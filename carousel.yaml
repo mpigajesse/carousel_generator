@@ -1,0 +1,62 @@
+footer:
+  series: "AI Series"
+  author: "ton_compte"
+
+slides:
+  - type: cover
+    badge: "Knowledge Drop"
+    title: "Deep Learning"
+    code: "model.fit()_"
+    cta: "Swipe pour apprendre"
+
+  - type: content
+    badge: "Module 17 · 01"
+    title: "C'est quoi le Deep Learning ?"
+    body: |
+      Le Deep Learning est une branche du Machine Learning inspirée du cerveau humain,
+      utilisant des <span class="bold">Réseaux de Neurones</span> profonds.<br><br>
+      <span class="hl1">Machine Learning traditionnel :</span><br>
+      L'humain doit extraire manuellement les caractéristiques pertinentes.<br><br>
+      <span class="hl2">Deep Learning :</span><br>
+      Le réseau apprend lui-même depuis les données brutes (pixels, son).
+
+  - type: content
+    badge: "Module 17 · 02"
+    title: "Le Neurone Artificiel"
+    body: |
+      C'est l'unité de base du réseau. Il fonctionne en 4 étapes :<br><br>
+      <ul class="bullets">
+        <li>Reçoit des <strong>données d'entrée</strong> (X).</li>
+        <li>Multiplie chaque entrée par un <strong>poids</strong> (W).</li>
+        <li>Additionne le tout (+ un <strong>biais</strong> b).</li>
+        <li>Passe dans une <strong>fonction d'activation</strong> (ex: ReLU).</li>
+      </ul>
+
+  - type: compare
+    badge: "Module 17 · 03"
+    title: "Du Neurone au Réseau"
+    columns:
+      - title: "Neurone"
+        body: |
+          Le Perceptron. Reçoit des entrées, les multiplie par des poids, décide.<br><br>
+          Entrées : x1, x2, x3<br>
+          Sortie : 0 ou 1
+        tag: "Décision binaire"
+      - title: "Réseau"
+        body: |
+          Deep Neural Network. Des milliers de neurones en couches successives.<br><br>
+          Couches : 10 à 100+<br>
+          Neurones : Millions
+        tag: "Reconnaissance complexe"
+
+  - type: content
+    badge: "Module 17 · 08"
+    title: "Transformers : La Révolution"
+    body: |
+      Publié par Google en 2017, il a rendu les RNN presque obsolètes.<br><br>
+      <span class="hl3">Son secret ? Le Mécanisme d'Attention</span><br>
+      Au lieu de lire mot par mot, il analyse <span class="bold">toute la phrase en parallèle</span>
+      pour pondérer la relation entre chaque mot.<br><br>
+      C'est l'architecture derrière :<br>
+      <span class="hl1">• Le 'T' de ChatGPT</span> — Génération<br>
+      <span class="hl2">• BERT</span> — Recherche & Compréhension

@@ -1,0 +1,41 @@
+{
+  "skills": {
+    "docs-audit-and-refresh": {
+      "path": ".qwen/skills/docs-audit-and-refresh/SKILL.md",
+      "autoLoad": true
+    },
+    "docs-update-from-diff": {
+      "path": ".qwen/skills/docs-update-from-diff/SKILL.md",
+      "autoLoad": true
+    },
+    "pr-review": {
+      "path": ".qwen/skills/pr-review/SKILL.md",
+      "autoLoad": true
+    },
+    "qwen-code-claw": {
+      "path": ".qwen/skills/qwen-code-claw/SKILL.md",
+      "autoLoad": true
+    },
+    "terminal-capture": {
+      "path": ".qwen/skills/terminal-capture/SKILL.md",
+      "autoLoad": true
+    }
+  },
+  "commands": {
+    "qc/code-review": {
+      "path": ".qwen/commands/qc/code-review.md"
+    },
+    "qc/commit": {
+      "path": ".qwen/commands/qc/commit.md"
+    },
+    "qc/create-issue": {
+      "path": ".qwen/commands/qc/create-issue.md"
+    },
+    "qc/create-pr": {
+      "path": ".qwen/commands/qc/create-pr.md"
+    }
+  },
+  "model": {
+    "name": "qwen3-coder-plus"
+  }
+}

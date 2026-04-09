@@ -1,0 +1,1349 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Carousel Generator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:       #080b10;
+  --surface:  #0e1219;
+  --card:     #131820;
+  --border:   rgba(255,255,255,.07);
+  --border2:  rgba(255,255,255,.13);
+  --text:     #e8eaf0;
+  --muted:    #5a6072;
+  --muted2:   #8890a4;
+  --accent:   #7c6af7;
+  --accent2:  #38c8a8;
+  --accent3:  #f06292;
+  --danger:   #f87171;
+  --success:  #4ade80;
+  --radius:   14px;
+  --radius-sm: 8px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── Noise overlay ── */
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+  opacity: .025;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── Glow orbs ── */
+.orb {
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(80px);
+  pointer-events: none;
+  z-index: 0;
+}
+.orb-1 { width: 500px; height: 500px; top: -150px; left: -100px; background: rgba(124,106,247,.12); }
+.orb-2 { width: 400px; height: 400px; bottom: -100px; right: -80px; background: rgba(56,200,168,.10); }
+
+/* ── Layout ── */
+.shell { position: relative; z-index: 1; display: grid; grid-template-columns: 340px 1fr; min-height: 100vh; }
+
+/* ── Sidebar ── */
+aside {
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  height: 100vh;
+  position: sticky;
+  top: 0;
+}
+
+.brand {
+  padding: 28px 28px 24px;
+  border-bottom: 1px solid var(--border);
+}
+.brand-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 4px;
+}
+.brand-icon {
+  width: 32px; height: 32px;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+}
+.brand-name {
+  font-family: 'Syne', sans-serif;
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: -.02em;
+}
+.brand-sub { font-size: 11px; color: var(--muted); }
+
+/* ── Sidebar sections ── */
+.sidebar-section { padding: 20px 24px; border-bottom: 1px solid var(--border); }
+.sidebar-section:last-child { border-bottom: none; flex: 1; }
+
+.section-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 14px;
+}
+
+/* ── Form fields ── */
+.field { margin-bottom: 14px; }
+.field label {
+  display: block;
+  font-size: 12px;
+  color: var(--muted2);
+  margin-bottom: 6px;
+  font-weight: 500;
+}
+.field input, .field select, .field textarea {
+  width: 100%;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 9px 12px;
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  outline: none;
+  transition: border-color .2s;
+}
+.field input:focus, .field select:focus, .field textarea:focus {
+  border-color: var(--accent);
+}
+.field select option { background: var(--card); }
+
+/* ── Theme picker ── */
+.theme-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+.theme-pill {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 8px 6px;
+  cursor: pointer;
+  text-align: center;
+  font-size: 11px;
+  color: var(--muted2);
+  transition: all .2s;
+  background: var(--card);
+  position: relative;
+  overflow: hidden;
+}
+.theme-pill::before {
+  content: '';
+  display: block;
+  width: 100%;
+  height: 5px;
+  border-radius: 3px;
+  margin-bottom: 6px;
+}
+.theme-pill.active { border-color: var(--accent); color: var(--text); }
+.theme-pill:hover { border-color: var(--border2); }
+
+/* ── Format toggle ── */
+.format-row { display: flex; gap: 8px; }
+.fmt-btn {
+  flex: 1;
+  padding: 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--card);
+  color: var(--muted2);
+  font-size: 12px;
+  font-family: 'DM Mono', monospace;
+  cursor: pointer;
+  text-align: center;
+  transition: all .2s;
+  font-weight: 500;
+}
+.fmt-btn.active { border-color: var(--accent); color: var(--accent); background: rgba(124,106,247,.08); }
+
+/* ── Generate button ── */
+.btn-generate {
+  width: 100%;
+  padding: 13px;
+  background: linear-gradient(135deg, var(--accent), #9b5de5);
+  border: none;
+  border-radius: var(--radius-sm);
+  color: #fff;
+  font-family: 'Syne', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity .2s, transform .15s;
+  letter-spacing: .03em;
+  margin-top: 4px;
+}
+.btn-generate:hover { opacity: .9; transform: translateY(-1px); }
+.btn-generate:active { transform: translateY(0); }
+.btn-generate:disabled { opacity: .4; cursor: not-allowed; transform: none; }
+
+/* ── Main area ── */
+main {
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+/* ── Header ── */
+.main-header {
+  padding: 28px 36px 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.main-header h1 {
+  font-family: 'Syne', sans-serif;
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -.03em;
+}
+.tab-row { display: flex; gap: 4px; background: var(--card); padding: 4px; border-radius: 10px; }
+.tab {
+  padding: 7px 18px;
+  border-radius: 7px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  color: var(--muted2);
+  transition: all .2s;
+  border: none;
+  background: none;
+  font-family: 'DM Sans', sans-serif;
+}
+.tab.active { background: var(--surface); color: var(--text); }
+
+/* ── Slides editor ── */
+.slides-area { padding: 24px 36px; flex: 1; }
+
+.slides-list { display: flex; flex-direction: column; gap: 14px; }
+
+.slide-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  transition: border-color .2s;
+}
+.slide-card:hover { border-color: var(--border2); }
+
+.slide-card-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 18px;
+  cursor: pointer;
+  user-select: none;
+}
+.slide-num {
+  width: 26px; height: 26px;
+  background: rgba(124,106,247,.15);
+  color: var(--accent);
+  border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  font-weight: 500;
+  flex-shrink: 0;
+}
+.slide-title-preview {
+  flex: 1;
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.slide-type-badge {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+.badge-cover   { background: rgba(240,98,146,.12); color: var(--accent3); }
+.badge-content { background: rgba(56,200,168,.10); color: var(--accent2); }
+.badge-compare { background: rgba(124,106,247,.12); color: var(--accent); }
+
+.slide-actions { display: flex; gap: 4px; flex-shrink: 0; }
+.icon-btn {
+  width: 28px; height: 28px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: none;
+  color: var(--muted);
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px;
+  transition: all .15s;
+}
+.icon-btn:hover { background: var(--surface); color: var(--text); border-color: var(--border2); }
+.icon-btn.danger:hover { color: var(--danger); border-color: var(--danger); }
+
+.slide-body {
+  padding: 0 18px 18px;
+  border-top: 1px solid var(--border);
+  display: none;
+}
+.slide-body.open { display: block; padding-top: 16px; }
+
+.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.field textarea { min-height: 90px; resize: vertical; font-family: 'DM Mono', monospace; font-size: 12px; }
+
+/* Col fields pour compare */
+.cols-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 8px; }
+.col-block {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 12px;
+}
+.col-block-label { font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; font-weight: 600; }
+
+/* ── Add slide bar ── */
+.add-slide-bar {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+  padding: 16px;
+  background: var(--card);
+  border: 1px dashed var(--border2);
+  border-radius: var(--radius);
+}
+.add-btn {
+  flex: 1;
+  padding: 9px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--muted2);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all .2s;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+}
+.add-btn:hover { border-color: var(--accent); color: var(--accent); background: rgba(124,106,247,.07); }
+
+/* ── Preview tab ── */
+.preview-area {
+  padding: 24px 36px;
+  flex: 1;
+  display: none;
+}
+.preview-area.active { display: block; }
+.slides-area.hidden { display: none; }
+
+/* ── Progress overlay ── */
+.progress-bar-wrap {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  margin: 12px 0;
+  display: none;
+}
+.progress-bar-wrap.visible { display: block; }
+.progress-label { font-size: 12px; color: var(--muted2); margin-bottom: 10px; }
+.progress-track {
+  height: 4px;
+  background: var(--surface);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+  border-radius: 2px;
+  transition: width .4s ease;
+}
+
+/* ── Preview grid ── */
+.preview-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 16px;
+  margin-top: 20px;
+}
+.preview-item {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  transition: all .2s;
+}
+.preview-item:hover { border-color: var(--border2); transform: translateY(-2px); }
+.preview-item img {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  display: block;
+}
+.preview-item-footer {
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.preview-item-name { font-size: 11px; color: var(--muted2); font-family: 'DM Mono', monospace; }
+.preview-item-dl {
+  font-size: 11px;
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: 500;
+}
+.preview-item-dl:hover { text-decoration: underline; }
+
+.preview-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+.btn-dl-all {
+  padding: 9px 20px;
+  background: rgba(56,200,168,.12);
+  border: 1px solid rgba(56,200,168,.3);
+  border-radius: var(--radius-sm);
+  color: var(--accent2);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  transition: all .2s;
+  text-decoration: none;
+  display: inline-flex; align-items: center; gap: 6px;
+}
+.btn-dl-all:hover { background: rgba(56,200,168,.2); }
+
+/* ── Status msg ── */
+.status-msg {
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  margin: 12px 0;
+  display: none;
+}
+.status-msg.visible { display: block; }
+.status-msg.error   { background: rgba(248,113,113,.1); border: 1px solid rgba(248,113,113,.3); color: var(--danger); }
+.status-msg.success { background: rgba(74,222,128,.1);  border: 1px solid rgba(74,222,128,.3);  color: var(--success); }
+
+/* ── Markdown Import Modal ── */
+.md-modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,.75);
+  backdrop-filter: blur(8px);
+  z-index: 1000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+.md-modal-overlay.visible { display: flex; }
+.md-modal {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  width: 90vw;
+  max-width: 800px;
+  max-height: 85vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0,0,0,.5);
+}
+.md-modal-header {
+  padding: 24px 28px 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.md-modal-header h2 {
+  font-family: 'Syne', sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+}
+.md-modal-close {
+  width: 32px; height: 32px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: none;
+  color: var(--muted2);
+  cursor: pointer;
+  font-size: 18px;
+  display: flex; align-items: center; justify-content: center;
+  transition: all .2s;
+}
+.md-modal-close:hover { background: var(--card); color: var(--text); }
+
+.md-modal-tabs {
+  display: flex;
+  gap: 4px;
+  padding: 0 28px;
+  border-bottom: 1px solid var(--border);
+}
+.md-tab {
+  padding: 12px 20px;
+  border: none;
+  background: none;
+  color: var(--muted2);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all .2s;
+}
+.md-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+.md-modal-body { padding: 24px 28px; }
+.md-tab-content { display: none; }
+.md-tab-content.active { display: block; }
+
+.md-file-drop {
+  border: 2px dashed var(--border2);
+  border-radius: var(--radius);
+  padding: 40px;
+  text-align: center;
+  cursor: pointer;
+  transition: all .2s;
+  background: var(--card);
+}
+.md-file-drop:hover, .md-file-drop.dragover {
+  border-color: var(--accent);
+  background: rgba(124,106,247,.05);
+}
+.md-file-drop-icon { font-size: 36px; opacity: .4; margin-bottom: 12px; }
+.md-file-drop-text { color: var(--muted2); font-size: 13px; }
+.md-file-drop-hint { color: var(--muted); font-size: 11px; margin-top: 8px; }
+
+.md-textarea {
+  width: 100%;
+  min-height: 300px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 14px;
+  color: var(--text);
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  line-height: 1.6;
+  resize: vertical;
+  outline: none;
+}
+.md-textarea:focus { border-color: var(--accent); }
+
+.md-preview-info {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 16px;
+  margin-top: 16px;
+}
+.md-preview-info-title {
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 10px;
+  color: var(--muted2);
+}
+.md-preview-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.md-preview-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  background: var(--surface);
+  border-radius: 6px;
+  font-size: 12px;
+}
+.md-preview-item-num {
+  width: 24px; height: 24px;
+  background: rgba(124,106,247,.15);
+  color: var(--accent);
+  border-radius: 5px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  font-weight: 500;
+  flex-shrink: 0;
+}
+.md-preview-item-type {
+  font-size: 10px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+}
+.md-preview-item-title { flex: 1; color: var(--text); font-weight: 500; }
+
+.md-modal-footer {
+  padding: 20px 28px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+.md-btn {
+  padding: 10px 20px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--card);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all .2s;
+}
+.md-btn:hover { background: var(--surface); border-color: var(--border2); }
+.md-btn.primary {
+  background: linear-gradient(135deg, var(--accent), #9b5de5);
+  border: none;
+  color: #fff;
+}
+.md-btn.primary:hover { opacity: .9; }
+.md-btn:disabled { opacity: .4; cursor: not-allowed; }
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+
+/* ── Empty state ── */
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--muted);
+}
+.empty-state-icon { font-size: 40px; margin-bottom: 12px; opacity: .4; }
+.empty-state p { font-size: 13px; }
+</style>
+</head>
+<body>
+
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+
+<div class="shell">
+
+  <!-- ══ SIDEBAR ══ -->
+  <aside>
+    <div class="brand">
+      <div class="brand-logo">
+        <div class="brand-icon">◈</div>
+        <span class="brand-name">CarouselGen</span>
+      </div>
+      <div class="brand-sub">Générateur de slides Instagram</div>
+    </div>
+
+    <!-- Footer -->
+    <div class="sidebar-section">
+      <div class="section-label">Footer</div>
+      <div class="field">
+        <label>Série / Label</label>
+        <input type="text" id="footer-series" value="AI Series" placeholder="ex: Knowledge Drop">
+      </div>
+      <div class="field">
+        <label>Nom d'auteur</label>
+        <input type="text" id="footer-author" value="ton_compte" placeholder="@username">
+      </div>
+    </div>
+
+    <!-- Theme -->
+    <div class="sidebar-section">
+      <div class="section-label">Thème</div>
+      <div class="theme-grid" id="theme-grid">
+        <!-- Généré par JS -->
+      </div>
+    </div>
+
+    <!-- Format -->
+    <div class="sidebar-section">
+      <div class="section-label">Format de sortie</div>
+      <div class="format-row">
+        <button class="fmt-btn active" data-fmt="png" onclick="setFormat('png', this)">PNG</button>
+        <button class="fmt-btn" data-fmt="pdf" onclick="setFormat('pdf', this)">PDF</button>
+      </div>
+    </div>
+
+    <!-- Generate -->
+    <div class="sidebar-section">
+      <div class="progress-bar-wrap" id="progress-wrap">
+        <div class="progress-label" id="progress-label">Génération en cours…</div>
+        <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+      </div>
+      <div class="status-msg" id="status-msg"></div>
+      <button class="btn-generate" id="btn-generate" onclick="startGenerate()">
+        ◈ &nbsp;Générer le carousel
+      </button>
+    </div>
+
+    <!-- Import Markdown -->
+    <div class="sidebar-section">
+      <div class="section-label">Import Markdown</div>
+      <button class="btn-generate" style="background: linear-gradient(135deg, var(--accent2), #2dd4bf);" onclick="openMarkdownModal()">
+        📄 &nbsp;Importer un fichier MD
+      </button>
+    </div>
+  </aside>
+
+  <!-- ══ MAIN ══ -->
+  <main>
+    <div class="main-header">
+      <h1>Éditeur de slides</h1>
+      <div class="tab-row">
+        <button class="tab active" onclick="switchTab('editor', this)">Éditeur</button>
+        <button class="tab" onclick="switchTab('preview', this)">Aperçu</button>
+      </div>
+    </div>
+
+    <!-- Editor tab -->
+    <div class="slides-area" id="editor-area">
+      <div class="slides-list" id="slides-list"></div>
+      <div class="add-slide-bar">
+        <button class="add-btn" onclick="addSlide('cover')">＋ Couverture</button>
+        <button class="add-btn" onclick="addSlide('content')">＋ Contenu</button>
+        <button class="add-btn" onclick="addSlide('compare')">＋ Comparaison</button>
+      </div>
+    </div>
+
+    <!-- Preview tab -->
+    <div class="preview-area" id="preview-area">
+      <div id="preview-empty" class="empty-state">
+        <div class="empty-state-icon">◫</div>
+        <p>Lance une génération pour voir l'aperçu ici.</p>
+      </div>
+      <div id="preview-content" style="display:none">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+          <span style="font-size:13px;color:var(--muted2)" id="preview-count"></span>
+          <a class="btn-dl-all" id="btn-dl-all" href="#" onclick="downloadAll()">↓ Télécharger tout (ZIP)</a>
+        </div>
+        <div class="preview-grid" id="preview-grid"></div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- ══ MARKDOWN IMPORT MODAL ══ -->
+<div class="md-modal-overlay" id="md-modal">
+  <div class="md-modal">
+    <div class="md-modal-header">
+      <h2>📄 Importer du Markdown</h2>
+      <button class="md-modal-close" onclick="closeMarkdownModal()">✕</button>
+    </div>
+    
+    <div class="md-modal-tabs">
+      <button class="md-tab active" onclick="switchMdTab('paste', this)">Coller le contenu</button>
+      <button class="md-tab" onclick="switchMdTab('upload', this)">Uploader un fichier</button>
+    </div>
+    
+    <div class="md-modal-body">
+      <!-- Tab: Paste -->
+      <div class="md-tab-content active" id="tab-paste">
+        <textarea class="md-textarea" id="md-content" placeholder="Collez votre contenu Markdown ici...
+
+# Exemple de structure
+
+## Slide 1: Introduction
+Contenu de la première slide...
+
+## Slide 2: Concepts clés
+- Point important 1
+- Point important 2
+- Point important 3
+
+## Slide 3: Comparaison
+**Option A**: Description...
+
+**Option B**: Description..."></textarea>
+      </div>
+      
+      <!-- Tab: Upload -->
+      <div class="md-tab-content" id="tab-upload">
+        <div class="md-file-drop" id="md-file-drop" onclick="document.getElementById('md-file-input').click()">
+          <div class="md-file-drop-icon">📁</div>
+          <div class="md-file-drop-text">Cliquez ou glissez un fichier .md ici</div>
+          <div class="md-file-drop-hint">Formats supportés: .md, .markdown</div>
+        </div>
+        <input type="file" id="md-file-input" accept=".md,.markdown" style="display:none" onchange="handleFileUpload(event)">
+        <div id="md-file-name" style="margin-top:12px;font-size:12px;color:var(--muted2)"></div>
+      </div>
+      
+      <!-- Preview -->
+      <div class="md-preview-info" id="md-preview" style="display:none">
+        <div class="md-preview-info-title">✨ Aperçu des slides détectées:</div>
+        <div class="md-preview-list" id="md-preview-list"></div>
+      </div>
+    </div>
+    
+    <div class="md-modal-footer">
+      <button class="md-btn" onclick="closeMarkdownModal()">Annuler</button>
+      <button class="md-btn primary" id="md-apply-btn" onclick="applyMarkdownImport()" disabled>
+        Appliquer aux slides
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── State ──
+let slides = [];
+let selectedTheme = 'dark_purple';
+let selectedFormat = 'png';
+let currentJobId = null;
+let themeColors = {};
+let parsedMarkdownData = null; // Stocke les données parsées du Markdown
+
+// ── Init ──
+document.addEventListener('DOMContentLoaded', async () => {
+  await loadThemes();
+  addSlide('cover');
+  addSlide('content');
+  addSlide('compare');
+});
+
+// ── Themes ──
+async function loadThemes() {
+  const res = await fetch('/api/themes');
+  themeColors = await res.json();
+  renderThemeGrid();
+}
+
+function renderThemeGrid() {
+  const grid = document.getElementById('theme-grid');
+  const themeLabels = {
+    dark_purple: 'Purple',
+    dark_blue:   'Blue',
+    dark_green:  'Green',
+    dark_red:    'Red',
+    dark_orange: 'Orange',
+    random:      'Random ✦',
+  };
+  grid.innerHTML = Object.entries(themeColors).map(([name, t]) => `
+    <div class="theme-pill ${name === selectedTheme ? 'active' : ''}"
+         data-theme="${name}"
+         onclick="selectTheme('${name}', this)"
+         style="--c1:${t.accent1};--c2:${t.accent2}">
+      <div style="background:linear-gradient(90deg,${t.accent1},${t.accent2});height:5px;border-radius:3px;margin-bottom:7px"></div>
+      ${themeLabels[name] || name}
+    </div>
+  `).join('');
+}
+
+function selectTheme(name, el) {
+  selectedTheme = name;
+  document.querySelectorAll('.theme-pill').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function setFormat(fmt, el) {
+  selectedFormat = fmt;
+  document.querySelectorAll('.fmt-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+}
+
+// ── Slide management ──
+function addSlide(type) {
+  const id = Date.now();
+  const defaults = {
+    cover:   { type:'cover',   badge:'Knowledge Drop', title:'Mon Titre', code:'model.fit()_', cta:'Swipe pour apprendre' },
+    content: { type:'content', badge:'Module 01',       title:'Nouveau Sujet', body:'Ton contenu ici...' },
+    compare: { type:'compare', badge:'Module 02',       title:'Comparaison', columns:[
+      { title:'Option A', body:'Description A', tag:'Tag A' },
+      { title:'Option B', body:'Description B', tag:'Tag B' },
+    ]},
+  };
+  slides.push({ id, ...defaults[type] });
+  renderSlides();
+}
+
+function removeSlide(id) {
+  slides = slides.filter(s => s.id !== id);
+  renderSlides();
+}
+
+function moveSlide(id, dir) {
+  const i = slides.findIndex(s => s.id === id);
+  const j = i + dir;
+  if (j < 0 || j >= slides.length) return;
+  [slides[i], slides[j]] = [slides[j], slides[i]];
+  renderSlides();
+}
+
+function toggleSlide(id) {
+  const body = document.getElementById('sbody-' + id);
+  body.classList.toggle('open');
+}
+
+function updateSlide(id, key, value) {
+  const s = slides.find(s => s.id === id);
+  if (!s) return;
+  if (key.startsWith('col.')) {
+    const [, ci, ck] = key.split('.');
+    s.columns[ci][ck] = value;
+  } else {
+    s[key] = value;
+  }
+  // Update preview title
+  const preview = document.getElementById('stitle-' + id);
+  if (preview && (key === 'title')) preview.textContent = value || '—';
+}
+
+function renderSlides() {
+  const list = document.getElementById('slides-list');
+  if (slides.length === 0) {
+    list.innerHTML = `<div class="empty-state"><div class="empty-state-icon">◫</div><p>Aucune slide. Ajoute-en une ci-dessous.</p></div>`;
+    return;
+  }
+  list.innerHTML = slides.map((s, i) => renderSlideCard(s, i)).join('');
+}
+
+function renderSlideCard(s, i) {
+  const badgeClass = { cover:'badge-cover', content:'badge-content', compare:'badge-compare' }[s.type];
+  const badgeLabel = { cover:'Couverture', content:'Contenu', compare:'Comparaison' }[s.type];
+
+  let fields = '';
+
+  if (s.type === 'cover') {
+    fields = `
+      <div class="field-row">
+        <div class="field"><label>Badge</label><input type="text" value="${esc(s.badge)}" oninput="updateSlide(${s.id},'badge',this.value)"></div>
+        <div class="field"><label>CTA</label><input type="text" value="${esc(s.cta)}" oninput="updateSlide(${s.id},'cta',this.value)"></div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>Titre principal</label><input type="text" value="${esc(s.title)}" oninput="updateSlide(${s.id},'title',this.value)"></div>
+        <div class="field"><label>Code terminal</label><input type="text" value="${esc(s.code)}" oninput="updateSlide(${s.id},'code',this.value)"></div>
+      </div>`;
+  } else if (s.type === 'content') {
+    fields = `
+      <div class="field-row">
+        <div class="field"><label>Badge</label><input type="text" value="${esc(s.badge)}" oninput="updateSlide(${s.id},'badge',this.value)"></div>
+        <div class="field"><label>Titre</label><input type="text" value="${esc(s.title)}" oninput="updateSlide(${s.id},'title',this.value)"></div>
+      </div>
+      <div class="field"><label>Contenu (HTML autorisé)</label>
+        <textarea oninput="updateSlide(${s.id},'body',this.value)">${esc(s.body||'')}</textarea>
+      </div>`;
+  } else if (s.type === 'compare') {
+    const c = s.columns || [{},{},];
+    fields = `
+      <div class="field-row">
+        <div class="field"><label>Badge</label><input type="text" value="${esc(s.badge)}" oninput="updateSlide(${s.id},'badge',this.value)"></div>
+        <div class="field"><label>Titre</label><input type="text" value="${esc(s.title)}" oninput="updateSlide(${s.id},'title',this.value)"></div>
+      </div>
+      <div class="cols-grid">
+        ${[0,1].map(ci => `
+          <div class="col-block">
+            <div class="col-block-label">Colonne ${ci+1}</div>
+            <div class="field"><label>Titre</label><input type="text" value="${esc(c[ci]?.title||'')}" oninput="updateSlide(${s.id},'col.${ci}.title',this.value)"></div>
+            <div class="field"><label>Corps</label><textarea oninput="updateSlide(${s.id},'col.${ci}.body',this.value)">${esc(c[ci]?.body||'')}</textarea></div>
+            <div class="field"><label>Tag</label><input type="text" value="${esc(c[ci]?.tag||'')}" oninput="updateSlide(${s.id},'col.${ci}.tag',this.value)"></div>
+          </div>`).join('')}
+      </div>`;
+  }
+
+  return `
+    <div class="slide-card">
+      <div class="slide-card-head" onclick="toggleSlide(${s.id})">
+        <div class="slide-num">${i+1}</div>
+        <div class="slide-title-preview" id="stitle-${s.id}">${esc(s.title||'Sans titre')}</div>
+        <span class="slide-type-badge ${badgeClass}">${badgeLabel}</span>
+        <div class="slide-actions" onclick="event.stopPropagation()">
+          <button class="icon-btn" onclick="moveSlide(${s.id},-1)" title="Monter">↑</button>
+          <button class="icon-btn" onclick="moveSlide(${s.id},1)"  title="Descendre">↓</button>
+          <button class="icon-btn danger" onclick="removeSlide(${s.id})" title="Supprimer">✕</button>
+        </div>
+      </div>
+      <div class="slide-body" id="sbody-${s.id}">
+        ${fields}
+      </div>
+    </div>`;
+}
+
+function esc(str) {
+  return String(str || '').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// ── Generate ──
+async function startGenerate() {
+  if (slides.length === 0) return showStatus('Ajoute au moins une slide.', 'error');
+
+  const btn = document.getElementById('btn-generate');
+  btn.disabled = true;
+
+  showProgress(true, 'Préparation…');
+
+  const payload = {
+    theme:  selectedTheme,
+    format: selectedFormat,
+    footer: {
+      series: document.getElementById('footer-series').value,
+      author: document.getElementById('footer-author').value,
+    },
+    slides: slides.map(s => {
+      const { id, ...rest } = s;
+      return rest;
+    }),
+  };
+
+  try {
+    const res  = await fetch('/api/generate', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
+    const data = await res.json();
+    if (data.error) { showStatus(data.error, 'error'); showProgress(false); btn.disabled = false; return; }
+    currentJobId = data.job_id;
+    pollStatus(currentJobId);
+  } catch(e) {
+    showStatus('Erreur réseau: ' + e.message, 'error');
+    showProgress(false);
+    btn.disabled = false;
+  }
+}
+
+async function pollStatus(jobId) {
+  let pct = 10;
+  const interval = setInterval(async () => {
+    const res  = await fetch('/api/status/' + jobId);
+    const data = await res.json();
+    pct = Math.min(pct + 15, 90);
+    setProgress(pct, 'Génération en cours…');
+
+    if (data.status === 'done') {
+      clearInterval(interval);
+      setProgress(100, 'Terminé !');
+      setTimeout(() => showProgress(false), 800);
+      showStatus(`✓ ${data.files.length} slide(s) générée(s) avec succès.`, 'success');
+      renderPreview(data.files, jobId);
+      document.getElementById('btn-generate').disabled = false;
+      switchTab('preview', document.querySelectorAll('.tab')[1]);
+    }
+    if (data.status === 'error') {
+      clearInterval(interval);
+      showProgress(false);
+      showStatus('Erreur : ' + data.error, 'error');
+      document.getElementById('btn-generate').disabled = false;
+    }
+  }, 1200);
+}
+
+// ── Preview ──
+function renderPreview(files, jobId) {
+  const grid = document.getElementById('preview-grid');
+  const pngFiles = files.filter(f => f.endsWith('.png') || f.endsWith('.pdf'));
+
+  document.getElementById('preview-empty').style.display = 'none';
+  document.getElementById('preview-content').style.display = 'block';
+  document.getElementById('preview-count').textContent = `${pngFiles.length} slide(s) générée(s)`;
+
+  grid.innerHTML = pngFiles.map((f, i) => `
+    <div class="preview-item">
+      ${f.endsWith('.png')
+        ? `<img src="/${f}" alt="slide ${i+1}" loading="lazy">`
+        : `<div style="aspect-ratio:1;display:flex;align-items:center;justify-content:center;background:var(--surface);font-size:32px;opacity:.3">PDF</div>`
+      }
+      <div class="preview-item-footer">
+        <span class="preview-item-name">slide_${String(i+1).padStart(2,'0')}</span>
+        <a class="preview-item-dl" href="/${f}" download>↓</a>
+      </div>
+    </div>
+  `).join('');
+
+  document.getElementById('btn-dl-all').dataset.job = jobId;
+}
+
+function downloadAll() {
+  const jobId = document.getElementById('btn-dl-all').dataset.job;
+  if (jobId) window.location.href = '/api/download/' + jobId;
+}
+
+// ── UI helpers ──
+function switchTab(tab, el) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('editor-area').classList.toggle('hidden', tab !== 'editor');
+  document.getElementById('preview-area').classList.toggle('active', tab === 'preview');
+}
+
+function showProgress(visible, label='') {
+  const wrap = document.getElementById('progress-wrap');
+  wrap.classList.toggle('visible', visible);
+  if (label) document.getElementById('progress-label').textContent = label;
+  if (!visible) setProgress(0, '');
+}
+
+function setProgress(pct, label) {
+  document.getElementById('progress-fill').style.width = pct + '%';
+  if (label) document.getElementById('progress-label').textContent = label;
+}
+
+function showStatus(msg, type) {
+  const el = document.getElementById('status-msg');
+  el.textContent = msg;
+  el.className = `status-msg visible ${type}`;
+  setTimeout(() => el.classList.remove('visible'), 5000);
+}
+
+// ── Markdown Import ──
+function openMarkdownModal() {
+  document.getElementById('md-modal').classList.add('visible');
+  document.getElementById('md-content').value = '';
+  document.getElementById('md-preview').style.display = 'none';
+  document.getElementById('md-apply-btn').disabled = true;
+  document.getElementById('md-file-name').textContent = '';
+  parsedMarkdownData = null;
+}
+
+function closeMarkdownModal() {
+  document.getElementById('md-modal').classList.remove('visible');
+}
+
+function switchMdTab(tab, el) {
+  document.querySelectorAll('.md-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.md-tab-content').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('tab-' + tab).classList.add('active');
+}
+
+// Gestion du drag & drop
+const mdFileDrop = document.getElementById('md-file-drop');
+if (mdFileDrop) {
+  mdFileDrop.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    mdFileDrop.classList.add('dragover');
+  });
+  
+  mdFileDrop.addEventListener('dragleave', () => {
+    mdFileDrop.classList.remove('dragover');
+  });
+  
+  mdFileDrop.addEventListener('drop', (e) => {
+    e.preventDefault();
+    mdFileDrop.classList.remove('dragover');
+    const files = e.dataTransfer.files;
+    if (files.length > 0) {
+      handleMarkdownFile(files[0]);
+    }
+  });
+}
+
+function handleFileUpload(event) {
+  const file = event.target.files[0];
+  if (file) {
+    handleMarkdownFile(file);
+  }
+}
+
+function handleMarkdownFile(file) {
+  if (!file.name.endsWith('.md') && !file.name.endsWith('.markdown')) {
+    showStatus('Format non supporté. Utilisez .md ou .markdown', 'error');
+    return;
+  }
+  
+  document.getElementById('md-file-name').textContent = `📄 ${file.name}`;
+  
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    const content = e.target.result;
+    parseMarkdownContent(content);
+  };
+  reader.readAsText(file);
+}
+
+// Parse le contenu Markdown quand l'utilisateur tape ou colle
+let mdParseTimeout = null;
+document.addEventListener('DOMContentLoaded', () => {
+  const mdContent = document.getElementById('md-content');
+  if (mdContent) {
+    mdContent.addEventListener('input', () => {
+      clearTimeout(mdParseTimeout);
+      mdParseTimeout = setTimeout(() => {
+        const content = mdContent.value;
+        if (content.trim().length > 10) {
+          parseMarkdownContent(content);
+        } else {
+          document.getElementById('md-preview').style.display = 'none';
+          document.getElementById('md-apply-btn').disabled = true;
+        }
+      }, 500); // Délai de 500ms pour éviter trop d'appels
+    });
+  }
+});
+
+async function parseMarkdownContent(content) {
+  try {
+    const res = await fetch('/api/import-markdown', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ content })
+    });
+
+    const data = await res.json();
+
+    if (data.error) {
+      showStatus(data.error, 'error');
+      return;
+    }
+
+    parsedMarkdownData = data;
+    renderMarkdownPreview(data);
+    document.getElementById('md-apply-btn').disabled = false;
+    
+    // Afficher l'analyse de structure intelligente
+    if (data.structure_analysis) {
+      showStructureAnalysis(data.structure_analysis);
+    }
+  } catch (e) {
+    showStatus('Erreur réseau: ' + e.message, 'error');
+  }
+}
+
+function showStructureAnalysis(analysis) {
+  // Créer un élément d'information sur la structure
+  const infoDiv = document.createElement('div');
+  infoDiv.className = 'structure-info';
+  infoDiv.style.cssText = `
+    background: rgba(56,200,168,.08);
+    border: 1px solid rgba(56,200,168,.2);
+    border-radius: 8px;
+    padding: 12px;
+    margin: 12px 0;
+    font-size: 12px;
+  `;
+  
+  const formatLabels = {
+    'separators': '📑 Séparateurs (---/***)',
+    'headings': '📑 Headings (# ## ###)',
+    'lists': '📑 Listes structurées',
+    'unstructured': '🔄 Contenu réorganisé'
+  };
+  
+  infoDiv.innerHTML = `
+    <div style="color: #38c8a8; font-weight: 600; margin-bottom: 8px;">
+      ✨ Analyse intelligente du Markdown
+    </div>
+    <div style="color: #8890a4;">
+      <div>📊 Format détecté: <strong style="color: #e8eaf0;">${formatLabels[analysis.detected_format]}</strong></div>
+      <div>🎯 Confiance: <strong style="color: ${analysis.confidence === 'high' ? '#4ade80' : '#fbbf24'};">${analysis.confidence === 'high' ? '✓ Haute' : '⚡ Moyenne'}</strong></div>
+      ${analysis.reorganization_applied ? '<div>🔄 <strong style="color: #7c6af7;">Réorganisation automatique appliquée</strong></div>' : ''}
+      <div>📈 ${analysis.heading_counts.h1 || 0} titre(s), ${analysis.heading_counts.h2 || 0} sous-titre(s), ${analysis.total_paragraphs || 0} paragraphe(s)</div>
+    </div>
+  `;
+  
+  // Supprimer l'ancien info s'il existe
+  const existing = document.querySelector('.structure-info');
+  if (existing) existing.remove();
+  
+  // Insérer avant le preview
+  const preview = document.getElementById('md-preview');
+  preview.parentNode.insertBefore(infoDiv, preview);
+}
+
+function renderMarkdownPreview(data) {
+  const preview = document.getElementById('md-preview');
+  const list = document.getElementById('md-preview-list');
+  
+  preview.style.display = 'block';
+  
+  list.innerHTML = data.slides.map((s, i) => {
+    const typeLabels = {
+      cover: '🎯 Couverture',
+      content: '📝 Contenu',
+      compare: '⚖️ Comparaison'
+    };
+    const typeColors = {
+      cover: 'rgba(240,98,146,.15)',
+      content: 'rgba(56,200,168,.15)',
+      compare: 'rgba(124,106,247,.15)'
+    };
+    const typeTextColors = {
+      cover: '#f06292',
+      content: '#38c8a8',
+      compare: '#7c6af7'
+    };
+    
+    return `
+      <div class="md-preview-item">
+        <div class="md-preview-item-num">${i + 1}</div>
+        <div class="md-preview-item-title">${esc(s.title || 'Sans titre')}</div>
+        <div class="md-preview-item-type" style="background:${typeColors[s.type]};color:${typeTextColors[s.type]}">
+          ${typeLabels[s.type] || s.type}
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+async function applyMarkdownImport() {
+  if (!parsedMarkdownData) {
+    showStatus('Aucune donnée à importer', 'error');
+    return;
+  }
+
+  // Remplacer les slides actuelles
+  slides = [];
+  const importedSlides = parsedMarkdownData.slides;
+
+  importedSlides.forEach((s, i) => {
+    slides.push({
+      id: Date.now() + i,
+      ...s
+    });
+  });
+
+  // Mettre à jour le footer si présent
+  if (parsedMarkdownData.footer) {
+    if (parsedMarkdownData.footer.series) {
+      document.getElementById('footer-series').value = parsedMarkdownData.footer.series;
+    }
+    if (parsedMarkdownData.footer.author) {
+      document.getElementById('footer-author').value = parsedMarkdownData.footer.author;
+    }
+  }
+
+  renderSlides();
+  closeMarkdownModal();
+  
+  // Message de succès intelligent
+  const structureInfo = parsedMarkdownData.structure_analysis || {};
+  const reorgMsg = structureInfo.reorganization_applied ? ' (réorganisé automatiquement)' : '';
+  showStatus(`✓ ${slides.length} slide(s) importée(s) avec succès${reorgMsg}!`, 'success');
+}
+</script>
+
+</body>
+</html>
