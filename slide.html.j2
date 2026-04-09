@@ -17,6 +17,16 @@
     position: relative;
   }
 
+  pre {
+    white-space: pre-wrap;       /* Since CSS 2.1 */
+    white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+    white-space: -pre-wrap;      /* Opera 4-6 */
+    white-space: -o-pre-wrap;    /* Opera 7 */
+    word-wrap: break-word;       /* Internet Explorer 5.5+ */
+    overflow-wrap: break-word;
+    max-width: 100%;
+  }
+
   .slide {
     width: 1080px;
     height: 1080px;
@@ -60,10 +70,10 @@
 
   /* Titre principal */
   .module-title {
-    font-size: 56px;
+    font-size: {% if slide.is_compact %}48px{% else %}56px{% endif %};
     font-weight: 700;
     line-height: 1.1;
-    margin-bottom: 28px;
+    margin-bottom: {% if slide.is_compact %}16px{% else %}28px{% endif %};
   }
 
   /* Règle colorée */
@@ -72,11 +82,11 @@
     height: 5px;
     background: {{ theme.rule }};
     border-radius: 3px;
-    margin-bottom: 40px;
+    margin-bottom: {% if slide.is_compact %}24px{% else %}40px{% endif %};
   }
 
   /* Corps de texte */
-  .body { font-size: {{ slide.text_size | default(30) }}px; line-height: 1.65; color: {{ theme.text_muted }}; flex: 1; overflow: hidden; }
+  .body { font-size: {{ slide.text_size | default(30) }}px; line-height: 1.65; color: {{ theme.text_muted }}; flex: 1; overflow: hidden; display: flex; flex-direction: column; justify-content: flex-start; margin-top: 10px; }
 
   .hl1 { color: {{ theme.accent2 }}; font-weight: 600; }
   .hl2 { color: {{ theme.accent3 }}; font-weight: 600; }
@@ -117,11 +127,11 @@
     padding: 32px;
     border: 1px solid rgba(255,255,255,.08);
   }
-  .compare-head { font-size: 30px; font-weight: 700; margin-bottom: 16px; }
-  .compare-body { font-size: 26px; color: {{ theme.text_muted }}; line-height: 1.55; }
+  .compare-head { font-size: {% if slide.is_compact %}26px{% else %}30px{% endif %}; font-weight: 700; margin-bottom: 16px; }
+  .compare-body { font-size: {{ slide.text_size | default(26) }}px; color: {{ theme.text_muted }}; line-height: 1.55; }
   .compare-tag {
     display: inline-block;
-    font-size: 22px;
+    font-size: {% if slide.is_compact %}18px{% else %}22px{% endif %};
     font-weight: 600;
     padding: 6px 20px;
     border-radius: 8px;

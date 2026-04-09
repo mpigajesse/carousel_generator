@@ -28,8 +28,13 @@ def _calculate_text_size(slide: dict) -> dict:
     S'assure que le contenu tient dans les 936px disponibles (1080 - 2*72 padding).
     """
     body = slide.get("body", "")
+    if slide.get("type") == "compare" and "columns" in slide:
+        for col in slide["columns"]:
+            body += " " + col.get("body", "")
+
     if not body:
-        slide["text_size"] = 30
+        slide["text_size"] = 42
+        slide["is_compact"] = False
         return slide
 
     # Compter le nombre approximatif de caractères visibles (sans HTML tags)
@@ -37,27 +42,25 @@ def _calculate_text_size(slide: dict) -> dict:
     text_only = re.sub(r'<[^>]+>', '', body)
     char_count = len(text_only)
 
-    # Compter le nombre de lignes (basé sur les <br> et paragraphes)
-    line_count = body.count('<br>') + body.count('</p>') + body.count('</li>') + 1
+    if slide.get("type") == "compare":
+        char_count = int(char_count * 1.5)  # Les colonnes divisent l'espace horizontal
 
-    # Logique de scaling :
-    # - Slide courte (< 300 chars) → texte plus grand (32-36px)
-    # - Slide moyenne (300-600 chars) → taille normale (28-32px)
-    # - Slide longue (> 600 chars) → texte plus petit (24-28px)
-    # - Slide très longue (> 900 chars) → texte minimal (22-24px)
-
-    if char_count < 200:
-        text_size = 34  # Court = grand texte
-    elif char_count < 400:
-        text_size = 30  # Normal
-    elif char_count < 600:
+    # Logique de scaling ajustée pour utiliser l'espace
+    if char_count < 150:
+        text_size = 46  # Très court = occupation maximale
+    elif char_count < 300:
+        text_size = 40  # Court
+    elif char_count < 500:
+        text_size = 34  # Normal
+    elif char_count < 750:
         text_size = 28  # Moyen
-    elif char_count < 900:
-        text_size = 26  # Long
+    elif char_count < 1000:
+        text_size = 24  # Long
     else:
-        text_size = 24  # Très long
+        text_size = 21  # Très long
 
     slide["text_size"] = text_size
+    slide["is_compact"] = char_count >= 750
     return slide
 
 
