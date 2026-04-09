@@ -653,6 +653,165 @@ main {
 }
 .empty-state-icon { font-size: 40px; margin-bottom: 12px; opacity: .4; }
 .empty-state p { font-size: 13px; }
+
+/* ══ PRESENTATION MODE ══ */
+.presentation-overlay {
+  position: fixed;
+  inset: 0;
+  background: #000;
+  z-index: 10000;
+  display: flex;
+  flex-direction: column;
+  animation: presentationFadeIn .3s ease;
+}
+@keyframes presentationFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.presentation-main {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.presentation-slide-container {
+  position: relative;
+  max-height: 80vh;
+  max-width: 80vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.presentation-slide {
+  max-height: 80vh;
+  max-width: 80vw;
+  object-fit: contain;
+  border-radius: 8px;
+  box-shadow: 0 20px 60px rgba(0,0,0,.5);
+  animation: slideTransition .3s ease;
+}
+@keyframes slideTransition {
+  from { opacity: 0; transform: scale(.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* Navigation arrows */
+.presentation-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255,255,255,.1);
+  backdrop-filter: blur(10px);
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all .2s;
+  z-index: 10;
+}
+.presentation-nav:hover {
+  background: rgba(255,255,255,.2);
+  transform: translateY(-50%) scale(1.1);
+}
+.presentation-nav-prev { left: 24px; }
+.presentation-nav-next { right: 24px; }
+
+/* Top bar */
+.presentation-topbar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 64px;
+  background: linear-gradient(to bottom, rgba(0,0,0,.8), transparent);
+  display: flex;
+  align-items: center;
+  padding: 0 24px;
+  gap: 16px;
+  z-index: 10;
+}
+
+.presentation-counter {
+  color: #fff;
+  font-family: 'DM Mono', monospace;
+  font-size: 16px;
+  font-weight: 500;
+  min-width: 80px;
+}
+
+.presentation-progress-bar {
+  flex: 1;
+  height: 4px;
+  background: rgba(255,255,255,.1);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.presentation-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+  border-radius: 2px;
+  transition: width .3s ease;
+}
+
+.presentation-exit-btn {
+  padding: 8px 16px;
+  border: 1px solid rgba(255,255,255,.2);
+  border-radius: 8px;
+  background: rgba(255,255,255,.1);
+  color: #fff;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all .2s;
+}
+.presentation-exit-btn:hover {
+  background: rgba(255,255,255,.2);
+}
+
+/* Bottom thumbnails */
+.presentation-thumbnails {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 120px;
+  background: linear-gradient(to top, rgba(0,0,0,.9), transparent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 0 24px 16px;
+  z-index: 10;
+  overflow-x: auto;
+}
+
+.presentation-thumbnail {
+  height: 80px;
+  width: auto;
+  border-radius: 4px;
+  cursor: pointer;
+  opacity: .4;
+  transition: all .2s;
+  border: 2px solid transparent;
+}
+.presentation-thumbnail:hover {
+  opacity: .7;
+  transform: scale(1.05);
+}
+.presentation-thumbnail.active {
+  opacity: 1;
+  border-color: var(--accent);
+  box-shadow: 0 0 20px rgba(124,106,247,.5);
+}
 </style>
 </head>
 <body>
@@ -752,13 +911,46 @@ main {
       <div id="preview-content" style="display:none">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
           <span style="font-size:13px;color:var(--muted2)" id="preview-count"></span>
-          <a class="btn-dl-all" id="btn-dl-all" href="#" onclick="downloadAll()">↓ Télécharger tout (ZIP)</a>
+          <div style="display:flex;gap:8px;align-items:center;">
+            <button class="btn-dl-all" style="cursor:pointer;" onclick="openPresentationMode()">🖥️ Mode Présentation</button>
+            <a class="btn-dl-all" id="btn-dl-all" href="#" onclick="downloadAll()">↓ Télécharger tout (ZIP)</a>
+          </div>
         </div>
         <div class="preview-grid" id="preview-grid"></div>
       </div>
     </div>
 
   </main>
+</div>
+
+<!-- ══ PRESENTATION MODE OVERLAY ══ -->
+<div class="presentation-overlay" id="presentation-overlay" style="display:none">
+  <!-- Main slide display -->
+  <div class="presentation-main">
+    <div class="presentation-slide-container">
+      <img class="presentation-slide" id="presentation-slide" src="" alt="Slide en cours">
+    </div>
+    
+    <!-- Navigation arrows -->
+    <button class="presentation-nav presentation-nav-prev" onclick="presentationPrev()">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
+    </button>
+    <button class="presentation-nav presentation-nav-next" onclick="presentationNext()">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+    </button>
+  </div>
+  
+  <!-- Top bar -->
+  <div class="presentation-topbar">
+    <div class="presentation-counter" id="presentation-counter">1 / 6</div>
+    <div class="presentation-progress-bar">
+      <div class="presentation-progress-fill" id="presentation-progress-fill"></div>
+    </div>
+    <button class="presentation-exit-btn" onclick="closePresentationMode()">✕ Fermer</button>
+  </div>
+  
+  <!-- Bottom thumbnails -->
+  <div class="presentation-thumbnails" id="presentation-thumbnails"></div>
 </div>
 
 <!-- ══ MARKDOWN IMPORT MODAL ══ -->
@@ -1342,6 +1534,111 @@ async function applyMarkdownImport() {
   const structureInfo = parsedMarkdownData.structure_analysis || {};
   const reorgMsg = structureInfo.reorganization_applied ? ' (réorganisé automatiquement)' : '';
   showStatus(`✓ ${slides.length} slide(s) importée(s) avec succès${reorgMsg}!`, 'success');
+}
+
+// ════════════════════════════════════════
+// PRESENTATION MODE
+// ════════════════════════════════════════
+let presentationFiles = [];
+let presentationCurrentIndex = 0;
+
+function openPresentationMode() {
+  // Récupérer les fichiers depuis le preview
+  const previewItems = document.querySelectorAll('#preview-grid .preview-item img');
+  if (previewItems.length === 0) {
+    showStatus('Aucune slide à afficher', 'error');
+    return;
+  }
+  
+  presentationFiles = Array.from(previewItems).map(img => img.src);
+  presentationCurrentIndex = 0;
+  
+  const overlay = document.getElementById('presentation-overlay');
+  overlay.style.display = 'flex';
+  
+  // Empêcher le scroll du body
+  document.body.style.overflow = 'hidden';
+  
+  renderPresentationSlide();
+  renderPresentationThumbnails();
+  
+  // Ajouter l'écouteur clavier
+  document.addEventListener('keydown', presentationKeyHandler);
+}
+
+function closePresentationMode() {
+  const overlay = document.getElementById('presentation-overlay');
+  overlay.style.display = 'none';
+  document.body.style.overflow = '';
+  
+  // Retirer l'écouteur clavier
+  document.removeEventListener('keydown', presentationKeyHandler);
+}
+
+function presentationKeyHandler(e) {
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') {
+    e.preventDefault();
+    presentationNext();
+  } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+    e.preventDefault();
+    presentationPrev();
+  } else if (e.key === 'Escape') {
+    closePresentationMode();
+  }
+}
+
+function renderPresentationSlide() {
+  const slide = document.getElementById('presentation-slide');
+  const counter = document.getElementById('presentation-counter');
+  const progressFill = document.getElementById('presentation-progress-fill');
+  
+  slide.src = presentationFiles[presentationCurrentIndex];
+  counter.textContent = `${presentationCurrentIndex + 1} / ${presentationFiles.length}`;
+  
+  const progress = ((presentationCurrentIndex + 1) / presentationFiles.length) * 100;
+  progressFill.style.width = progress + '%';
+  
+  // Mettre à jour les thumbnails
+  document.querySelectorAll('.presentation-thumbnail').forEach((thumb, i) => {
+    thumb.classList.toggle('active', i === presentationCurrentIndex);
+  });
+  
+  // Scroll to active thumbnail
+  const activeThumb = document.querySelector('.presentation-thumbnail.active');
+  if (activeThumb) {
+    activeThumb.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+  }
+}
+
+function renderPresentationThumbnails() {
+  const container = document.getElementById('presentation-thumbnails');
+  container.innerHTML = presentationFiles.map((src, i) => 
+    `<img class="presentation-thumbnail ${i === presentationCurrentIndex ? 'active' : ''}" 
+          src="${src}" 
+          onclick="presentationGoTo(${i})" 
+          alt="Slide ${i+1}">`
+  ).join('');
+}
+
+function presentationGoTo(index) {
+  if (index >= 0 && index < presentationFiles.length) {
+    presentationCurrentIndex = index;
+    renderPresentationSlide();
+  }
+}
+
+function presentationNext() {
+  if (presentationCurrentIndex < presentationFiles.length - 1) {
+    presentationCurrentIndex++;
+    renderPresentationSlide();
+  }
+}
+
+function presentationPrev() {
+  if (presentationCurrentIndex > 0) {
+    presentationCurrentIndex--;
+    renderPresentationSlide();
+  }
 }
 </script>
 
