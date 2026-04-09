@@ -8,296 +8,98 @@ import math
 
 THEMES = {
     # ═══════════════════════════════════════════
-    # THÈMES CLASSIQUES
+    # THÈMES AFRO-TECH (Afrofuturisme & Afrique)
     # ═══════════════════════════════════════════
-    "dark_purple": {
-        "bg":          "#0d1117",
-        "bg2":         "#1a0f2e",
-        "blob1":       "#4c1d8f",
-        "blob2":       "#0f4d6e",
-        "accent1":     "#c084fc",   # violet
-        "accent2":     "#22d3ee",   # cyan
-        "accent3":     "#f472b6",   # rose
-        "text":        "#ffffff",
-        "text_muted":  "#9ca3af",
-        "badge_bg":    "#131325",
-        "rule":        "linear-gradient(90deg, #22d3ee, #c084fc)",
-        "terminal_bg": "#1e1e2e",
-        "terminal_border": "rgba(192,132,252,.3)",
-    },
-    "dark_blue": {
-        "bg":          "#0a0f1e",
-        "bg2":         "#0f1f3d",
-        "blob1":       "#1e3a8a",
-        "blob2":       "#0c4a6e",
-        "accent1":     "#60a5fa",
-        "accent2":     "#34d399",
-        "accent3":     "#fb923c",
-        "text":        "#ffffff",
-        "text_muted":  "#94a3b8",
-        "badge_bg":    "#0f1f3d",
-        "rule":        "linear-gradient(90deg, #34d399, #60a5fa)",
-        "terminal_bg": "#0f172a",
-        "terminal_border": "rgba(96,165,250,.3)",
-    },
-    "dark_green": {
-        "bg":          "#0a0f0a",
-        "bg2":         "#0d2010",
-        "blob1":       "#14532d",
-        "blob2":       "#052e16",
-        "accent1":     "#4ade80",
-        "accent2":     "#86efac",
-        "accent3":     "#fbbf24",
-        "text":        "#ffffff",
-        "text_muted":  "#86efac",
-        "badge_bg":    "#0d1f0e",
-        "rule":        "linear-gradient(90deg, #4ade80, #86efac)",
-        "terminal_bg": "#052e16",
-        "terminal_border": "rgba(74,222,128,.3)",
-    },
-    "dark_red": {
-        "bg":          "#0f0a0a",
-        "bg2":         "#2d0f0f",
-        "blob1":       "#7f1d1d",
-        "blob2":       "#450a0a",
-        "accent1":     "#f87171",
-        "accent2":     "#fbbf24",
-        "accent3":     "#c084fc",
-        "text":        "#ffffff",
-        "text_muted":  "#fca5a5",
-        "badge_bg":    "#1f0d0d",
-        "rule":        "linear-gradient(90deg, #f87171, #fbbf24)",
-        "terminal_bg": "#1c0505",
-        "terminal_border": "rgba(248,113,113,.3)",
-    },
-    "dark_orange": {
-        "bg":          "#0f0c08",
-        "bg2":         "#2d1a08",
-        "blob1":       "#78350f",
-        "blob2":       "#431407",
-        "accent1":     "#fb923c",
-        "accent2":     "#fbbf24",
-        "accent3":     "#34d399",
-        "text":        "#ffffff",
-        "text_muted":  "#fdba74",
-        "badge_bg":    "#1f1008",
-        "rule":        "linear-gradient(90deg, #fb923c, #fbbf24)",
-        "terminal_bg": "#1c1008",
-        "terminal_border": "rgba(251,146,60,.3)",
-    },
-    # ═══════════════════════════════════════════
-    # THÈMES PREMIUM
-    # ═══════════════════════════════════════════
-    "midnight_ocean": {
-        "bg":          "#020617",
-        "bg2":         "#0c1929",
-        "blob1":       "#082f49",
-        "blob2":       "#0c4a6e",
-        "accent1":     "#38bdf8",   # sky blue
-        "accent2":     "#2dd4bf",   # teal
-        "accent3":     "#818cf8",   # indigo
-        "text":        "#f0f9ff",
-        "text_muted":  "#94a3b8",
-        "badge_bg":    "#0c1929",
-        "rule":        "linear-gradient(90deg, #38bdf8, #2dd4bf, #818cf8)",
-        "terminal_bg": "#081421",
-        "terminal_border": "rgba(56,189,248,.3)",
-    },
-    "sunset_glow": {
-        "bg":          "#1c0a0a",
-        "bg2":         "#2d1215",
-        "blob1":       "#7f1d1d",
-        "blob2":       "#92400e",
-        "accent1":     "#fb7185",   # rose
-        "accent2":     "#f59e0b",   # amber
-        "accent3":     "#c084fc",   # violet
-        "text":        "#fff1f2",
-        "text_muted":  "#fda4af",
-        "badge_bg":    "#2d1215",
-        "rule":        "linear-gradient(90deg, #fb7185, #f59e0b)",
-        "terminal_bg": "#1f0f12",
-        "terminal_border": "rgba(251,113,133,.3)",
-    },
-    "neon_tokyo": {
-        "bg":          "#0a0a0f",
-        "bg2":         "#13131f",
-        "blob1":       "#7c3aed",
-        "blob2":       "#db2777",
-        "accent1":     "#a78bfa",   # light purple
-        "accent2":     "#f0abfc",   # pink
-        "accent3":     "#22d3ee",   # cyan
-        "text":        "#faf5ff",
-        "text_muted":  "#c4b5fd",
-        "badge_bg":    "#13131f",
-        "rule":        "linear-gradient(90deg, #a78bfa, #f0abfc, #22d3ee)",
-        "terminal_bg": "#0f0f17",
-        "terminal_border": "rgba(167,139,250,.3)",
-    },
-    "emerald_city": {
-        "bg":          "#052e16",
-        "bg2":         "#064e3b",
-        "blob1":       "#047857",
-        "blob2":       "#065f46",
-        "accent1":     "#34d399",   # emerald
-        "accent2":     "#6ee7b7",   # light green
-        "accent3":     "#fbbf24",   # amber
-        "text":        "#ecfdf5",
-        "text_muted":  "#6ee7b7",
-        "badge_bg":    "#064e3b",
-        "rule":        "linear-gradient(90deg, #34d399, #6ee7b7)",
-        "terminal_bg": "#042f2e",
-        "terminal_border": "rgba(52,211,153,.3)",
-    },
-    "cyber_punk": {
-        "bg":          "#0a0a14",
-        "bg2":         "#14142a",
-        "blob1":       "#2563eb",
-        "blob2":       "#dc2626",
-        "accent1":     "#60a5fa",   # blue
-        "accent2":     "#f472b6",   # pink
-        "accent3":     "#facc15",   # yellow
-        "text":        "#f8fafc",
-        "text_muted":  "#93c5fd",
-        "badge_bg":    "#14142a",
-        "rule":        "linear-gradient(90deg, #60a5fa, #f472b6)",
-        "terminal_bg": "#0f172a",
-        "terminal_border": "rgba(96,165,250,.3)",
-    },
-    "arctic_frost": {
-        "bg":          "#0c1222",
-        "bg2":         "#162032",
-        "blob1":       "#1e40af",
-        "blob2":       "#0891b2",
-        "accent1":     "#93c5fd",   # light blue
-        "accent2":     "#67e8f9",   # cyan
-        "accent3":     "#e0e7ff",   # lavender
-        "text":        "#f0f9ff",
-        "text_muted":  "#93c5fd",
-        "badge_bg":    "#162032",
-        "rule":        "linear-gradient(90deg, #93c5fd, #67e8f9)",
-        "terminal_bg": "#0f172a",
-        "terminal_border": "rgba(147,197,253,.3)",
-    },
-    "golden_aura": {
-        "bg":          "#1c1308",
-        "bg2":         "#291d0c",
-        "blob1":       "#92400e",
-        "blob2":       "#78350f",
-        "accent1":     "#fbbf24",   # amber
-        "accent2":     "#f59e0b",   # gold
-        "accent3":     "#fb923c",   # orange
+    "kente_tech": {
+        "bg":          "#0a0505",
+        "bg2":         "#140a0a",
+        "blob1":       "#5e1111",
+        "blob2":       "#1f4214",
+        "accent1":     "#f59e0b",   # gold
+        "accent2":     "#dc2626",   # red
+        "accent3":     "#16a34a",   # green
         "text":        "#fffbeb",
-        "text_muted":  "#fcd34d",
-        "badge_bg":    "#291d0c",
-        "rule":        "linear-gradient(90deg, #fbbf24, #f59e0b)",
-        "terminal_bg": "#1f150a",
-        "terminal_border": "rgba(251,191,36,.3)",
+        "text_muted":  "#f3f4f6",
+        "badge_bg":    "#1f0c0c",
+        "rule":        "linear-gradient(90deg, #dc2626, #f59e0b, #16a34a)",
+        "terminal_bg": "#120505",
+        "terminal_border": "rgba(245,158,11,.4)",
     },
-    "lavender_dream": {
-        "bg":          "#130a1f",
-        "bg2":         "#1e1133",
-        "blob1":       "#6d28d9",
-        "blob2":       "#7c3aed",
-        "accent1":     "#c4b5fd",   # lavender
-        "accent2":     "#a78bfa",   # purple
-        "accent3":     "#f0abfc",   # pink
-        "text":        "#faf5ff",
-        "text_muted":  "#c4b5fd",
-        "badge_bg":    "#1e1133",
-        "rule":        "linear-gradient(90deg, #c4b5fd, #a78bfa)",
-        "terminal_bg": "#160d26",
-        "terminal_border": "rgba(196,181,253,.3)",
+    "savanna_gold": {
+        "bg":          "#110a05",
+        "bg2":         "#1c110a",
+        "blob1":       "#632c0c",
+        "blob2":       "#78350f",
+        "accent1":     "#eab308",   # bright yellow
+        "accent2":     "#f97316",   # vibrant orange
+        "accent3":     "#ef4444",   # warm red
+        "text":        "#fff8f0",
+        "text_muted":  "#fed7aa",
+        "badge_bg":    "#24140b",
+        "rule":        "linear-gradient(90deg, #f97316, #eab308)",
+        "terminal_bg": "#170c06",
+        "terminal_border": "rgba(234,179,8,.4)",
     },
-    "forest_night": {
-        "bg":          "#05140e",
-        "bg2":         "#0a2e1d",
-        "blob1":       "#065f46",
-        "blob2":       "#047857",
-        "accent1":     "#6ee7b7",   # mint
-        "accent2":     "#34d399",   # emerald
-        "accent3":     "#a7f3d0",   # light green
+    "jungle_emerald": {
+        "bg":          "#021008",
+        "bg2":         "#061b10",
+        "blob1":       "#0f3d23",
+        "blob2":       "#134e2c",
+        "accent1":     "#22c55e",   # neon green
+        "accent2":     "#10b981",   # emerald
+        "accent3":     "#eab308",   # jungle gold
         "text":        "#ecfdf5",
-        "text_muted":  "#6ee7b7",
-        "badge_bg":    "#0a2e1d",
-        "rule":        "linear-gradient(90deg, #6ee7b7, #34d399)",
-        "terminal_bg": "#052e16",
-        "terminal_border": "rgba(110,231,183,.3)",
+        "text_muted":  "#a7f3d0",
+        "badge_bg":    "#0a2818",
+        "rule":        "linear-gradient(90deg, #10b981, #22c55e, #eab308)",
+        "terminal_bg": "#04150b",
+        "terminal_border": "rgba(34,197,94,.4)",
     },
-    "crimson_tide": {
-        "bg":          "#1a0505",
-        "bg2":         "#2d0a0a",
-        "blob1":       "#991b1b",
-        "blob2":       "#b91c1c",
-        "accent1":     "#f87171",   # red
-        "accent2":     "#fca5a5",   # light red
-        "accent3":     "#fbbf24",   # amber
-        "text":        "#fef2f2",
-        "text_muted":  "#fca5a5",
-        "badge_bg":    "#2d0a0a",
-        "rule":        "linear-gradient(90deg, #f87171, #fca5a5)",
-        "terminal_bg": "#1f0505",
-        "terminal_border": "rgba(248,113,113,.3)",
+    "sahara_dune": {
+        "bg":          "#110e0c",
+        "bg2":         "#1d1612",
+        "blob1":       "#8b5a2b",
+        "blob2":       "#6b4423",
+        "accent1":     "#f59e0b",   # amber/sand
+        "accent2":     "#38bdf8",   # oasis blue
+        "accent3":     "#d97706",   # deep sand
+        "text":        "#fffcf5",
+        "text_muted":  "#fde68a",
+        "badge_bg":    "#241a14",
+        "rule":        "linear-gradient(90deg, #38bdf8, #f59e0b)",
+        "terminal_bg": "#14100e",
+        "terminal_border": "rgba(245,158,11,.4)",
     },
-    "cosmic_void": {
-        "bg":          "#0a0a14",
-        "bg2":         "#111128",
-        "blob1":       "#4338ca",
-        "blob2":       "#6366f1",
-        "accent1":     "#818cf8",   # indigo
-        "accent2":     "#c084fc",   # purple
-        "accent3":     "#22d3ee",   # cyan
-        "text":        "#eef2ff",
-        "text_muted":  "#a5b4fc",
-        "badge_bg":    "#111128",
-        "rule":        "linear-gradient(90deg, #818cf8, #c084fc, #22d3ee)",
-        "terminal_bg": "#0f0f1f",
-        "terminal_border": "rgba(129,140,248,.3)",
+    "afro_futurism": {
+        "bg":          "#050511",
+        "bg2":         "#0a0a20",
+        "blob1":       "#3730a3",
+        "blob2":       "#1e1b4b",
+        "accent1":     "#22d3ee",   # cyber cyan
+        "accent2":     "#d946ef",   # fuchsia
+        "accent3":     "#f59e0b",   # tech gold
+        "text":        "#f8fafc",
+        "text_muted":  "#cbd5e1",
+        "badge_bg":    "#0f0f2e",
+        "rule":        "linear-gradient(90deg, #22d3ee, #d946ef, #f59e0b)",
+        "terminal_bg": "#070716",
+        "terminal_border": "rgba(217,70,239,.4)",
     },
-    "tropical_breeze": {
-        "bg":          "#042f2e",
-        "bg2":         "#064e3b",
-        "blob1":       "#0891b2",
-        "blob2":       "#0d9488",
-        "accent1":     "#22d3ee",   # cyan
-        "accent2":     "#2dd4bf",   # teal
-        "accent3":     "#fbbf24",   # amber
-        "text":        "#f0fdfa",
-        "text_muted":  "#5eead4",
-        "badge_bg":    "#064e3b",
-        "rule":        "linear-gradient(90deg, #22d3ee, #2dd4bf)",
-        "terminal_bg": "#042f2e",
-        "terminal_border": "rgba(34,211,238,.3)",
-    },
-    "volcanic_fire": {
-        "bg":          "#1a0a00",
-        "bg2":         "#2d1200",
-        "blob1":       "#b91c1c",
-        "blob2":       "#ea580c",
-        "accent1":     "#fb923c",   # orange
-        "accent2":     "#fbbf24",   # yellow
-        "accent3":     "#f87171",   # red
-        "text":        "#fff7ed",
-        "text_muted":  "#fdba74",
-        "badge_bg":    "#2d1200",
-        "rule":        "linear-gradient(90deg, #fb923c, #fbbf24)",
-        "terminal_bg": "#1f0f00",
-        "terminal_border": "rgba(251,146,60,.3)",
-    },
-    "aurora_borealis": {
-        "bg":          "#0a1628",
-        "bg2":         "#0f2744",
-        "blob1":       "#0891b2",
-        "blob2":       "#7c3aed",
-        "accent1":     "#34d399",   # green
-        "accent2":     "#22d3ee",   # cyan
-        "accent3":     "#a78bfa",   # purple
-        "text":        "#f0f9ff",
-        "text_muted":  "#7dd3fc",
-        "badge_bg":    "#0f2744",
-        "rule":        "linear-gradient(90deg, #34d399, #22d3ee, #a78bfa)",
-        "terminal_bg": "#0c1a30",
-        "terminal_border": "rgba(52,211,153,.3)",
-    },
+    "terracotta_sunset": {
+        "bg":          "#170705",
+        "bg2":         "#260e0a",
+        "blob1":       "#7c2d12",
+        "blob2":       "#431407",
+        "accent1":     "#f87171",   # soft red
+        "accent2":     "#fb923c",   # vivid orange
+        "accent3":     "#eab308",   # sunset yellow
+        "text":        "#fff5f5",
+        "text_muted":  "#fecaca",
+        "badge_bg":    "#33140e",
+        "rule":        "linear-gradient(90deg, #f87171, #fb923c)",
+        "terminal_bg": "#1f0907",
+        "terminal_border": "rgba(248,113,113,.4)",
+    }
 }
 
 def hsl_to_hex(h, s, l):
@@ -434,24 +236,11 @@ def get_theme(name: str) -> dict:
 def get_theme_preview(name: str) -> str:
     """Retourne un emoji et description pour l'aperçu du thème."""
     previews = {
-        "dark_purple": ("💜", "Violet/Cyan - Classique élégant"),
-        "dark_blue": ("💙", "Bleu/Vert - Calme professionnel"),
-        "dark_green": ("💚", "Vert/Or - Nature et fraîcheur"),
-        "dark_red": ("❤️", "Rouge/Or - Passion et énergie"),
-        "dark_orange": ("🧡", "Orange/Or - Chaleur et dynamisme"),
-        "midnight_ocean": ("🌊", "Bleu océan - Profondeur marine"),
-        "sunset_glow": ("🌅", "Coucher de soleil - Chaleur dorée"),
-        "neon_tokyo": ("🌃", "Néon cyberpunk - Futuriste vibrant"),
-        "emerald_city": ("💎", "Émeraude - Luxe et sophistication"),
-        "cyber_punk": ("⚡", "Cyberpunk - Énergie électrique"),
-        "arctic_frost": ("❄️", "Glace arctique - Fraîcheur cristalline"),
-        "golden_aura": ("✨", "Aura dorée - Prestige et lumière"),
-        "lavender_dream": ("💜", "Rêve lavande - Douceur onirique"),
-        "forest_night": ("🌲", "Forêt nocturne - Mystère naturel"),
-        "crimson_tide": ("🩸", "Marée cramoisie - Intensité dramatique"),
-        "cosmic_void": ("🌌", "Vide cosmique - Espace infini"),
-        "tropical_breeze": ("🌴", "Brise tropicale - Exotisme apaisant"),
-        "volcanic_fire": ("🌋", "Feu volcanique - Puissance brute"),
-        "aurora_borealis": ("🌈", "Aurore boréale - Magie céleste"),
+        "kente_tech": ("🔴", "Kente Tech - Couleurs traditionnelles vibrantes"),
+        "savanna_gold": ("🦁", "Or de la Savane - Chaleur et éclat africain"),
+        "jungle_emerald": ("🌴", "Émeraude de la Jungle - Luxuriance naturelle"),
+        "sahara_dune": ("🐪", "Dunes du Sahara - Sables dorés et oasis"),
+        "afro_futurism": ("🛸", "Afrofuturisme - Le futur ancré dans la racine"),
+        "terracotta_sunset": ("🌅", "Coucher Terracotta - Argile et soleil vibrant"),
     }
     return previews.get(name, ("🎨", "Thème personnalisé"))

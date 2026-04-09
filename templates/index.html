@@ -1054,7 +1054,7 @@ Contenu de la première slide...
 <script>
 // ── State ──
 let slides = [];
-let selectedTheme = 'dark_purple';
+let selectedTheme = 'kente_tech';
 let selectedFormat = 'png';
 let currentJobId = null;
 let themeColors = {};
@@ -1078,12 +1078,13 @@ async function loadThemes() {
 function renderThemeGrid() {
   const grid = document.getElementById('theme-grid');
   const themeLabels = {
-    dark_purple: 'Purple',
-    dark_blue:   'Blue',
-    dark_green:  'Green',
-    dark_red:    'Red',
-    dark_orange: 'Orange',
-    random:      'Random ✦',
+    kente_tech: 'Kente Tech',
+    savanna_gold: 'Savanna Gold',
+    jungle_emerald: 'Jungle Pulse',
+    sahara_dune: 'Sahara Dune',
+    afro_futurism: 'Afro Future',
+    terracotta_sunset: 'Terracotta',
+    random: 'Esprit Libre ✦',
   };
   grid.innerHTML = Object.entries(themeColors).map(([name, t]) => `
     <div class="theme-pill ${name === selectedTheme ? 'active' : ''}"

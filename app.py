@@ -63,7 +63,15 @@ def api_generate():
     # Construire la config en mémoire (sans fichier YAML)
     config = {'footer': footer, 'slides': slides_raw}
 
-    job_id = str(uuid.uuid4())[:8]
+    # Créer un identifiant descriptif : date_heure_series
+    from datetime import datetime
+    now = datetime.now()
+    date_str = now.strftime('%Y-%m-%d')       # 2026-04-09
+    time_str = now.strftime('%H-%M-%S')       # 14-30-45
+    series_name = _sanitize_folder_name(footer.get('series', 'carousel'))
+    
+    # job_id utilisable comme nom de dossier
+    job_id = f"{date_str}_{time_str}_{series_name}"
     jobs[job_id] = {'status': 'running', 'files': [], 'error': None}
 
     def run():
@@ -171,6 +179,24 @@ def api_upload_markdown():
 # ─────────────────────────────────────────
 #  HELPER : génération depuis dict (pas YAML)
 # ─────────────────────────────────────────
+
+def _sanitize_folder_name(name: str) -> str:
+    """
+    Nettoie un nom pour qu'il soit valide comme nom de dossier.
+    Supprime les caractères interdits et normalise les espaces.
+    """
+    import re
+    # Remplacer les caractères spéciaux par des underscores
+    clean = re.sub(r'[<>:"/\\|?*]', '_', name)
+    # Remplacer les espaces multiples par un seul underscore
+    clean = re.sub(r'[\s_]+', '_', clean)
+    # Nettoyer les underscores en début/fin
+    clean = clean.strip('_')
+    # Limiter la longueur à 40 caractères
+    if len(clean) > 40:
+        clean = clean[:40]
+    return clean if clean else 'carousel'
+
 
 def generate_carousel_from_dict(config: dict, theme_name: str, output_dir: str, fmt: str):
     """Génère le carousel directement depuis un dict Python (sans fichier YAML)."""

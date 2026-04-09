@@ -164,7 +164,7 @@ def _parse_with_headings(content: str) -> List[Dict[str, Any]]:
     first_heading_found = False
     
     for line in lines:
-        heading_match = re.match(r'^(#{1,3})\s+(.+)$', line)
+        heading_match = re.match(r'^(#{1,2})\s+(.+)$', line)
         if heading_match:
             # Sauvegarder la slide précédente
             if current_slide_lines:
@@ -198,7 +198,7 @@ def _parse_with_lists(content: str) -> List[Dict[str, Any]]:
     
     for line in lines:
         # Détecter un heading
-        heading_match = re.match(r'^(#{1,3})\s+(.+)$', line)
+        heading_match = re.match(r'^(#{1,2})\s+(.+)$', line)
         if heading_match:
             # Sauvegarder la liste précédente
             if current_list:
@@ -348,7 +348,7 @@ def _parse_section_to_slide(section: str) -> Dict[str, Any]:
     title = ''
     body_lines = []
 
-    heading_match = re.match(r'^(#{1,3})\s+(.+)$', lines[0])
+    heading_match = re.match(r'^(#{1,2})\s+(.+)$', lines[0])
     if heading_match:
         title = heading_match.group(2).strip()
         body_lines = lines[1:]
@@ -406,8 +406,8 @@ def _detect_slide_type(title: str, body: str, lines: List[str]) -> str:
     if body and re.search(r'\b(?:vs\.?|versus|compar[ée])\b', body, re.IGNORECASE):
         return 'compare'
     
-    # Détecter les structures de comparaison dans le corps
-    if body and body.count('\n##') >= 1:
+    # Détecter les structures de comparaison dans le corps (seulement s'il y a un H2 réel, pas H3)
+    if body and re.search(r'\n##\s+', body):
         return 'compare'
     
     # Par défaut: contenu
@@ -492,6 +492,15 @@ def _markdown_to_html(md: str) -> str:
             html_lines.append(line.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;'))
             continue
         
+        # Headings H3
+        h3_match = re.match(r'^###\s+(.+)$', line.strip())
+        if h3_match:
+            if in_list:
+                html_lines.append('</ul>')
+                in_list = False
+            html_lines.append(f'<h3 class="slide-h3">{_inline_formatting(h3_match.group(1))}</h3>')
+            continue
+            
         # Lignes vides
         if not line.strip():
             if in_list:

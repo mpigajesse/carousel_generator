@@ -157,50 +157,83 @@ def generate_carousel(
         )
         sys.exit(1)
 
-    output_files = []
+    output_pngs = []
+    output_pdfs = []
+    
     with sync_playwright() as p:
         browser = p.chromium.launch()
 
         for i, html_path in enumerate(html_files):
             page = browser.new_page(viewport={"width": 1080, "height": 1080})
+            page.emulate_media(media="screen")
             page.goto(f"file://{os.path.abspath(html_path)}")
             page.wait_for_timeout(800)  # Attendre les fonts Google
 
+            png_path = os.path.join(output_dir, f"slide_{i + 1:02d}.png")
+            page.screenshot(path=png_path, full_page=False)
+
             if format == "png":
-                out_path = os.path.join(output_dir, f"slide_{i + 1:02d}.png")
-                page.screenshot(path=out_path, full_page=False)
+                print(f"  ✅ slide_{i + 1:02d}.png")
+                output_pngs.append(png_path)
             elif format == "pdf":
-                out_path = os.path.join(output_dir, f"slide_{i + 1:02d}.pdf")
+                # Transformer le PNG généré en un PDF parfait via Chromium
+                pdf_path = os.path.join(output_dir, f"slide_{i + 1:02d}.pdf")
+                abs_png_path = os.path.abspath(png_path).replace("\\", "/")
+                
+                img_html = f'''
+                <!DOCTYPE html>
+                <html><head><style>
+                @page {{ size: 1080px 1080px; margin: 0; }}
+                * {{ margin: 0; padding: 0; box-sizing: border-box; }}
+                body {{ width: 1080px; height: 1080px; overflow: hidden; background: #000; }}
+                img {{ width: 1080px; height: 1080px; display: block; }}
+                </style></head>
+                <body><img src="file:///{abs_png_path}" /></body>
+                </html>
+                '''
+                page.set_content(img_html)
+                # Attendre un instant pour s'assurer que l'image locale est chargée
+                page.wait_for_timeout(200)
                 page.pdf(
-                    path=out_path,
+                    path=pdf_path,
                     width="1080px",
                     height="1080px",
                     print_background=True,
+                    prefer_css_page_size=True,
+                    margin={"top": "0", "right": "0", "bottom": "0", "left": "0"}
                 )
-
-            print(f"  ✅ slide_{i + 1:02d}.{format}")
-            output_files.append(out_path)
+                print(f"  ✅ slide_{i + 1:02d}.pdf")
+                output_pdfs.append(pdf_path)
+                output_pngs.append(png_path) # Garder une référence pour nettoyage
+            
             page.close()
 
         browser.close()
 
-    # Si PDF : fusionner toutes les slides en un seul fichier
     if format == "pdf":
         final_pdf_name = f"{module_title}.pdf"
         final_pdf_path = os.path.join(output_dir, final_pdf_name)
-        merge_pdfs(output_files, final_pdf_path)
-        # Nettoyer les PDF individuels et HTML temporaires
-        for pdf_path in output_files:
-            if os.path.exists(pdf_path):
-                os.remove(pdf_path)
-        for html_path in html_files:
-            if os.path.exists(html_path):
-                os.remove(html_path)
-        print(f"📦 Fichiers temporaires supprimés (PDF fusionné uniquement)")
+        
+        # Fusionner avec pypdf
+        merge_pdfs(output_pdfs, final_pdf_path)
+        
+        # Nettoyage
+        for f in output_pngs + output_pdfs + html_files:
+            if os.path.exists(f):
+                try:
+                    os.remove(f)
+                except:
+                    pass
+        print(f"📦 PDF parfait généré via fusion : {final_pdf_path}")
         return [final_pdf_path]
 
+    # Mode PNG : nettoyer les html temporaires
+    for f in html_files:
+        if os.path.exists(f):
+            os.remove(f)
+            
     print(f"\n🚀 Terminé ! Fichiers dans: {output_dir}")
-    return output_files
+    return output_pngs
 
 
 def merge_pdfs(pdf_files: list, output_path: str):
