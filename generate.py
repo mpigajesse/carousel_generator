@@ -64,6 +64,49 @@ def _calculate_text_size(slide: dict) -> dict:
     return slide
 
 
+def _extract_module_title(slides: list, footer: dict) -> str:
+    """
+    Extrait un titre significatif pour le fichier PDF final.
+    Priorité: footer.series > premier slide title > fallback générique.
+    """
+    import re
+    
+    # 1. Utiliser footer.series si disponible et significatif
+    series = footer.get("series", "").strip()
+    if series and series.lower() not in ("series", "my series", "ai series"):
+        return _sanitize_filename(series)
+    
+    # 2. Utiliser le titre de la première slide (cover)
+    if slides:
+        first_title = slides[0].get("title", "").strip()
+        if first_title:
+            # Nettoyer le titre des numéros de module "01 / 06 - "
+            clean_title = re.sub(r'^\d+\s*/\s*\d+\s*[-–—:]\s*', '', first_title)
+            return _sanitize_filename(clean_title)
+    
+    # 3. Fallback
+    return _sanitize_filename("carousel")
+
+
+def _sanitize_filename(filename: str) -> str:
+    """
+    Nettoie un nom de fichier pour qu'il soit valide sur tous les OS.
+    Supprime les caractères interdits et normalise.
+    """
+    import re
+    # Remplacer les caractères interdits par des underscores
+    forbidden = r'[<>:"/\\|?*]'
+    clean = re.sub(forbidden, '_', filename)
+    # Supprimer les espaces multiples et underscores doubles
+    clean = re.sub(r'[\s_]+', '_', clean)
+    # Nettoyer les underscores en début/fin
+    clean = clean.strip('_')
+    # Limiter la longueur à 80 caractères
+    if len(clean) > 80:
+        clean = clean[:80]
+    return clean
+
+
 def generate_carousel(
     config_path: str, theme_name: str, output_dir: str, format: str = "png"
 ):
@@ -88,6 +131,9 @@ def generate_carousel(
 
     slides = config.get("slides", [])
     footer = config.get("footer", {"series": "Series", "author": "author"})
+
+    # Extraire le titre du module pour le nom du PDF
+    module_title = _extract_module_title(slides, footer)
 
     # Générer le HTML de chaque slide
     html_files = []
@@ -140,7 +186,18 @@ def generate_carousel(
 
     # Si PDF : fusionner toutes les slides en un seul fichier
     if format == "pdf":
-        merge_pdfs(output_files, os.path.join(output_dir, "carousel_final.pdf"))
+        final_pdf_name = f"{module_title}.pdf"
+        final_pdf_path = os.path.join(output_dir, final_pdf_name)
+        merge_pdfs(output_files, final_pdf_path)
+        # Nettoyer les PDF individuels et HTML temporaires
+        for pdf_path in output_files:
+            if os.path.exists(pdf_path):
+                os.remove(pdf_path)
+        for html_path in html_files:
+            if os.path.exists(html_path):
+                os.remove(html_path)
+        print(f"📦 Fichiers temporaires supprimés (PDF fusionné uniquement)")
+        return [final_pdf_path]
 
     print(f"\n🚀 Terminé ! Fichiers dans: {output_dir}")
     return output_files

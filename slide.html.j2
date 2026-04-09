@@ -74,6 +74,7 @@
     font-weight: 700;
     line-height: 1.1;
     margin-bottom: {% if slide.is_compact %}16px{% else %}28px{% endif %};
+    text-wrap: balance;
   }
 
   /* Règle colorée */
@@ -158,6 +159,7 @@
     font-weight: 700;
     text-align: center;
     margin: 16px 0 8px;
+    text-wrap: balance;
   }
   .terminal-code {
     font-family: 'JetBrains Mono', monospace;
@@ -210,7 +212,7 @@
           <div class="dot dot-y"></div>
           <div class="dot dot-g"></div>
         </div>
-        <div class="terminal-title">{{ slide.title }}</div>
+        <div class="terminal-title" {% if slide.title|length > 40 %}style="font-size: 40px;"{% elif slide.title|length > 25 %}style="font-size: 48px;"{% elif slide.title|length > 15 %}style="font-size: 58px;"{% endif %}>{{ slide.title }}</div>
         <div class="terminal-code">&gt; {{ slide.code }}</div>
       </div>
       <div class="arrow-circle">→</div>
