@@ -1,0 +1,97 @@
+# =============================================================================
+# .dockerignore - Fichiers exclus de l'image Docker
+# =============================================================================
+
+# ── Python ──
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg
+*.egg-info/
+*.egg-link
+*.dist-info/
+
+# ── Environnements virtuels ──
+env/
+venv/
+.venv/
+ENV/
+
+# ── Git ──
+.git/
+.gitignore
+.gitattributes
+
+# ── IDE ──
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.pydevproject
+
+# ── OS ──
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# ── Sorties générées (seront créées dynamiquement) ──
+output/
+static/generated/
+
+# ── Documentation et tests ──
+PLAN.md
+DEPLOYMENT_GUIDE.md
+test_*.py
+test_*.md
+*.backup
+
+# ── Fichiers de développement ──
+.env
+.env.local
+.env.*.local
+
+# ── Jupyter ──
+.ipynb_checkpoints
+
+# ── Coverage et tests ──
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+.pytest_cache/
+
+# ── mypy ──
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# ── Pyre ──
+.pyre/
+
+# ── Node.js (si présent) ──
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ── Docker ──
+Dockerfile
+.dockerignore
+docker-compose.yml
+
+# ── CI/CD ──
+.github/
+.gitlab-ci.yml
+
+# ── Qwen Code (pas nécessaire en prod) ──
+.qwen/
+AGENTS.md
