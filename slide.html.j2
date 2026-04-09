@@ -76,7 +76,7 @@
   }
 
   /* Corps de texte */
-  .body { font-size: 32px; line-height: 1.65; color: {{ theme.text_muted }}; flex: 1; }
+  .body { font-size: {{ slide.text_size | default(30) }}px; line-height: 1.65; color: {{ theme.text_muted }}; flex: 1; overflow: hidden; }
 
   .hl1 { color: {{ theme.accent2 }}; font-weight: 600; }
   .hl2 { color: {{ theme.accent3 }}; font-weight: 600; }
@@ -89,7 +89,7 @@
     padding: 16px 0 16px 40px;
     position: relative;
     border-bottom: 1px solid rgba(255,255,255,.06);
-    font-size: 30px;
+    font-size: {{ (slide.text_size | default(30)) - 2 }}px;
     color: {{ theme.text_muted }};
     line-height: 1.5;
   }
