@@ -1070,9 +1070,21 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 // ── Themes ──
 async function loadThemes() {
-  const res = await fetch('/api/themes');
-  themeColors = await res.json();
-  renderThemeGrid();
+  try {
+    const res = await fetch('api/themes'); // Utiliser un chemin relatif sans le premier slash pour HF
+    if (!res.ok) throw new Error(`Status: ${res.status}`);
+    const text = await res.text();
+    try {
+      themeColors = JSON.parse(text);
+      renderThemeGrid();
+    } catch (e) {
+      console.error("Réponse non-JSON reçue de l'API:", text);
+      showStatus("Erreur de chargement des thèmes (réponse invalide)", 'error');
+    }
+  } catch (e) {
+    console.error("Erreur de chargement des thèmes:", e);
+    showStatus("L'API des thèmes est inaccessible (404 ou erreur réseau)", 'error');
+  }
 }
 
 function renderThemeGrid() {
@@ -1253,7 +1265,7 @@ async function startGenerate() {
   };
 
   try {
-    const res  = await fetch('/api/generate', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
+    const res  = await fetch('api/generate', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
     const data = await res.json();
     if (data.error) { showStatus(data.error, 'error'); showProgress(false); btn.disabled = false; return; }
     currentJobId = data.job_id;
@@ -1268,7 +1280,7 @@ async function startGenerate() {
 async function pollStatus(jobId) {
   let pct = 10;
   const interval = setInterval(async () => {
-    const res  = await fetch('/api/status/' + jobId);
+    const res  = await fetch('api/status/' + jobId);
     const data = await res.json();
     pct = Math.min(pct + 15, 90);
     setProgress(pct, 'Génération en cours…');
@@ -1330,7 +1342,7 @@ function renderPreview(files, jobId) {
 
 function downloadAll() {
   const jobId = document.getElementById('btn-dl-all').dataset.job;
-  if (jobId) window.location.href = '/api/download/' + jobId;
+  if (jobId) window.location.href = 'api/download/' + jobId;
 }
 
 // ── UI helpers ──
@@ -1448,7 +1460,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 async function parseMarkdownContent(content) {
   try {
-    const res = await fetch('/api/import-markdown', {
+    const res = await fetch('api/import-markdown', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({ content })

@@ -33,18 +33,23 @@ def index():
     return render_template('index.html', themes=theme_names)
 
 
-@app.route('/api/themes')
+@app.route('/api/themes', methods=['GET'])
+@app.route('/api/themes/', methods=['GET'])
 def api_themes():
     """Retourne les thèmes disponibles avec aperçu des couleurs."""
-    result = {}
-    for name, t in THEMES.items():
-        result[name] = {
-            'accent1': t['accent1'],
-            'accent2': t['accent2'],
-            'bg':      t['bg'],
-        }
-    result['random'] = {'accent1': '#ffffff', 'accent2': '#aaaaaa', 'bg': '#111111'}
-    return jsonify(result)
+    try:
+        result = {}
+        for name, t in THEMES.items():
+            result[name] = {
+                'accent1': t['accent1'],
+                'accent2': t['accent2'],
+                'bg':      t['bg'],
+            }
+        result['random'] = {'accent1': '#ffffff', 'accent2': '#aaaaaa', 'bg': '#111111'}
+        return jsonify(result)
+    except Exception as e:
+        app.logger.error(f"Error in api_themes: {str(e)}")
+        return jsonify({'error': str(e)}), 500
 
 
 @app.route('/api/generate', methods=['POST'])
