@@ -43,8 +43,9 @@ def parse_markdown_to_slides(md_content: str) -> Dict[str, Any]:
     structure = _analyze_structure(content)
     
     # 4. Parser selon la structure détectée
-    # Ne pas utiliser separators si c'est juste le front matter qui a été enlevé
-    has_real_separators = structure['has_explicit_separators'] and not front_matter_match
+    # Le front matter est déjà extrait de `content` — les séparateurs restants sont réels.
+    # Priorité: separators > headings > lists > unstructured
+    has_real_separators = structure['has_explicit_separators']
     if has_real_separators:
         slides = _parse_with_separators(content)
     elif structure['has_heading_hierarchy']:
@@ -62,9 +63,13 @@ def parse_markdown_to_slides(md_content: str) -> Dict[str, Any]:
     slides = _enrich_slides(slides)
     
     # 7. Construire la structure finale
+    raw_author = front_matter.get('author', front_matter.get('username', ''))
+    # Normaliser : ton_compte / vide → auteur par défaut
+    DEFAULT_AUTHOR = '@Sohaib Baroud'
+    author = raw_author if raw_author and raw_author not in ('ton_compte', 'username', '@username') else DEFAULT_AUTHOR
     footer = {
         'series': front_matter.get('series', front_matter.get('title', 'Series')),
-        'author': front_matter.get('author', front_matter.get('username', 'author'))
+        'author': author
     }
     
     return {
@@ -299,7 +304,7 @@ def _reorganize_slides(slides: List[Dict[str, Any]], structure: Dict[str, Any]) 
         first_slide = slides[0]
         cover_slide = {
             'type': 'cover',
-            'badge': 'Knowledge Drop',
+            'badge': '',
             'title': first_slide.get('title', 'Presentation'),
             'code': '',
             'cta': 'Swipe to learn'
@@ -325,18 +330,17 @@ def _reorganize_slides(slides: List[Dict[str, Any]], structure: Dict[str, Any]) 
                 if 'body' in slide:
                     del slide['body']
     
-    # Améliorer la détection des comparisons
+    # Améliorer la détection des comparaisons — uniquement sur le titre (jamais sur le body)
     for slide in slides:
-        if slide.get('type') == 'content' and slide.get('title') and slide.get('body'):
-            # Vérifier si le titre ou le body contient des indices de comparaison
+        if slide.get('type') == 'content' and slide.get('title'):
             title = slide.get('title', '')
-            body = slide.get('body', '')
-            if re.search(r'\b(?:vs\.?|versus|compar[ée])\b', title + ' ' + body, re.IGNORECASE):
+            if re.search(r'\b(?:vs\.?|versus|compar[ée])\b', title, re.IGNORECASE):
+                body = slide.get('body', '')
                 slide['type'] = 'compare'
                 slide['columns'] = _extract_compare_columns(body, body.split('\n'))
                 if 'body' in slide:
                     del slide['body']
-    
+
     return slides
 
 
@@ -367,10 +371,10 @@ def _parse_section_to_slide(section: str) -> Dict[str, Any]:
         'type': slide_type,
         'title': title,
     }
-    
+
     # Ajouter badge par défaut
     if slide_type == 'cover':
-        slide['badge'] = 'Knowledge Drop'
+        slide['badge'] = ''
         slide['code'] = ''
         slide['cta'] = 'Swipe to learn'
         # Si le body contient du code, l'utiliser
@@ -393,73 +397,83 @@ def _parse_section_to_slide(section: str) -> Dict[str, Any]:
 
 def _detect_slide_type(title: str, body: str, lines: List[str]) -> str:
     """Détecte intelligemment le type de slide basé sur le contenu."""
-    
-    # Cover keywords - mais seulement si c'est le premier heading H1
+
+    title_lower = title.lower()
+
+    # Cover keywords
     cover_keywords = ['cover', 'welcome', 'presentation', 'guide']
-    if any(kw in title.lower() for kw in cover_keywords):
+    if any(kw in title_lower for kw in cover_keywords):
         return 'cover'
-    
-    # Compare keywords
-    compare_keywords = ['vs', 'versus', 'vs.', 'comparé', 'comparaison', 'compare', 'difference', 'diff']
-    if any(kw in title.lower() for kw in compare_keywords):
+
+    # CTA / Conclusion slide — titre interrogatif ou mots d'action
+    cta_keywords = ['et vous', 'à vous', 'conclusion', 'retenir', 'commentaire',
+                    'partagez', 'rejoins', 'suivez', 'prêt', 'passer à']
+    if any(kw in title_lower for kw in cta_keywords):
+        return 'cta'
+    if title.rstrip().endswith('?') and len(title) > 15:
+        return 'cta'
+
+    # Quote slide — corps dominé par une citation blockquote
+    if body:
+        body_stripped = body.strip()
+        if body_stripped.startswith('> ') or re.match(r'^\s*<blockquote', body_stripped):
+            return 'quote'
+
+    # Compare — uniquement sur le titre (jamais sur le body pour éviter les faux positifs)
+    compare_keywords = [' vs ', ' versus ', ' vs.', 'comparé', 'comparaison', 'compare',
+                        'annonces vs', 'vs réalité']
+    if any(kw in title_lower for kw in compare_keywords):
         return 'compare'
-    if body and re.search(r'\b(?:vs\.?|versus|compar[ée])\b', body, re.IGNORECASE):
-        return 'compare'
-    
-    # Détecter les structures de comparaison dans le corps (seulement s'il y a un H2 réel, pas H3)
-    if body and re.search(r'\n##\s+', body):
-        return 'compare'
-    
+
+    # Compare via structure ### dans le body (deux sous-sections opposées)
+    if body and re.search(r'^###\s+', body, re.MULTILINE):
+        h3_sections = [m.group(0) for m in re.finditer(r'^###\s+.+', body, re.MULTILINE)]
+        if len(h3_sections) == 2:
+            return 'compare'
+
     # Par défaut: contenu
     return 'content'
 
 
 def _extract_compare_columns(body: str, lines: List[str]) -> List[Dict[str, str]]:
     """Extrait deux colonnes de comparaison depuis le contenu."""
-    # Stratégie 1: chercher deux sections avec headings ##
-    sections = re.split(r'\n##\s+', body)
-    if len(sections) >= 2:
-        columns = []
-        for i, section in enumerate(sections[:2]):
-            section_lines = section.strip().split('\n')
-            col_title = section_lines[0].strip() if section_lines else f'Colonne {i+1}'
-            col_body = '\n'.join(section_lines[1:]).strip() if len(section_lines) > 1 else section.strip()
-            columns.append({
-                'title': col_title,
-                'body': _markdown_to_html(col_body),
-                'tag': ''
-            })
-        return columns
-    
-    # Stratégie 2: diviser sur "vs" ou "versus"
-    vs_match = re.split(r'\b(?:vs\.?|versus)\b', body, maxsplit=1, flags=re.IGNORECASE)
-    if len(vs_match) == 2:
-        return [
-            {
-                'title': 'Option A',
-                'body': _markdown_to_html(vs_match[0].strip()),
-                'tag': ''
-            },
-            {
-                'title': 'Option B',
-                'body': _markdown_to_html(vs_match[1].strip()),
-                'tag': ''
-            }
-        ]
-    
-    # Stratégie 3: diviser en deux parties égales
+
+    def _build_col(section_text: str, fallback_title: str) -> Dict[str, str]:
+        section_lines = section_text.strip().split('\n')
+        col_title = section_lines[0].strip() if section_lines else fallback_title
+        col_body = '\n'.join(section_lines[1:]).strip() if len(section_lines) > 1 else section_text.strip()
+        return {'title': col_title, 'body': _markdown_to_html(col_body), 'tag': ''}
+
+    # Stratégie 1: chercher deux sections avec headings ## ou ###
+    for pattern in (r'(?:^|\n)##\s+', r'(?:^|\n)###\s+'):
+        parts = re.split(pattern, body)
+        non_empty = [p.strip() for p in parts if p.strip()]
+        if len(non_empty) >= 2:
+            return [_build_col(non_empty[0], 'Colonne 1'),
+                    _build_col(non_empty[1], 'Colonne 2')]
+
+    # Stratégie 2: deux blocs séparés par une ligne vide avec labels clairs
+    # (ex: "### Ce qui est promis" already handled above)
+
+    # Stratégie 3: chercher une liste en deux groupes séparés par une ligne vide
+    groups = re.split(r'\n{2,}', body.strip())
+    non_empty_groups = [g.strip() for g in groups if g.strip()]
+    if len(non_empty_groups) >= 2:
+        # Utiliser la première ligne de chaque groupe comme titre de colonne
+        def _group_to_col(group: str, fallback: str) -> Dict[str, str]:
+            glines = group.split('\n')
+            first = glines[0].lstrip('#').strip()
+            rest = '\n'.join(glines[1:]).strip()
+            return {'title': first or fallback, 'body': _markdown_to_html(rest or group), 'tag': ''}
+
+        return [_group_to_col(non_empty_groups[0], 'Colonne 1'),
+                _group_to_col(non_empty_groups[1], 'Colonne 2')]
+
+    # Stratégie 4: diviser en deux parties égales (fallback)
     mid = len(lines) // 2
     return [
-        {
-            'title': 'Colonne 1',
-            'body': _markdown_to_html('\n'.join(lines[:mid]).strip()),
-            'tag': ''
-        },
-        {
-            'title': 'Colonne 2',
-            'body': _markdown_to_html('\n'.join(lines[mid:]).strip()),
-            'tag': ''
-        }
+        {'title': 'Colonne 1', 'body': _markdown_to_html('\n'.join(lines[:mid]).strip()), 'tag': ''},
+        {'title': 'Colonne 2', 'body': _markdown_to_html('\n'.join(lines[mid:]).strip()), 'tag': ''},
     ]
 
 
@@ -467,83 +481,319 @@ def _markdown_to_html(md: str) -> str:
     """Convertit du Markdown basique en HTML pour les slides."""
     if not md:
         return ''
-    
+
+    # ── Étape 1 : extraire les tableaux Markdown dans des placeholders ──
+    # On le fait AVANT le traitement ligne-par-ligne pour éviter que
+    # _inline_formatting n'échappe les balises < > du HTML généré.
+    html_blocks: dict = {}
+    if _has_markdown_table(md):
+        md, html_blocks = _extract_tables_as_placeholders(md)
+
     lines = md.split('\n')
     html_lines = []
-    in_list = False
+    list_type = None  # None, 'ul', ou 'ol'
     in_code_block = False
-    
+    in_blockquote = False
+    in_paragraph = False
+
+    def close_list():
+        nonlocal list_type
+        if list_type == 'ul':
+            html_lines.append('</ul>')
+        elif list_type == 'ol':
+            html_lines.append('</ol>')
+        list_type = None
+
+    def close_paragraph():
+        nonlocal in_paragraph
+        if in_paragraph:
+            html_lines.append('</p>')
+            in_paragraph = False
+
+    def close_all():
+        close_list()
+        close_paragraph()
+        if in_blockquote:
+            html_lines.append('</blockquote>')
+
     for line in lines:
+        stripped = line.strip()
+
+        # Blocs HTML protégés (tableaux convertis) — passer en direct
+        if stripped.startswith('\x00HTMLBLOCK'):
+            close_all()
+            html_lines.append(stripped)
+            continue
+
         # Code blocks ```
-        if line.strip().startswith('```'):
+        if stripped.startswith('```'):
+            close_all()
             if in_code_block:
                 html_lines.append('</code></pre>')
                 in_code_block = False
             else:
-                if in_list:
-                    html_lines.append('</ul>')
-                    in_list = False
-                lang = line.strip()[3:].strip()
-                html_lines.append(f'<pre style="background:rgba(0,0,0,.3);padding:12px;border-radius:8px;margin:8px 0;"><code class="language-{lang}">')
+                lang = stripped[3:].strip()
+                html_lines.append(f'<pre style="background:rgba(0,0,0,.3);padding:16px;border-radius:8px;margin:12px 0;"><code class="language-{lang}">')
                 in_code_block = True
             continue
-        
+
         if in_code_block:
-            html_lines.append(line.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;'))
+            html_lines.append(stripped.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;'))
             continue
-        
-        # Headings H3
-        h3_match = re.match(r'^###\s+(.+)$', line.strip())
-        if h3_match:
-            if in_list:
-                html_lines.append('</ul>')
-                in_list = False
-            html_lines.append(f'<h3 class="slide-h3">{_inline_formatting(h3_match.group(1))}</h3>')
-            continue
-            
-        # Lignes vides
-        if not line.strip():
-            if in_list:
-                html_lines.append('</ul>')
-                in_list = False
-            html_lines.append('<br>')
-            continue
-        
-        # Listes - ou *
-        list_match = re.match(r'^[-*]\s+(.+)$', line.strip())
-        if list_match:
-            if not in_list:
-                html_lines.append('<ul class="bullets">')
-                in_list = True
-            html_lines.append(f'<li>{_inline_formatting(list_match.group(1))}</li>')
+
+        # Blockquotes >
+        bq_match = re.match(r'^>\s*(.+)$', stripped)
+        if bq_match:
+            close_all()
+            if not in_blockquote:
+                html_lines.append('<blockquote class="slide-quote">')
+                in_blockquote = True
+            html_lines.append(_inline_formatting(bq_match.group(1)))
             continue
         else:
-            if in_list:
-                html_lines.append('</ul>')
-                in_list = False
-        
+            if in_blockquote:
+                html_lines.append('</blockquote>')
+                in_blockquote = False
+
+        # Séparateurs horizontaux *** ou ---
+        if re.match(r'^\*{3,}$', stripped) or re.match(r'^-{3,}$', stripped):
+            close_all()
+            html_lines.append('<hr class="slide-hr">')
+            continue
+
+        # Headings H3
+        h3_match = re.match(r'^###\s+(.+)$', stripped)
+        if h3_match:
+            close_all()
+            html_lines.append(f'<h3 class="slide-h3">{_inline_formatting(h3_match.group(1))}</h3>')
+            continue
+
+        # Headings H4
+        h4_match = re.match(r'^####\s+(.+)$', stripped)
+        if h4_match:
+            close_all()
+            html_lines.append(f'<h4 class="slide-h4">{_inline_formatting(h4_match.group(1))}</h4>')
+            continue
+
+        # Lignes vides
+        if not stripped:
+            close_all()
+            continue
+
+        # Listes à puces - ou *
+        list_match = re.match(r'^[-*]\s+(.+)$', stripped)
+        if list_match:
+            close_paragraph()
+            if not list_type:
+                html_lines.append('<ul class="bullets">')
+                list_type = 'ul'
+            html_lines.append(f'<li>{_inline_formatting(list_match.group(1))}</li>')
+            continue
+
+        # Listes numérotées 1. 2. etc
+        num_list_match = re.match(r'^(\d+)\.\s+(.+)$', stripped)
+        if num_list_match:
+            close_paragraph()
+            if not list_type:
+                html_lines.append('<ol class="bullets numbered">')
+                list_type = 'ol'
+            html_lines.append(f'<li>{_inline_formatting(num_list_match.group(2))}</li>')
+            continue
+
+        # Pas dans une liste
+        if list_type:
+            close_list()
+
         # Paragraphes normaux
-        html_lines.append(_inline_formatting(line.strip()))
-    
-    if in_list:
-        html_lines.append('</ul>')
+        if not in_paragraph:
+            html_lines.append(f'<p>{_inline_formatting(stripped)}')
+            in_paragraph = True
+        else:
+            # Continuer le paragraphe (même bloc de texte, plusieurs lignes)
+            html_lines.append(' ' + _inline_formatting(stripped))
+
+    # Fermer les blocs ouverts
+    close_all()
     if in_code_block:
         html_lines.append('</code></pre>')
-    
-    return '\n'.join(html_lines)
+
+    # Nettoyer
+    result = '\n'.join(html_lines).strip()
+
+    # Nettoyer les paragraphes vides
+    result = re.sub(r'<p>\s*</p>', '', result)
+
+    # ── Étape 3 : restaurer les blocs HTML (tableaux) ──
+    for placeholder, html in html_blocks.items():
+        result = result.replace(placeholder, html)
+
+    return result
+
+
+def _extract_tables_as_placeholders(md: str) -> tuple:
+    """
+    Remplace chaque tableau Markdown par un placeholder unique et retourne
+    (md_avec_placeholders, {placeholder: html_table}).
+    Cela protège le HTML des tableaux du traitement inline ultérieur.
+    """
+    html_blocks: dict = {}
+    lines = md.split('\n')
+    result_lines = []
+    i = 0
+
+    while i < len(lines):
+        line = lines[i].strip()
+
+        # Détecter l'en-tête d'un tableau
+        if line.startswith('|') and line.endswith('|') and i + 1 < len(lines):
+            if re.match(r'^\s*\|[\s\-:|]+\|\s*$', lines[i + 1]):
+                table_lines = [line]
+                i += 2  # Sauter header + séparateur
+
+                while i < len(lines):
+                    next_line = lines[i].strip()
+                    if next_line.startswith('|') and next_line.endswith('|'):
+                        table_lines.append(next_line)
+                        i += 1
+                    else:
+                        break
+
+                placeholder = f'\x00HTMLBLOCK{len(html_blocks)}\x00'
+                html_blocks[placeholder] = _build_html_table(table_lines)
+                result_lines.append(placeholder)
+                continue
+
+        result_lines.append(lines[i])
+        i += 1
+
+    return '\n'.join(result_lines), html_blocks
+
+
+def _has_markdown_table(text: str) -> bool:
+    """Détecte si le texte contient un tableau Markdown (pipe-separated)."""
+    lines = text.strip().split('\n')
+    for i, line in enumerate(lines):
+        line = line.strip()
+        if line.startswith('|') and line.endswith('|'):
+            # Vérifier si la ligne suivante est une ligne séparatrice |---|---|
+            if i + 1 < len(lines):
+                next_line = lines[i + 1].strip()
+                if re.match(r'^\|[\s\-:|]+\|$', next_line):
+                    return True
+    return False
+
+
+def _convert_tables(md: str) -> str:
+    """Convertit les tableaux Markdown en HTML stylisé pour les slides."""
+    lines = md.split('\n')
+    result_lines = []
+    i = 0
+
+    while i < len(lines):
+        line = lines[i].strip()
+
+        # Détecter le début d'un tableau
+        if line.startswith('|') and line.endswith('|'):
+            # Vérifier si la ligne suivante est le séparateur
+            if i + 1 < len(lines) and re.match(r'^\s*\|[\s\-:|]+\|\s*$', lines[i + 1]):
+                # Parser le tableau
+                table_lines = [line]
+                i += 2  # Sauter la ligne header + séparateur
+
+                # Collecter toutes les lignes du tableau
+                while i < len(lines):
+                    next_line = lines[i].strip()
+                    if next_line.startswith('|') and next_line.endswith('|'):
+                        table_lines.append(next_line)
+                        i += 1
+                    else:
+                        break
+
+                # Convertir en HTML
+                html_table = _build_html_table(table_lines)
+                result_lines.append(html_table)
+                continue
+            else:
+                # Ce n'est pas un tableau, juste une ligne avec des pipes
+                result_lines.append(line)
+                i += 1
+        else:
+            result_lines.append(lines[i])
+            i += 1
+
+    return '\n'.join(result_lines)
+
+
+def _build_html_table(table_lines: List[str]) -> str:
+    """Construit un HTML table à partir de lignes Markdown pipe-separated."""
+    rows = []
+    for line in table_lines:
+        # Split par | et nettoyer
+        cells = [cell.strip() for cell in line.split('|')[1:-1]]
+        rows.append(cells)
+
+    if not rows:
+        return ''
+
+    header_cells = rows[0]
+    data_rows = rows[1:]
+
+    # Construire le HTML
+    html_parts = ['<table class="slide-table">']
+
+    # Header
+    html_parts.append('<thead><tr>')
+    for cell in header_cells:
+        html_parts.append(f'<th>{_inline_formatting(cell)}</th>')
+    html_parts.append('</tr></thead>')
+
+    # Body
+    if data_rows:
+        html_parts.append('<tbody>')
+        for row in data_rows:
+            html_parts.append('<tr>')
+            for cell in row:
+                html_parts.append(f'<td>{_inline_formatting(cell)}</td>')
+            html_parts.append('</tr>')
+        html_parts.append('</tbody>')
+
+    html_parts.append('</table>')
+    return '\n'.join(html_parts)
 
 
 def _inline_formatting(text: str) -> str:
     """Applique le formatage inline: **gras**, *italique*, `code`."""
-    # Inline code
-    text = re.sub(r'`([^`]+)`', r'<code style="background:rgba(255,255,255,.1);padding:2px 6px;border-radius:4px;font-family:monospace;">\1</code>', text)
+    # Extraire d'abord les segments code inline pour les protéger de l'échappement HTML
+    code_segments = {}
+    placeholder_base = '\x00CODE\x00'
+
+    def protect_code(m):
+        key = f'{placeholder_base}{len(code_segments)}\x00'
+        code_segments[key] = m.group(1)
+        return key
+
+    text = re.sub(r'`([^`]+)`', protect_code, text)
+
+    # Échapper les entités HTML dans le texte brut (pas dans le code)
+    text = text.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
+
+    # Réinjecter les balises code avec leur contenu échappé
+    for key, code_content in code_segments.items():
+        safe_code = code_content.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
+        text = text.replace(key, f'<code>{safe_code}</code>')
+    
     # Bold
-    text = re.sub(r'\*\*(.+?)\*\*', r'<strong class="bold">\1</strong>', text)
+    text = re.sub(r'\*\*(.+?)\*\*', r'<strong>\1</strong>', text)
+    
     # Italic
     text = re.sub(r'\*(.+?)\*', r'<em>\1</em>', text)
-    # Links
-    text = re.sub(r'\[([^\]]+)\]\(([^)]+)\)', r'<a href="\2" style="color:var(--accent2);">\1</a>', text)
     
+    # Links
+    text = re.sub(r'\[([^\]]+)\]\(([^)]+)\)', r'<a href="\2" style="color:var(--accent2);text-decoration:underline;">\1</a>', text)
+    
+    # Strikethrough
+    text = re.sub(r'~~(.+?)~~', r'<del style="opacity:0.6;">\1</del>', text)
+
     return text
 
 
@@ -554,10 +804,10 @@ def _enrich_slides(slides: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
     
     # Si la première slide n'est pas une cover OU si elle n'a pas de corps
     first_slide = slides[0]
-    needs_cover = (first_slide['type'] != 'cover' or 
-                   not first_slide.get('body') or 
+    needs_cover = (first_slide['type'] != 'cover' or
+                   not first_slide.get('body') or
                    first_slide.get('title', '').startswith('#'))
-    
+
     if needs_cover:
         # Utiliser le titre de la première slide si possible
         cover_title = first_slide.get('title', 'Presentation')
@@ -568,7 +818,7 @@ def _enrich_slides(slides: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
         else:
             cover_slide = {
                 'type': 'cover',
-                'badge': 'Knowledge Drop',
+                'badge': '',
                 'title': cover_title,
                 'code': '',
                 'cta': 'Swipe to learn'
@@ -584,32 +834,8 @@ def _enrich_slides(slides: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
             slides[0] = cover_slide
     
     # Ajouter des badges automatiques aux slides de contenu
-    content_count = 0
     for i, slide in enumerate(slides):
-        if slide['type'] == 'content' and not slide.get('badge'):
-            content_count += 1
-            slide['badge'] = f'Module {content_count:02d}'
-        elif slide['type'] == 'compare' and not slide.get('badge'):
-            content_count += 1
-            slide['badge'] = f'Module {content_count:02d}'
-    
-    # Ajouter une slide de conclusion si le contenu est long
-    if len(slides) > 4:
-        last_slide = slides[-1]
-        if last_slide['type'] != 'cover':
-            # Vérifier si on a déjà une conclusion
-            has_conclusion = any(
-                'conclusion' in s.get('title', '').lower() or 
-                'summary' in s.get('title', '').lower() or
-                'résumé' in s.get('title', '').lower()
-                for s in slides
-            )
-            if not has_conclusion:
-                slides.append({
-                    'type': 'content',
-                    'badge': f'Module {content_count + 1:02d}',
-                    'title': 'Conclusion',
-                    'body': '<p>Résumé des points clés.</p>'
-                })
-    
+        if slide['type'] in ('content', 'compare') and not slide.get('badge'):
+            slide['badge'] = ''
+
     return slides
