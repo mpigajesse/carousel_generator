@@ -6,13 +6,47 @@ Générateur de carrousels professionnels pour **LinkedIn** et **Instagram** —
 
 ## Fonctionnalités
 
-- **Import Markdown intelligent** — détecte automatiquement la structure (front matter YAML, hiérarchie de titres `#`/`##`/`###`, séparateurs `---`, listes)
+- **Import Markdown intelligent** — détecte automatiquement la structure (front matter YAML, hiérarchie `#`/`##`/`###`, séparateurs `---`, listes)
 - **Rendu HTML complet** — tableaux, gras, italique, code inline, blocs `<pre>`, listes à puces, highlights `.hl1/.hl2/.hl3`
-- **19 thèmes premium** — dark purple, neon green, ocean, sunset, forest, et plus — ou mode `random`
-- **Deux plateformes** — LinkedIn (carré 1080×1080) et Instagram (carré 1080×1080, 6 types de slides)
+- **19 thèmes premium** — dark purple, neon green, ocean, sunset, forest et plus — ou mode `random`
+- **Deux plateformes** — LinkedIn (1080×1080) et Instagram (1080×1080, 6 types de slides)
 - **Export PNG ou PDF** — PDF multi-pages avec fusion automatique via `pypdf`
-- **Interface web** — Flask + JS, responsive mobile/tablette/desktop, sidebar collapsible
-- **CLI** — génération batch depuis le terminal, sans interface graphique
+- **Bibliothèque persistante** — tous les carrousels générés sont archivés, consultables et gérables depuis `/generator`
+- **Aperçu PDF inline** — les PDF s'affichent directement dans l'app (plein écran, rendu natif du navigateur)
+- **Interface web** — Flask + JS, responsive mobile/tablette/desktop
+- **CLI** — génération batch depuis le terminal sans interface graphique
+
+---
+
+## Interface web
+
+### Éditeur (`/`)
+
+L'éditeur principal permet de :
+- Coller ou uploader un fichier Markdown (`.md` / `.markdown`)
+- Choisir la plateforme (LinkedIn / Instagram), le thème et le format de sortie
+- Prévisualiser les slides parsés avant génération
+- Télécharger le résultat en PNG (ZIP) ou PDF
+- Télécharger `STRUCTURE_COMPLETE.md` — le guide de structure pour créer des skills Claude Code
+
+### Bibliothèque (`/generator`)
+
+Page de gestion de tous les carrousels générés :
+
+| Fonctionnalité | Description |
+|----------------|-------------|
+| **Vue grille / liste** | Basculer entre les deux modes d'affichage |
+| **Aperçu lightbox** | Naviguer entre les slides PNG avec clavier (←/→) ou swipe tactile |
+| **Aperçu PDF plein écran** | Lecture du PDF directement dans l'app, comme dans un onglet navigateur |
+| **Renommage inline** | Double-clic sur le nom de la carte pour renommer |
+| **Téléchargement** | ZIP (PNG + PDF) ou PDF direct |
+| **Corbeille douce** | Suppression locale (localStorage) avec annulation 5 s |
+| **Suppression définitive** | Supprime le dossier et tous les fichiers du serveur |
+| **Filtres intelligents** | Par format (PNG/PDF), par période (aujourd'hui/hier/7 jours/ce mois/plage custom) |
+| **Recherche** | Correspond au nom, à la date ISO, à la date formatée, à l'heure |
+| **Tri** | Plus récent, plus ancien, nom A→Z, plus de slides, plus lourd |
+| **Groupes de dates** | Les cartes se regroupent automatiquement par période lors du tri par date |
+| **Statistiques** | Total, slides, espace disque, dernier ajout |
 
 ---
 
@@ -58,12 +92,6 @@ playwright install chromium
 python app.py
 # → http://localhost:5000
 ```
-
-L'interface permet de :
-- Coller ou uploader un fichier Markdown
-- Choisir la plateforme (LinkedIn / Instagram) et le thème
-- Prévisualiser les slides parsés avant génération
-- Télécharger le résultat en PNG ou PDF
 
 ### CLI
 
@@ -150,10 +178,12 @@ carousel_generator/
 ├── themes.py               # 19 thèmes LinkedIn + Instagram
 ├── slide.html.j2           # Template Jinja2 LinkedIn
 ├── slide_instagram.html.j2 # Template Jinja2 Instagram
+├── STRUCTURE_COMPLETE.md   # Guide de structure (téléchargeable depuis l'app)
 ├── templates/
-│   └── index.html          # Interface web (SPA vanilla JS)
+│   ├── index.html          # Éditeur principal (SPA vanilla JS)
+│   └── generator.html      # Bibliothèque — CRUD des carrousels générés
 ├── static/
-│   └── generated/          # Sortie des carrousels générés
+│   └── generated/          # Sortie persistante — <job_id>/<slides>
 ├── requirements.txt
 └── Dockerfile
 ```
@@ -162,14 +192,28 @@ carousel_generator/
 
 ## API REST
 
+### Génération
+
 | Endpoint | Méthode | Description |
 |----------|---------|-------------|
-| `/api/generate` | POST | Lancer une génération |
-| `/api/status/<job_id>` | GET | Statut du job |
-| `/api/download/<job_id>` | GET | Télécharger le résultat |
-| `/api/themes` | GET | Liste des thèmes disponibles |
-| `/api/import-markdown` | POST | Parser un Markdown → slides JSON |
-| `/api/upload-markdown` | POST | Upload fichier .md |
+| `/api/generate` | POST | Lancer une génération en arrière-plan |
+| `/api/status/<job_id>` | GET | Statut du job (`running` / `done` / `error`) |
+| `/api/themes` | GET | Liste des thèmes avec aperçu des couleurs |
+| `/api/import-markdown` | POST | Parser un contenu Markdown → slides JSON |
+| `/api/upload-markdown` | POST | Upload fichier `.md` → slides JSON |
+| `/api/download-structure` | GET | Télécharger `STRUCTURE_COMPLETE.md` |
+
+### Bibliothèque
+
+| Endpoint | Méthode | Description |
+|----------|---------|-------------|
+| `/api/library` | GET | Lister tous les carrousels (lecture disque) |
+| `/api/library/<id>` | DELETE | Supprimer un carousel (dossier + fichiers) |
+| `/api/library/<id>/rename` | PATCH | Renommer un carousel |
+| `/api/library/<id>/thumbnail` | GET | Miniature (1er PNG ou `cover_thumb.png`) |
+| `/api/library/<id>/slide/<n>` | GET | PNG à l'index `n` pour le viewer lightbox |
+| `/api/library/<id>/pdf` | GET | PDF inline pour aperçu natif dans le navigateur |
+| `/api/library/<id>/download` | GET | Télécharger tout en ZIP |
 
 ### Exemple de payload `/api/generate`
 
@@ -179,10 +223,32 @@ carousel_generator/
   "theme": "dark_purple",
   "platform": "linkedin",
   "format": "png",
-  "series": "Ma série",
-  "author": "@username"
+  "footer": {
+    "series": "Ma série",
+    "author": "@username"
+  }
 }
 ```
+
+---
+
+## Détails techniques
+
+### Miniature des carrousels PDF
+
+Lors de la génération PDF, chaque slide est d'abord rendu en PNG puis converti en PDF.
+Avant la suppression des PNG intermédiaires, le premier slide est copié sous `cover_thumb.png`
+dans le dossier du job — il sert de miniature dans la bibliothèque sans alourdir le résultat final.
+
+### Identifiant de job
+
+Les jobs sont nommés selon le format : `YYYY-MM-DD_HH-MM-SS_nom_de_serie`.
+Ce format permet à `_scan_job_folder()` d'extraire date, heure et nom sans base de données.
+
+### Taille du texte auto-adaptée
+
+`_calculate_text_size()` calcule automatiquement la taille de police optimale (21–46 px)
+en fonction du nombre de caractères du corps, pour que le contenu tienne toujours dans les 936 px disponibles.
 
 ---
 
@@ -210,6 +276,19 @@ git push hf main
 ```
 
 Le `Dockerfile.hf` cible le port 7860 requis par HF Spaces.
+
+### Multi-remote (double push)
+
+Le projet est mirroring sur deux dépôts GitHub automatiquement :
+
+```bash
+bash push-all.sh          # push origin + act en une commande
+```
+
+| Remote | Dépôt |
+|--------|-------|
+| `origin` | `github.com/mpigajesse/carousel_generator` |
+| `act` | `github.com/Africa-centred-technology/carousel_generator_officiel` |
 
 ---
 
