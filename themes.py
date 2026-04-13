@@ -298,7 +298,242 @@ THEMES = {
         "terminal_bg": "#0c1a30",
         "terminal_border": "rgba(52,211,153,.3)",
     },
+    # ═══════════════════════════════════════════
+    # THÈME PERSONNALISÉ
+    # ═══════════════════════════════════════════
+    "kente_tech": {
+        "bg":          "#0a0a0a",
+        "bg2":         "#141414",
+        "blob1":       "#1a5c00",
+        "blob2":       "#8b0000",
+        "accent1":     "#f5c518",   # gold (Kente jaune)
+        "accent2":     "#22c55e",   # vert (Kente vert)
+        "accent3":     "#ef4444",   # rouge (Kente rouge)
+        "text":        "#ffffff",
+        "text_muted":  "#a3a3a3",
+        "badge_bg":    "#141414",
+        "rule":        "linear-gradient(90deg, #f5c518, #22c55e, #ef4444)",
+        "terminal_bg": "#0f0f0f",
+        "terminal_border": "rgba(245,197,24,.3)",
+    },
 }
+
+IG_THEMES = {
+    # ═══════════════════════════════════════════
+    # INSTAGRAM-OPTIMIZED THEMES
+    # ═══════════════════════════════════════════
+
+    # 1. Dark purple/blue/pink gradient — viral aesthetic
+    "ig_aurora_dark": {
+        "bg":               "#0d0520",
+        "bg2":              "#1a0a38",
+        "bg_gradient":      "linear-gradient(145deg, #0d0520 0%, #1a0a38 40%, #0a1a40 100%)",
+        "blob1":            "#3b1060",
+        "blob2":            "#0a2060",
+        "accent1":          "#c084fc",
+        "accent2":          "#f472b6",
+        "accent3":          "#38bdf8",
+        "text":             "#ffffff",
+        "text_muted":       "#c4b5fd",
+        "badge_bg":         "#200a40",
+        "rule":             "linear-gradient(90deg, #c084fc, #f472b6)",
+        "terminal_bg":      "#0d0520",
+        "terminal_border":  "rgba(192,132,252,.3)",
+        "surface":          "rgba(255,255,255,0.06)",
+        "surface2":         "rgba(255,255,255,0.10)",
+        "is_light":         False,
+    },
+
+    # 2. Warm coral/orange/pink gradient — lifestyle/wellness
+    "ig_sunset_vibes": {
+        "bg":               "#1a0a0a",
+        "bg2":              "#2d0a1a",
+        "bg_gradient":      "linear-gradient(145deg, #2d0a1a 0%, #3d1a00 50%, #1a0a14 100%)",
+        "blob1":            "#5c1a10",
+        "blob2":            "#3d1500",
+        "accent1":          "#fb7185",
+        "accent2":          "#f97316",
+        "accent3":          "#fbbf24",
+        "text":             "#fff7f0",
+        "text_muted":       "#fda4af",
+        "badge_bg":         "#3d0a14",
+        "rule":             "linear-gradient(90deg, #fb7185, #f97316)",
+        "terminal_bg":      "#1a0a0a",
+        "terminal_border":  "rgba(251,113,133,.3)",
+        "surface":          "rgba(255,255,255,0.06)",
+        "surface2":         "rgba(255,255,255,0.10)",
+        "is_light":         False,
+    },
+
+    # 3. Clean white/light — pro minimal aesthetic
+    "ig_minimal_white": {
+        "bg":               "#ffffff",
+        "bg2":              "#f5f5f5",
+        "bg_gradient":      None,
+        "blob1":            "#e0e0f0",
+        "blob2":            "#f0e0e8",
+        "accent1":          "#1a1a2e",
+        "accent2":          "#6366f1",
+        "accent3":          "#f43f5e",
+        "text":             "#0f0f1a",
+        "text_muted":       "#6b7280",
+        "badge_bg":         "#ebebeb",
+        "rule":             "linear-gradient(90deg, #1a1a2e, #6366f1)",
+        "terminal_bg":      "#f8f8f8",
+        "terminal_border":  "rgba(26,26,46,.3)",
+        "surface":          "rgba(0,0,0,0.06)",
+        "surface2":         "rgba(0,0,0,0.10)",
+        "is_light":         True,
+    },
+
+    # 4. Warm cream/beige — luxury/fashion aesthetic
+    "ig_cream_luxury": {
+        "bg":               "#faf6f0",
+        "bg2":              "#f5ede0",
+        "bg_gradient":      "linear-gradient(145deg, #faf6f0 0%, #f5ede0 100%)",
+        "blob1":            "#e8d8c0",
+        "blob2":            "#dcc8b0",
+        "accent1":          "#1c1410",
+        "accent2":          "#b5873e",
+        "accent3":          "#8b6355",
+        "text":             "#1c1410",
+        "text_muted":       "#6b5c4e",
+        "badge_bg":         "#ede5d8",
+        "rule":             "linear-gradient(90deg, #1c1410, #b5873e)",
+        "terminal_bg":      "#f0ebe2",
+        "terminal_border":  "rgba(28,20,16,.3)",
+        "surface":          "rgba(0,0,0,0.06)",
+        "surface2":         "rgba(0,0,0,0.10)",
+        "is_light":         True,
+    },
+
+    # 5. Electric neon on deep black — Gen-Z aesthetic
+    "ig_neon_pulse": {
+        "bg":               "#050505",
+        "bg2":              "#0d0014",
+        "bg_gradient":      "linear-gradient(145deg, #050505 0%, #0d0014 50%, #000d14 100%)",
+        "blob1":            "#003320",
+        "blob2":            "#001a33",
+        "accent1":          "#00ff88",
+        "accent2":          "#ff0080",
+        "accent3":          "#0088ff",
+        "text":             "#ffffff",
+        "text_muted":       "#88ffcc",
+        "badge_bg":         "#0a0014",
+        "rule":             "linear-gradient(90deg, #00ff88, #ff0080)",
+        "terminal_bg":      "#050505",
+        "terminal_border":  "rgba(0,255,136,.3)",
+        "surface":          "rgba(255,255,255,0.06)",
+        "surface2":         "rgba(255,255,255,0.10)",
+        "is_light":         False,
+    },
+
+    # 6. Deep ocean teal/blue — calm/premium
+    "ig_ocean_deep": {
+        "bg":               "#041520",
+        "bg2":              "#062030",
+        "bg_gradient":      "linear-gradient(145deg, #041520 0%, #062030 50%, #041830 100%)",
+        "blob1":            "#073a50",
+        "blob2":            "#053248",
+        "accent1":          "#22d3ee",
+        "accent2":          "#2dd4bf",
+        "accent3":          "#818cf8",
+        "text":             "#f0fdff",
+        "text_muted":       "#7dd3fc",
+        "badge_bg":         "#062838",
+        "rule":             "linear-gradient(90deg, #22d3ee, #2dd4bf)",
+        "terminal_bg":      "#041520",
+        "terminal_border":  "rgba(34,211,238,.3)",
+        "surface":          "rgba(255,255,255,0.06)",
+        "surface2":         "rgba(255,255,255,0.10)",
+        "is_light":         False,
+    },
+
+    # 7. Bold rose/pink — beauty/fashion
+    "ig_rose_pop": {
+        "bg":               "#1a0510",
+        "bg2":              "#2d0a1e",
+        "bg_gradient":      "linear-gradient(145deg, #1a0510 0%, #2d0a1e 60%, #1a0520 100%)",
+        "blob1":            "#500a28",
+        "blob2":            "#3d0a30",
+        "accent1":          "#f9a8d4",
+        "accent2":          "#fb7185",
+        "accent3":          "#fbbf24",
+        "text":             "#fff0f5",
+        "text_muted":       "#fda4af",
+        "badge_bg":         "#350820",
+        "rule":             "linear-gradient(90deg, #f9a8d4, #fb7185)",
+        "terminal_bg":      "#1a0510",
+        "terminal_border":  "rgba(249,168,212,.3)",
+        "surface":          "rgba(255,255,255,0.06)",
+        "surface2":         "rgba(255,255,255,0.10)",
+        "is_light":         False,
+    },
+
+    # 8. Earthy green/terracotta — wellness/nature
+    "ig_sage_earth": {
+        "bg":               "#f7f4ef",
+        "bg2":              "#ede8df",
+        "bg_gradient":      "linear-gradient(145deg, #f7f4ef 0%, #ede8df 100%)",
+        "blob1":            "#d8e8d0",
+        "blob2":            "#e8d4c0",
+        "accent1":          "#4a7c59",
+        "accent2":          "#c2714f",
+        "accent3":          "#8b9d6a",
+        "text":             "#2c2420",
+        "text_muted":       "#6b6055",
+        "badge_bg":         "#e5e0d8",
+        "rule":             "linear-gradient(90deg, #4a7c59, #c2714f)",
+        "terminal_bg":      "#f0ede8",
+        "terminal_border":  "rgba(74,124,89,.3)",
+        "surface":          "rgba(0,0,0,0.06)",
+        "surface2":         "rgba(0,0,0,0.10)",
+        "is_light":         True,
+    },
+
+    # 9. Black with gold accents — luxury brand aesthetic
+    "ig_midnight_gold": {
+        "bg":               "#080604",
+        "bg2":              "#100d05",
+        "bg_gradient":      "linear-gradient(145deg, #080604 0%, #100d05 50%, #08060a 100%)",
+        "blob1":            "#241a02",
+        "blob2":            "#180e04",
+        "accent1":          "#d4a843",
+        "accent2":          "#c9a227",
+        "accent3":          "#e8c87a",
+        "text":             "#fefce8",
+        "text_muted":       "#d4a843",
+        "badge_bg":         "#120e04",
+        "rule":             "linear-gradient(90deg, #d4a843, #c9a227)",
+        "terminal_bg":      "#080604",
+        "terminal_border":  "rgba(212,168,67,.3)",
+        "surface":          "rgba(255,255,255,0.06)",
+        "surface2":         "rgba(255,255,255,0.10)",
+        "is_light":         False,
+    },
+
+    # 10. Bright coral/tangerine — energetic/youth
+    "ig_coral_burst": {
+        "bg":               "#0f0a06",
+        "bg2":              "#1e0e08",
+        "bg_gradient":      "linear-gradient(145deg, #0f0a06 0%, #1e0e08 60%, #0a0f0a 100%)",
+        "blob1":            "#3d1a08",
+        "blob2":            "#1a1a08",
+        "accent1":          "#ff6b35",
+        "accent2":          "#ffd700",
+        "accent3":          "#ff3366",
+        "text":             "#fff8f0",
+        "text_muted":       "#ffaa80",
+        "badge_bg":         "#200e06",
+        "rule":             "linear-gradient(90deg, #ff6b35, #ffd700)",
+        "terminal_bg":      "#0f0a06",
+        "terminal_border":  "rgba(255,107,53,.3)",
+        "surface":          "rgba(255,255,255,0.06)",
+        "surface2":         "rgba(255,255,255,0.10)",
+        "is_light":         False,
+    },
+}
+
 
 def hsl_to_hex(h, s, l):
     """Convertit HSL (0-1 chacun) en hex."""
@@ -424,34 +659,76 @@ def random_theme():
     }
 
 def get_theme(name: str) -> dict:
-    """Récupère un thème par son nom ou génère un thème aléatoire."""
+    """Récupère un thème par son nom ou génère un thème aléatoire.
+
+    Checks IG_THEMES first when the name starts with 'ig_', then falls back
+    to THEMES.  Returns a random theme when name is 'random'.
+    """
     if name == "random":
         return random_theme()
+    if name.startswith("ig_"):
+        if name in IG_THEMES:
+            return IG_THEMES[name]
+        raise ValueError(
+            f"Thème Instagram inconnu: {name}. "
+            f"Disponibles: {list(IG_THEMES.keys())}"
+        )
     if name not in THEMES:
-        raise ValueError(f"Thème inconnu: {name}. Disponibles: {list(THEMES.keys())} + 'random'")
+        all_names = list(THEMES.keys()) + list(IG_THEMES.keys())
+        raise ValueError(
+            f"Thème inconnu: {name}. Disponibles: {all_names} + 'random'"
+        )
     return THEMES[name]
 
+
+def get_ig_theme(name: str) -> dict:
+    """Récupère un thème Instagram par son nom.
+
+    Looks in IG_THEMES first, then falls back to THEMES.
+    """
+    if name in IG_THEMES:
+        return IG_THEMES[name]
+    if name in THEMES:
+        return THEMES[name]
+    all_names = list(IG_THEMES.keys()) + list(THEMES.keys())
+    raise ValueError(
+        f"Thème inconnu: {name}. Disponibles: {all_names}"
+    )
+
 def get_theme_preview(name: str) -> str:
-    """Retourne un emoji et description pour l'aperçu du thème."""
+    """Retourne la description du thème."""
     previews = {
-        "dark_purple": ("💜", "Violet/Cyan - Classique élégant"),
-        "dark_blue": ("💙", "Bleu/Vert - Calme professionnel"),
-        "dark_green": ("💚", "Vert/Or - Nature et fraîcheur"),
-        "dark_red": ("❤️", "Rouge/Or - Passion et énergie"),
-        "dark_orange": ("🧡", "Orange/Or - Chaleur et dynamisme"),
-        "midnight_ocean": ("🌊", "Bleu océan - Profondeur marine"),
-        "sunset_glow": ("🌅", "Coucher de soleil - Chaleur dorée"),
-        "neon_tokyo": ("🌃", "Néon cyberpunk - Futuriste vibrant"),
-        "emerald_city": ("💎", "Émeraude - Luxe et sophistication"),
-        "cyber_punk": ("⚡", "Cyberpunk - Énergie électrique"),
-        "arctic_frost": ("❄️", "Glace arctique - Fraîcheur cristalline"),
-        "golden_aura": ("✨", "Aura dorée - Prestige et lumière"),
-        "lavender_dream": ("💜", "Rêve lavande - Douceur onirique"),
-        "forest_night": ("🌲", "Forêt nocturne - Mystère naturel"),
-        "crimson_tide": ("🩸", "Marée cramoisie - Intensité dramatique"),
-        "cosmic_void": ("🌌", "Vide cosmique - Espace infini"),
-        "tropical_breeze": ("🌴", "Brise tropicale - Exotisme apaisant"),
-        "volcanic_fire": ("🌋", "Feu volcanique - Puissance brute"),
-        "aurora_borealis": ("🌈", "Aurore boréale - Magie céleste"),
+        # Standard themes
+        "dark_purple": "Violet/Cyan - Classique elegant",
+        "dark_blue": "Bleu/Vert - Calme professionnel",
+        "dark_green": "Vert/Or - Nature et fraicheur",
+        "dark_red": "Rouge/Or - Passion et energie",
+        "dark_orange": "Orange/Or - Chaleur et dynamisme",
+        "midnight_ocean": "Bleu ocean - Profondeur marine",
+        "sunset_glow": "Coucher de soleil - Chaleur doree",
+        "neon_tokyo": "Neon cyberpunk - Futuriste vibrant",
+        "emerald_city": "Emeraude - Luxe et sophistication",
+        "cyber_punk": "Cyberpunk - Energie electrique",
+        "arctic_frost": "Glace arctique - Fraicheur cristalline",
+        "golden_aura": "Aura doree - Prestige et lumiere",
+        "lavender_dream": "Reve lavande - Douceur onirique",
+        "forest_night": "Foret nocturne - Mystere naturel",
+        "crimson_tide": "Maree cramoisie - Intensite dramatique",
+        "cosmic_void": "Vide cosmique - Espace infini",
+        "tropical_breeze": "Brise tropicale - Exotisme apaisant",
+        "volcanic_fire": "Feu volcanique - Puissance brute",
+        "aurora_borealis": "Aurore boreale - Magie celeste",
+        "kente_tech": "Kente Tech - Heritage africain vibrant",
+        # Instagram-optimized themes
+        "ig_aurora_dark": "IG Aurora Dark - Violet/Bleu/Rose viral (dark)",
+        "ig_sunset_vibes": "IG Sunset Vibes - Corail/Orange/Rose lifestyle (dark)",
+        "ig_minimal_white": "IG Minimal White - Blanc epure professionnel (light)",
+        "ig_cream_luxury": "IG Cream Luxury - Creme/Beige luxe et mode (light)",
+        "ig_neon_pulse": "IG Neon Pulse - Neon electrique Gen-Z (dark)",
+        "ig_ocean_deep": "IG Ocean Deep - Bleu/Sarcelle ocean premium (dark)",
+        "ig_rose_pop": "IG Rose Pop - Rose/Fuchsia beaute et mode (dark)",
+        "ig_sage_earth": "IG Sage Earth - Vert sauge/Terre nature bien-etre (light)",
+        "ig_midnight_gold": "IG Midnight Gold - Noir/Or luxe de marque (dark)",
+        "ig_coral_burst": "IG Coral Burst - Corail/Tangerine energie jeunesse (dark)",
     }
-    return previews.get(name, ("🎨", "Thème personnalisé"))
+    return previews.get(name, "Theme personnalise")
