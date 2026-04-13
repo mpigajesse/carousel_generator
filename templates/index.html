@@ -447,6 +447,37 @@ main {
 .shell.sidebar-collapsed .main-header {
   padding-left: 64px; /* Libère de l'espace pour le bouton hamburger fixe */
 }
+.btn-header-structure {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 12px;
+  background: rgba(0,203,169,.06);
+  border: 1px dashed rgba(0,203,169,.35);
+  border-radius: var(--radius-sm);
+  color: rgba(0,203,169,.7);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all .15s;
+  flex-shrink: 0;
+}
+.btn-header-structure:hover {
+  background: rgba(0,203,169,.12);
+  border-style: solid;
+  border-color: var(--accent2);
+  color: var(--accent2);
+}
+.btn-header-structure:active { opacity: .8; }
+@media (max-width: 900px) {
+  .btn-header-structure-label { display: none; }
+  .btn-header-structure { padding: 7px 8px; }
+}
 .main-header h1 {
   font-family: 'Syne', sans-serif;
   font-size: 22px;
@@ -1619,9 +1650,15 @@ main {
 
     <div class="main-header">
       <h1>Éditeur de slides</h1>
-      <div class="tab-row">
-        <button class="tab active" onclick="switchTab('editor', this)">Éditeur</button>
-        <button class="tab" onclick="switchTab('preview', this)">Aperçu</button>
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div class="tab-row">
+          <button class="tab active" onclick="switchTab('editor', this)">Éditeur</button>
+          <button class="tab" onclick="switchTab('preview', this)">Aperçu</button>
+        </div>
+        <a class="btn-header-structure" href="/api/download-structure" download="STRUCTURE_COMPLETE.md" title="Télécharger le guide de structure Markdown pour créer des skills Claude Code">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+          <span class="btn-header-structure-label">Skill MD</span>
+        </a>
       </div>
     </div>
 
