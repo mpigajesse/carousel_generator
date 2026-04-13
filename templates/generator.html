@@ -480,6 +480,25 @@ body::before{
   color:var(--muted2);text-align:center;
 }
 .lightbox-pdf-msg svg{opacity:.4}
+
+/* PDF inline viewer */
+.lightbox-pdf-viewer{
+  width:100%;height:100%;
+  display:flex;flex-direction:column;align-items:stretch;
+  border-radius:var(--radius);overflow:hidden;
+  box-shadow:0 24px 80px rgba(0,0,0,.6);
+}
+.lightbox-pdf-iframe{
+  flex:1;border:none;background:#fff;
+  min-height:400px;display:block;
+  border-radius:var(--radius);
+}
+.btn-lb-action.pdf-dl{
+  border-color:rgba(240,98,146,.3);color:#f06292;
+}
+.btn-lb-action.pdf-dl:hover{
+  background:rgba(240,98,146,.08);border-color:#f06292;
+}
 .lightbox-footer{
   display:flex;align-items:center;justify-content:center;gap:6px;
   padding:16px;flex-wrap:wrap;
@@ -654,6 +673,7 @@ body::before{
     justify-content:center;gap:8px;
   }
   .lightbox-img-wrap{max-height:calc(100vh - 220px)}
+  .lightbox-pdf-iframe{min-height:calc(100vh - 220px)}
   .btn-lb-action{flex:1;justify-content:center;padding:10px 10px;font-size:11px;max-width:180px}
 
   /* Modal */
@@ -863,9 +883,13 @@ body::before{
   </div>
   <div class="lightbox-footer" id="lb-dots"></div>
   <div class="lightbox-actions">
-    <a class="btn-lb-action" id="lb-btn-dl" href="#" download>
+    <a class="btn-lb-action pdf-dl" id="lb-btn-pdf" href="#" target="_blank" style="display:none">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+      Télécharger PDF
+    </a>
+    <a class="btn-lb-action" id="lb-btn-dl" href="#">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-      Télécharger ZIP
+      ZIP
     </a>
     <button class="btn-lb-action danger" id="lb-btn-del" onclick="lbDeleteCurrent()">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
@@ -1237,7 +1261,7 @@ function buildCard(item, i, isTrash = false) {
   ].filter(Boolean).join('');
 
   const previewBtn = !isTrash && (item.has_png || item.has_pdf)
-    ? `<button class="btn-preview-quick" onclick="event.stopPropagation();openLightbox('${esc(item.job_id)}','${esc(item.display_name)}',${item.slide_count})">
+    ? `<button class="btn-preview-quick" onclick="event.stopPropagation();openLightbox('${esc(item.job_id)}','${esc(item.display_name)}',${item.slide_count},${item.has_pdf})">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
         Aperçu
        </button>` : '';
@@ -1257,7 +1281,7 @@ function buildCard(item, i, isTrash = false) {
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg>
         Supprimer définitivement
        </button>`
-    : `<button class="btn-card primary" onclick="openLightbox('${esc(item.job_id)}','${esc(item.display_name)}',${item.slide_count})">
+    : `<button class="btn-card primary" onclick="openLightbox('${esc(item.job_id)}','${esc(item.display_name)}',${item.slide_count},${item.has_pdf})">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
         Voir
        </button>
@@ -1271,7 +1295,7 @@ function buildCard(item, i, isTrash = false) {
        </button>`;
 
   const cardClass = `carousel-card${isTrash ? ' soft-deleted' : ''}`;
-  const clickAction = isTrash ? '' : `onclick="openLightbox('${esc(item.job_id)}','${esc(item.display_name)}',${item.slide_count})"`;
+  const clickAction = isTrash ? '' : `onclick="openLightbox('${esc(item.job_id)}','${esc(item.display_name)}',${item.slide_count},${item.has_pdf})"`;
 
   return `
 <div class="${cardClass}" style="animation-delay:${i*0.04}s" ${clickAction}>
@@ -1434,7 +1458,7 @@ async function doDelete(jobId) {
 // ═══════════════════════════════════════════
 //  LIGHTBOX
 // ═══════════════════════════════════════════
-function openLightbox(jobId, name, slideCount) {
+function openLightbox(jobId, name, slideCount, hasPdf) {
   lbJob    = jobId;
   lbSlides = Array.from({length: slideCount}, (_, i) => i);
   lbIndex  = 0;
@@ -1445,21 +1469,52 @@ function openLightbox(jobId, name, slideCount) {
   document.getElementById('lightbox').classList.add('open');
   document.body.style.overflow = 'hidden';
 
-  if (slideCount > 0) {
-    renderLbSlide(0);
+  // Show / hide PDF download button
+  const pdfBtn = document.getElementById('lb-btn-pdf');
+  if (hasPdf) {
+    pdfBtn.href = `/api/library/${encodeURIComponent(jobId)}/pdf`;
+    pdfBtn.style.display = '';
   } else {
-    // PDF only
+    pdfBtn.style.display = 'none';
+  }
+
+  if (slideCount > 0) {
+    // PNG slides: normal image viewer
+    renderLbSlide(0);
+  } else if (hasPdf) {
+    // PDF-only carousel: render inline with iframe
+    renderLbPdf(jobId);
+  } else {
+    // No content at all (shouldn't happen)
     document.getElementById('lb-img-wrap').innerHTML = `
       <div class="lightbox-pdf-msg">
         <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-        <p>Fichier PDF — téléchargez le ZIP pour l'ouvrir</p>
-        <a href="/api/library/${encodeURIComponent(jobId)}/download" class="btn-lb-action" style="text-decoration:none">Télécharger ZIP</a>
+        <p>Aucun fichier disponible</p>
       </div>`;
-    document.getElementById('lb-dots').innerHTML    = '';
-    document.getElementById('lb-counter').textContent = 'PDF';
-    document.getElementById('btn-prev').disabled    = true;
-    document.getElementById('btn-next').disabled    = true;
+    document.getElementById('lb-dots').innerHTML = '';
+    document.getElementById('lb-counter').textContent = '—';
+    document.getElementById('btn-prev').disabled = true;
+    document.getElementById('btn-next').disabled = true;
   }
+}
+
+function renderLbPdf(jobId) {
+  const pdfUrl = `/api/library/${encodeURIComponent(jobId)}/pdf`;
+  const wrap   = document.getElementById('lb-img-wrap');
+  // Use iframe for native browser PDF rendering
+  wrap.innerHTML = `
+    <div class="lightbox-pdf-viewer">
+      <iframe
+        class="lightbox-pdf-iframe"
+        src="${pdfUrl}#toolbar=1&navpanes=1&scrollbar=1&view=FitH"
+        title="Aperçu PDF"
+        allow="fullscreen"
+      ></iframe>
+    </div>`;
+  document.getElementById('lb-dots').innerHTML      = '';
+  document.getElementById('lb-counter').textContent = 'PDF';
+  document.getElementById('btn-prev').disabled      = true;
+  document.getElementById('btn-next').disabled      = true;
 }
 
 function renderLbSlide(index) {

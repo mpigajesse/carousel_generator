@@ -150,6 +150,22 @@ def api_library_rename(job_id):
     return jsonify({'ok': True, 'new_job_id': new_id})
 
 
+@app.route('/api/library/<path:job_id>/pdf')
+def api_library_pdf(job_id):
+    """Sert le PDF d'un carousel pour visualisation inline (pas en téléchargement)."""
+    if '..' in job_id or job_id.startswith('/'):
+        abort(400)
+    folder = app.config['OUTPUT_DIR'] / job_id
+    if not folder.exists():
+        abort(404)
+    # Après la génération, seul le PDF fusionné final subsiste (les PDFs par slide sont supprimés)
+    pdfs = sorted([f for f in folder.glob('*.pdf') if f.name != 'carousel.zip'])
+    if not pdfs:
+        abort(404)
+    # Servir inline (sans as_attachment) pour que le navigateur l'affiche directement
+    return send_file(str(pdfs[0]), mimetype='application/pdf')
+
+
 @app.route('/api/library/<path:job_id>/thumbnail')
 def api_library_thumbnail(job_id):
     """Retourne le premier PNG d'un carousel comme miniature.
