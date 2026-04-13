@@ -8,21 +8,29 @@
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg:       #080b10;
-  --surface:  #0e1219;
-  --card:     #131820;
-  --border:   rgba(255,255,255,.07);
-  --border2:  rgba(255,255,255,.13);
-  --text:     #e8eaf0;
-  --muted:    #5a6072;
-  --muted2:   #8890a4;
-  --accent:   #7c6af7;
-  --accent2:  #38c8a8;
-  --accent3:  #f06292;
-  --danger:   #f87171;
-  --success:  #4ade80;
-  --radius:   14px;
+  --bg:        #06080d;
+  --surface:   #0a0e16;
+  --surface2:  #0f1520;
+  --card:      #121826;
+  --card2:     #171f2e;
+  --border:    rgba(255,255,255,.06);
+  --border2:   rgba(255,255,255,.11);
+  --border3:   rgba(255,255,255,.18);
+  --text:      #e4e8f2;
+  --muted:     #4a5268;
+  --muted2:    #7b87a0;
+  --accent:    #6c5ce7;
+  --accent-hi: #8b7cf8;
+  --accent2:   #00cba9;
+  --accent3:   #f06292;
+  --li-color:  #0a84d0;
+  --ig-color:  #e1306c;
+  --danger:    #f87171;
+  --success:   #34d399;
+  --radius:    12px;
   --radius-sm: 8px;
+  --radius-xs: 6px;
+  --sidebar-w: 320px;
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -51,90 +59,237 @@ body::before {
 .orb {
   position: fixed;
   border-radius: 50%;
-  filter: blur(80px);
+  filter: blur(100px);
   pointer-events: none;
   z-index: 0;
 }
-.orb-1 { width: 500px; height: 500px; top: -150px; left: -100px; background: rgba(124,106,247,.12); }
-.orb-2 { width: 400px; height: 400px; bottom: -100px; right: -80px; background: rgba(56,200,168,.10); }
+.orb-1 { width: 600px; height: 600px; top: -200px; left: -150px; background: rgba(108,92,231,.09); }
+.orb-2 { width: 500px; height: 500px; bottom: -150px; right: -100px; background: rgba(0,203,169,.07); }
 
 /* ── Layout ── */
-.shell { position: relative; z-index: 1; display: grid; grid-template-columns: 340px 1fr; min-height: 100vh; }
+.shell {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: var(--sidebar-w) 1fr;
+  min-height: 100vh;
+  transition: grid-template-columns .28s cubic-bezier(.4,0,.2,1);
+}
+.shell.sidebar-collapsed {
+  grid-template-columns: 0px 1fr;
+}
 
-/* ── Sidebar ── */
+/* ════════════════════════════════════
+   SIDEBAR
+════════════════════════════════════ */
 aside {
   background: var(--surface);
   border-right: 1px solid var(--border);
-  padding: 0;
   display: flex;
   flex-direction: column;
-  overflow-y: auto;
+  overflow: hidden;
   height: 100vh;
   position: sticky;
   top: 0;
+  scrollbar-width: none;
+  min-width: 0;
+  transition: opacity .2s ease .04s;
+}
+aside::-webkit-scrollbar { display: none; }
+aside > * { min-width: var(--sidebar-w); }
+.shell.sidebar-collapsed aside {
+  opacity: 0;
+  pointer-events: none;
 }
 
-.brand {
-  padding: 28px 28px 24px;
-  border-bottom: 1px solid var(--border);
+/* ── Hamburger toggle ── */
+.btn-hamburger {
+  margin-left: auto;
+  flex-shrink: 0;
+  width: 30px; height: 30px;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  background: none;
+  color: var(--muted2);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  transition: background .15s, border-color .15s, color .15s;
 }
-.brand-logo {
+.btn-hamburger:hover { background: var(--card2); color: var(--text); border-color: var(--border2); }
+.btn-hamburger span {
+  display: block;
+  width: 13px;
+  height: 1.5px;
+  background: currentColor;
+  border-radius: 1px;
+  transform-origin: center;
+  transition: transform .22s ease, opacity .18s ease, width .18s ease;
+}
+.btn-hamburger.is-open span:nth-child(1) { transform: translateY(5.5px) rotate(45deg); }
+.btn-hamburger.is-open span:nth-child(2) { opacity: 0; width: 0; }
+.btn-hamburger.is-open span:nth-child(3) { transform: translateY(-5.5px) rotate(-45deg); }
+
+/* Floating reopen button (visible only when sidebar is collapsed) */
+.btn-sidebar-reopen {
+  position: fixed;
+  left: 14px;
+  top: 18px;
+  z-index: 200;
+  width: 36px; height: 36px;
+  border: 1px solid var(--border2);
+  border-radius: 9px;
+  background: var(--surface);
+  color: var(--muted2);
+  cursor: pointer;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  box-shadow: 0 4px 16px rgba(0,0,0,.3);
+  transition: background .15s, color .15s, border-color .15s, transform .15s;
+}
+.btn-sidebar-reopen:hover { background: var(--card); color: var(--accent); border-color: var(--accent); transform: scale(1.06); }
+.btn-sidebar-reopen span {
+  display: block;
+  width: 14px; height: 1.5px;
+  background: currentColor;
+  border-radius: 1px;
+}
+.shell.sidebar-collapsed .btn-sidebar-reopen { display: flex; }
+
+/* ── Brand ── */
+.brand {
+  padding: 20px 20px 20px;
+  border-bottom: 1px solid var(--border);
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin-bottom: 4px;
+  gap: 14px;
 }
-.brand-icon {
-  width: 32px; height: 32px;
-  background: linear-gradient(135deg, var(--accent), var(--accent2));
-  border-radius: 8px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 16px;
+.brand-logo-img {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+  border-radius: 14px;
+  flex-shrink: 0;
 }
+.brand-text { display: flex; flex-direction: column; gap: 1px; }
 .brand-name {
   font-family: 'Syne', sans-serif;
-  font-size: 18px;
+  font-size: 15px;
   font-weight: 800;
   letter-spacing: -.02em;
+  color: var(--text);
+  line-height: 1;
 }
-.brand-sub { font-size: 11px; color: var(--muted); }
+.brand-sub {
+  font-size: 10px;
+  color: var(--muted);
+  font-family: 'DM Mono', monospace;
+  letter-spacing: .04em;
+}
+
+/* ── Sidebar nav tabs (platform) ── */
+.sidebar-nav {
+  display: flex;
+  gap: 0;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border);
+}
+.nav-tab {
+  flex: 1;
+  padding: 8px 6px;
+  border: none;
+  background: none;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted2);
+  cursor: pointer;
+  border-radius: var(--radius-xs);
+  transition: all .18s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  letter-spacing: .02em;
+}
+.nav-tab svg { opacity: .5; transition: opacity .18s; }
+.nav-tab.active.linkedin {
+  background: rgba(10,132,208,.12);
+  color: var(--li-color);
+}
+.nav-tab.active.linkedin svg { opacity: 1; color: var(--li-color); }
+.nav-tab.active.instagram {
+  background: rgba(225,48,108,.10);
+  color: var(--ig-color);
+}
+.nav-tab.active.instagram svg { opacity: 1; color: var(--ig-color); }
+.nav-tab:not(.active):hover { background: var(--card); color: var(--muted2); }
+.nav-tab-dim {
+  font-size: 9px;
+  font-family: 'DM Mono', monospace;
+  opacity: .6;
+}
 
 /* ── Sidebar sections ── */
-.sidebar-section { padding: 20px 24px; border-bottom: 1px solid var(--border); }
-.sidebar-section:last-child { border-bottom: none; flex: 1; }
-
-.section-label {
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: .12em;
-  text-transform: uppercase;
-  color: var(--muted);
-  margin-bottom: 14px;
+.sidebar-section {
+  padding: 16px 16px;
+  border-bottom: 1px solid var(--border);
+}
+.sidebar-section:last-child { border-bottom: none; }
+.sidebar-bottom {
+  margin-top: auto;
+  padding: 16px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
+.section-label {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .10em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 12px;
+}
+.section-label svg { opacity: .5; flex-shrink: 0; }
+
 /* ── Form fields ── */
-.field { margin-bottom: 14px; }
+.field { margin-bottom: 10px; }
+.field:last-child { margin-bottom: 0; }
 .field label {
   display: block;
-  font-size: 12px;
+  font-size: 11px;
   color: var(--muted2);
-  margin-bottom: 6px;
-  font-weight: 500;
+  margin-bottom: 5px;
+  font-weight: 600;
+  letter-spacing: .03em;
 }
 .field input, .field select, .field textarea {
   width: 100%;
   background: var(--card);
   border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  padding: 9px 12px;
+  border-radius: var(--radius-xs);
+  padding: 8px 10px;
   color: var(--text);
   font-family: 'DM Sans', sans-serif;
-  font-size: 13px;
+  font-size: 12px;
   outline: none;
-  transition: border-color .2s;
+  transition: border-color .15s, background .15s;
 }
 .field input:focus, .field select:focus, .field textarea:focus {
   border-color: var(--accent);
+  background: var(--card2);
 }
 .field select option { background: var(--card); }
 
@@ -142,69 +297,107 @@ aside {
 .theme-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
+  gap: 6px;
 }
 .theme-pill {
   border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  padding: 8px 6px;
+  border-radius: var(--radius-xs);
+  padding: 7px 5px 6px;
   cursor: pointer;
   text-align: center;
-  font-size: 11px;
+  font-size: 10px;
   color: var(--muted2);
-  transition: all .2s;
+  transition: all .15s;
   background: var(--card);
   position: relative;
   overflow: hidden;
 }
-.theme-pill::before {
-  content: '';
-  display: block;
-  width: 100%;
-  height: 5px;
-  border-radius: 3px;
-  margin-bottom: 6px;
-}
-.theme-pill.active { border-color: var(--accent); color: var(--text); }
-.theme-pill:hover { border-color: var(--border2); }
+.theme-pill:hover { border-color: var(--border2); background: var(--card2); }
+.theme-pill.active { border-color: var(--accent); color: var(--text); background: rgba(108,92,231,.08); }
+
+/* ── Platform toggle — now handled by sidebar-nav ── */
+/* keep .plat-btn for JS compatibility but hide the old section */
+.platform-row { display: none; }
+.plat-btn { display: none; }
 
 /* ── Format toggle ── */
-.format-row { display: flex; gap: 8px; }
+.format-row {
+  display: flex;
+  gap: 0;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xs);
+  padding: 3px;
+}
 .fmt-btn {
   flex: 1;
-  padding: 8px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  background: var(--card);
+  padding: 7px 8px;
+  border: none;
+  border-radius: 5px;
+  background: none;
   color: var(--muted2);
-  font-size: 12px;
+  font-size: 11px;
   font-family: 'DM Mono', monospace;
   cursor: pointer;
   text-align: center;
-  transition: all .2s;
-  font-weight: 500;
+  transition: all .15s;
+  font-weight: 600;
+  letter-spacing: .04em;
 }
-.fmt-btn.active { border-color: var(--accent); color: var(--accent); background: rgba(124,106,247,.08); }
+.fmt-btn.active {
+  background: var(--surface2);
+  color: var(--text);
+  box-shadow: 0 1px 4px rgba(0,0,0,.3);
+}
 
 /* ── Generate button ── */
 .btn-generate {
   width: 100%;
-  padding: 13px;
-  background: linear-gradient(135deg, var(--accent), #9b5de5);
+  padding: 12px 16px;
+  background: linear-gradient(135deg, var(--accent) 0%, #8b5cf6 100%);
   border: none;
   border-radius: var(--radius-sm);
   color: #fff;
   font-family: 'Syne', sans-serif;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 700;
   cursor: pointer;
-  transition: opacity .2s, transform .15s;
-  letter-spacing: .03em;
-  margin-top: 4px;
+  transition: opacity .2s, transform .15s, box-shadow .2s;
+  letter-spacing: .04em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 4px 18px rgba(108,92,231,.35);
 }
-.btn-generate:hover { opacity: .9; transform: translateY(-1px); }
+.btn-generate:hover { opacity: .92; transform: translateY(-1px); box-shadow: 0 6px 24px rgba(108,92,231,.5); }
 .btn-generate:active { transform: translateY(0); }
-.btn-generate:disabled { opacity: .4; cursor: not-allowed; transform: none; }
+.btn-generate:disabled { opacity: .35; cursor: not-allowed; transform: none; box-shadow: none; }
+
+/* ── Import MD button ── */
+.btn-import {
+  width: 100%;
+  padding: 10px 14px;
+  background: transparent;
+  border: 1px solid var(--border2);
+  border-radius: var(--radius-sm);
+  color: var(--muted2);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  letter-spacing: .02em;
+}
+.btn-import:hover {
+  background: var(--card);
+  border-color: var(--accent);
+  color: var(--accent);
+}
 
 /* ── Main area ── */
 main {
@@ -221,6 +414,10 @@ main {
   align-items: center;
   justify-content: space-between;
   gap: 16px;
+  transition: padding-left .2s ease;
+}
+.shell.sidebar-collapsed .main-header {
+  padding-left: 64px; /* Libère de l'espace pour le bouton hamburger fixe */
 }
 .main-header h1 {
   font-family: 'Syne', sans-serif;
@@ -244,7 +441,8 @@ main {
 .tab.active { background: var(--surface); color: var(--text); }
 
 /* ── Slides editor ── */
-.slides-area { padding: 24px 36px; flex: 1; }
+.slides-area { padding: 24px 36px; flex: 1; transition: padding-left .2s ease; }
+.shell.sidebar-collapsed .slides-area { padding-left: 64px; }
 
 .slides-list { display: flex; flex-direction: column; gap: 14px; }
 
@@ -296,6 +494,35 @@ main {
 .badge-cover   { background: rgba(240,98,146,.12); color: var(--accent3); }
 .badge-content { background: rgba(56,200,168,.10); color: var(--accent2); }
 .badge-compare { background: rgba(124,106,247,.12); color: var(--accent); }
+.badge-quote   { background: rgba(251,191,36,.10);  color: #fbbf24; }
+.badge-stat    { background: rgba(52,211,238,.10);  color: #22d3ee; }
+.badge-cta     { background: rgba(248,113,113,.10); color: var(--danger); }
+
+/* ── Instagram preview: même ratio que LinkedIn (1:1) ── */
+.preview-item.ig-ratio {
+  border-color: rgba(225,48,108,.25);
+}
+.ig-platform-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #e1306c;
+  background: rgba(225,48,108,.1);
+  border: 1px solid rgba(225,48,108,.25);
+  padding: 4px 10px;
+  border-radius: 100px;
+  margin-bottom: 12px;
+}
+.theme-platform-tag {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  margin-top: 4px;
+  opacity: .7;
+}
 
 .slide-actions { display: flex; gap: 4px; flex-shrink: 0; }
 .icon-btn {
@@ -363,7 +590,9 @@ main {
   padding: 24px 36px;
   flex: 1;
   display: none;
+  transition: padding-left .2s ease;
 }
+.shell.sidebar-collapsed .preview-area { padding-left: 64px; }
 .preview-area.active { display: block; }
 .slides-area.hidden { display: none; }
 
@@ -392,6 +621,121 @@ main {
   transition: width .4s ease;
 }
 
+/* ── Re-theme bar ── */
+.retheme-bar {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px 20px;
+  margin-bottom: 16px;
+  display: none;
+}
+.retheme-bar.visible { display: block; }
+.retheme-bar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+  gap: 12px;
+}
+.retheme-bar-title {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.retheme-current {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--muted2);
+}
+.retheme-current-swatch {
+  width: 36px;
+  height: 6px;
+  border-radius: 3px;
+}
+.retheme-current-name {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  color: var(--text);
+  font-weight: 500;
+}
+.retheme-scroll {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  scrollbar-width: thin;
+}
+.retheme-scroll::-webkit-scrollbar { height: 3px; }
+.retheme-scroll::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+.retheme-pill {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 10px;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  cursor: pointer;
+  transition: all .18s;
+  min-width: 72px;
+  position: relative;
+}
+.retheme-pill:hover { border-color: var(--border2); transform: translateY(-2px); }
+.retheme-pill.active {
+  border-color: var(--accent);
+  background: rgba(124,106,247,.08);
+  box-shadow: 0 0 12px rgba(124,106,247,.2);
+}
+.retheme-pill.active-ig {
+  border-color: #e1306c;
+  background: rgba(225,48,108,.06);
+  box-shadow: 0 0 12px rgba(225,48,108,.15);
+}
+.retheme-pill-swatch {
+  width: 100%;
+  height: 5px;
+  border-radius: 3px;
+}
+.retheme-pill-name {
+  font-size: 10px;
+  color: var(--muted2);
+  text-align: center;
+  line-height: 1.3;
+  font-weight: 500;
+}
+.retheme-pill.active .retheme-pill-name { color: var(--accent); }
+.retheme-pill.active-ig .retheme-pill-name { color: #e1306c; }
+.retheme-pill-light-tag {
+  position: absolute;
+  top: -5px;
+  right: -4px;
+  font-size: 9px;
+  background: #fbbf24;
+  color: #000;
+  border-radius: 3px;
+  padding: 1px 4px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+.retheme-spinner {
+  display: none;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--accent);
+  font-weight: 500;
+}
+.retheme-spinner.visible { display: flex; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.retheme-spinner svg { animation: spin .7s linear infinite; }
+
 /* ── Preview grid ── */
 .preview-grid {
   display: grid;
@@ -418,15 +762,41 @@ main {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 8px;
 }
-.preview-item-name { font-size: 11px; color: var(--muted2); font-family: 'DM Mono', monospace; }
-.preview-item-dl {
+.preview-item-name {
   font-size: 11px;
+  color: var(--muted2);
+  font-family: 'DM Mono', monospace;
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.preview-item-dl {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 10px;
+  background: rgba(108,92,231,.12);
+  border: 1px solid rgba(108,92,231,.25);
+  border-radius: 6px;
   color: var(--accent);
   text-decoration: none;
-  font-weight: 500;
+  font-size: 11px;
+  font-weight: 600;
+  font-family: 'DM Sans', sans-serif;
+  transition: all .15s;
+  flex-shrink: 0;
+  letter-spacing: .02em;
 }
-.preview-item-dl:hover { text-decoration: underline; }
+.preview-item-dl:hover {
+  background: rgba(108,92,231,.22);
+  border-color: var(--accent);
+  color: var(--accent-hi);
+  text-decoration: none;
+  transform: translateY(-1px);
+}
 
 .preview-actions {
   display: flex;
@@ -448,6 +818,29 @@ main {
   display: inline-flex; align-items: center; gap: 6px;
 }
 .btn-dl-all:hover { background: rgba(56,200,168,.2); }
+
+.btn-edit-back {
+  padding: 9px 18px;
+  background: rgba(255,255,255,.05);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius-sm);
+  color: var(--muted2);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  transition: all .2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  text-decoration: none;
+}
+.btn-edit-back:hover {
+  background: rgba(255,255,255,.10);
+  color: var(--text);
+  border-color: var(--border2);
+}
+.btn-edit-back svg { opacity: .7; }
 
 .btn-presentation {
   padding: 10px 22px;
@@ -846,6 +1239,221 @@ main {
   border-color: var(--accent);
   box-shadow: 0 0 20px rgba(124,106,247,.5);
 }
+
+/* ══════════════════════════════════════════
+   SIDEBAR SCROLLBAR
+══════════════════════════════════════════ */
+.sidebar-scroll {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border2) transparent;
+}
+.sidebar-scroll::-webkit-scrollbar { width: 4px; }
+.sidebar-scroll::-webkit-scrollbar-track { background: transparent; }
+.sidebar-scroll::-webkit-scrollbar-thumb {
+  background: var(--border2);
+  border-radius: 2px;
+}
+.sidebar-scroll::-webkit-scrollbar-thumb:hover { background: var(--border3); }
+/* sidebar-bottom always at bottom of scroll area */
+.sidebar-scroll .sidebar-bottom { margin-top: auto; }
+
+/* ══════════════════════════════════════════
+   SIDEBAR BACKDROP (mobile drawer overlay)
+══════════════════════════════════════════ */
+.sidebar-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.55);
+  backdrop-filter: blur(3px);
+  z-index: 498;
+  cursor: pointer;
+}
+.sidebar-backdrop.visible { display: block; }
+
+/* ══════════════════════════════════════════
+   MOBILE TOPBAR
+══════════════════════════════════════════ */
+.mobile-topbar {
+  display: none;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 16px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  flex-shrink: 0;
+}
+.mobile-topbar-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: -.02em;
+  flex: 1;
+}
+.btn-mobile-hamburger {
+  width: 36px; height: 36px;
+  border: 1px solid var(--border2);
+  border-radius: 9px;
+  background: var(--card);
+  color: var(--muted2);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  flex-shrink: 0;
+  transition: background .15s, color .15s, border-color .15s;
+}
+.btn-mobile-hamburger:hover { background: var(--card2); color: var(--text); border-color: var(--border2); }
+.btn-mobile-hamburger span {
+  display: block;
+  width: 14px; height: 1.5px;
+  background: currentColor;
+  border-radius: 1px;
+}
+.mobile-topbar-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.btn-mobile-generate {
+  padding: 8px 14px;
+  background: linear-gradient(135deg, var(--accent), #8b5cf6);
+  border: none;
+  border-radius: 8px;
+  color: #fff;
+  font-family: 'Syne', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  letter-spacing: .03em;
+  transition: opacity .2s;
+}
+.btn-mobile-generate:hover { opacity: .88; }
+
+/* ══════════════════════════════════════════
+   RESPONSIVE — TABLET  (768 – 1023px)
+══════════════════════════════════════════ */
+@media (max-width: 1023px) {
+  :root { --sidebar-w: 270px; }
+
+  .main-header { padding: 20px 24px 16px; }
+  .main-header h1 { font-size: 18px; }
+  .slides-area { padding: 18px 24px; }
+  .preview-area { padding: 18px 24px; }
+  .preview-grid { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; }
+
+  .md-modal { width: 95vw; }
+}
+
+/* ══════════════════════════════════════════
+   RESPONSIVE — MOBILE  (< 768px)
+   Sidebar becomes a fixed overlay drawer
+══════════════════════════════════════════ */
+@media (max-width: 767px) {
+  :root { --sidebar-w: 290px; }
+
+  /* Grid becomes single column */
+  .shell {
+    grid-template-columns: 1fr !important;
+    transition: none !important;
+  }
+  .shell.sidebar-collapsed { grid-template-columns: 1fr !important; }
+
+  /* Aside → fixed drawer */
+  aside {
+    position: fixed !important;
+    left: 0 !important; top: 0 !important; bottom: 0 !important;
+    height: 100dvh !important;
+    z-index: 500 !important;
+    width: var(--sidebar-w) !important;
+    transform: translateX(-110%) !important;
+    opacity: 1 !important;
+    pointer-events: none !important;
+    box-shadow: 4px 0 32px rgba(0,0,0,.4);
+    transition: transform .28s cubic-bezier(.4,0,.2,1) !important;
+  }
+  .shell.sidebar-open aside {
+    transform: translateX(0) !important;
+    pointer-events: auto !important;
+  }
+  aside > * { min-width: 0 !important; }
+
+  /* Hide desktop-specific toggle buttons */
+  .btn-hamburger { display: none !important; }
+  .btn-sidebar-reopen { display: none !important; }
+
+  /* Show mobile topbar */
+  .mobile-topbar { display: flex; }
+
+  /* Content area adjustments */
+  .main-header { padding: 14px 16px 12px; }
+  .main-header h1 { font-size: 16px; }
+  .tab { padding: 6px 12px; font-size: 11px; }
+  .slides-area { padding: 12px 14px; }
+  .preview-area { padding: 12px 14px; }
+
+  /* Compact slide cards */
+  .slide-card-head { padding: 12px 14px; gap: 8px; }
+  .slide-num { width: 22px; height: 22px; font-size: 10px; }
+  .slide-title-preview { font-size: 12px; }
+  .slide-body { padding: 0 14px 14px; }
+
+  /* Preview grid */
+  .preview-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; }
+  .preview-header { flex-wrap: wrap; gap: 8px; }
+  .preview-actions { flex-wrap: wrap; gap: 8px; }
+
+  /* Forms: single column on mobile */
+  .field-row { grid-template-columns: 1fr; gap: 8px; }
+  .cols-grid { grid-template-columns: 1fr; }
+
+  /* Add slide bar wraps */
+  .add-slide-bar { flex-wrap: wrap; gap: 6px; }
+  .add-btn { flex: 1 1 calc(50% - 6px); min-width: 120px; font-size: 11px; }
+
+  /* Modal full screen */
+  .md-modal {
+    width: 100vw;
+    max-width: 100vw;
+    max-height: 100dvh;
+    border-radius: 0;
+    margin: 0;
+  }
+  .md-modal-header { padding: 18px 20px 14px; }
+  .md-modal-body { padding: 16px 20px; }
+  .md-modal-footer { padding: 14px 20px; }
+
+  /* retheme-bar */
+  .retheme-bar { padding: 12px 14px; }
+}
+
+/* ══════════════════════════════════════════
+   RESPONSIVE — SMALL MOBILE  (< 480px)
+══════════════════════════════════════════ */
+@media (max-width: 479px) {
+  :root { --sidebar-w: 100vw; }  /* full width drawer on tiny screens */
+
+  .main-header { gap: 8px; }
+  .tab-row { gap: 2px; }
+  .tab { padding: 5px 10px; font-size: 10px; }
+
+  .btn-dl-all, .btn-edit-back, .btn-presentation { font-size: 11px; padding: 7px 12px; }
+  .preview-grid { grid-template-columns: repeat(2, 1fr); }
+  .add-btn { flex: 1 1 100%; }
+}
 </style>
 </head>
 <body>
@@ -857,67 +1465,126 @@ main {
 
   <!-- ══ SIDEBAR ══ -->
   <aside>
+
+    <!-- Brand -->
     <div class="brand">
-      <div class="brand-logo">
-        <div class="brand-icon">◈</div>
+      <img class="brand-logo-img" src="/static/logo/logo.png" alt="Logo" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div style="display:none;width:80px;height:80px;border-radius:14px;background:linear-gradient(135deg,var(--accent),#9b5de5);align-items:center;justify-content:center;font-size:32px;flex-shrink:0">◈</div>
+      <div class="brand-text">
         <span class="brand-name">CarouselGen</span>
+        <span class="brand-sub">SLIDE GENERATOR</span>
       </div>
-      <div class="brand-sub">Générateur de slides Instagram</div>
-    </div>
-
-    <!-- Footer -->
-    <div class="sidebar-section">
-      <div class="section-label">Footer</div>
-      <div class="field">
-        <label>Série / Label</label>
-        <input type="text" id="footer-series" value="AI Series" placeholder="ex: Knowledge Drop">
-      </div>
-      <div class="field">
-        <label>Nom d'auteur</label>
-        <input type="text" id="footer-author" value="ton_compte" placeholder="@username">
-      </div>
-    </div>
-
-    <!-- Theme -->
-    <div class="sidebar-section">
-      <div class="section-label">Thème</div>
-      <div class="theme-grid" id="theme-grid">
-        <!-- Généré par JS -->
-      </div>
-    </div>
-
-    <!-- Format -->
-    <div class="sidebar-section">
-      <div class="section-label">Format de sortie</div>
-      <div class="format-row">
-        <button class="fmt-btn active" data-fmt="png" onclick="setFormat('png', this)">PNG</button>
-        <button class="fmt-btn" data-fmt="pdf" onclick="setFormat('pdf', this)">PDF</button>
-      </div>
-    </div>
-
-    <!-- Generate -->
-    <div class="sidebar-section">
-      <div class="progress-bar-wrap" id="progress-wrap">
-        <div class="progress-label" id="progress-label">Génération en cours…</div>
-        <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
-      </div>
-      <div class="status-msg" id="status-msg"></div>
-      <button class="btn-generate" id="btn-generate" onclick="startGenerate()">
-        ◈ &nbsp;Générer le carousel
+      <button class="btn-hamburger is-open" id="btn-hamburger" onclick="toggleSidebar()" title="Réduire le panneau" aria-label="Toggle sidebar">
+        <span></span><span></span><span></span>
       </button>
     </div>
 
-    <!-- Import Markdown -->
-    <div class="sidebar-section">
-      <div class="section-label">Import Markdown</div>
-      <button class="btn-generate" style="background: linear-gradient(135deg, var(--accent2), #2dd4bf);" onclick="openMarkdownModal()">
-        📄 &nbsp;Importer un fichier MD
+    <!-- Platform nav tabs -->
+    <div class="sidebar-nav">
+      <button class="nav-tab linkedin active" id="nav-linkedin" onclick="setPlatform('linkedin', this)">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg>
+        LinkedIn
+        <span class="nav-tab-dim">1080 × 1080</span>
+      </button>
+      <button class="nav-tab instagram" id="nav-instagram" onclick="setPlatform('instagram', this)">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+        Instagram
+        <span class="nav-tab-dim">1080 × 1080</span>
       </button>
     </div>
+
+    <!-- Hidden plat-btn for JS compat -->
+    <button class="plat-btn active linkedin" id="plat-linkedin" style="display:none" onclick="setPlatform('linkedin',this)"></button>
+    <button class="plat-btn instagram" id="plat-instagram" style="display:none" onclick="setPlatform('instagram',this)"></button>
+
+    <!-- Scrollable content zone -->
+    <div class="sidebar-scroll">
+
+      <!-- Footer info -->
+      <div class="sidebar-section">
+        <div class="section-label">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          Auteur
+        </div>
+        <div class="field">
+          <label>Série / Label</label>
+          <input type="text" id="footer-series" value="AI Series" placeholder="ex: Knowledge Drop">
+        </div>
+        <div class="field">
+          <label>Nom d'auteur</label>
+          <input type="text" id="footer-author" value="@Sohaib Baroud" placeholder="@username">
+        </div>
+      </div>
+
+      <!-- Theme -->
+      <div class="sidebar-section">
+        <div class="section-label">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 10 10c0 2.5-2 4-4 4s-4-1.5-4-4-2-4-4-4a4 4 0 0 0-4 4c0 5.5 4.5 10 10 10"/></svg>
+          Thème
+          <span id="theme-platform-hint" style="font-size:9px;color:var(--muted);font-weight:400;text-transform:none;letter-spacing:0;margin-left:2px"></span>
+        </div>
+        <div class="theme-grid" id="theme-grid">
+          <!-- Généré par JS -->
+        </div>
+      </div>
+
+      <!-- Format -->
+      <div class="sidebar-section">
+        <div class="section-label">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          Format de sortie
+        </div>
+        <div class="format-row">
+          <button class="fmt-btn active" data-fmt="png" onclick="setFormat('png', this)">PNG</button>
+          <button class="fmt-btn" data-fmt="pdf" onclick="setFormat('pdf', this)">PDF</button>
+        </div>
+      </div>
+
+      <!-- Bottom actions (margin-top: auto pushes to bottom of scroll area) -->
+      <div class="sidebar-bottom">
+        <div class="progress-bar-wrap" id="progress-wrap">
+          <div class="progress-label" id="progress-label">Génération en cours…</div>
+          <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+        </div>
+        <div class="status-msg" id="status-msg"></div>
+        <button class="btn-generate" id="btn-generate" onclick="startGenerate()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          Générer le carousel
+        </button>
+        <button class="btn-import" onclick="openMarkdownModal()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          Importer Markdown
+        </button>
+      </div>
+
+    </div><!-- end .sidebar-scroll -->
+
   </aside>
+
+  <!-- Backdrop (mobile drawer) -->
+  <div class="sidebar-backdrop" id="sidebar-backdrop" onclick="closeSidebar()"></div>
 
   <!-- ══ MAIN ══ -->
   <main>
+    <!-- Floating reopen button (desktop, shown only when sidebar is collapsed) -->
+    <button class="btn-sidebar-reopen" id="btn-sidebar-reopen" onclick="toggleSidebar()" title="Ouvrir le panneau" aria-label="Open sidebar">
+      <span></span><span></span><span></span>
+    </button>
+
+    <!-- Mobile topbar (visible only on small screens) -->
+    <div class="mobile-topbar" id="mobile-topbar">
+      <button class="btn-mobile-hamburger" onclick="toggleSidebar()" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+      <span class="mobile-topbar-title">CarouselGen</span>
+      <div class="mobile-topbar-actions">
+        <button class="btn-mobile-generate" onclick="startGenerate()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          Générer
+        </button>
+      </div>
+    </div>
+
     <div class="main-header">
       <h1>Éditeur de slides</h1>
       <div class="tab-row">
@@ -929,10 +1596,13 @@ main {
     <!-- Editor tab -->
     <div class="slides-area" id="editor-area">
       <div class="slides-list" id="slides-list"></div>
-      <div class="add-slide-bar">
+      <div class="add-slide-bar" id="add-slide-bar">
         <button class="add-btn" onclick="addSlide('cover')">＋ Couverture</button>
         <button class="add-btn" onclick="addSlide('content')">＋ Contenu</button>
         <button class="add-btn" onclick="addSlide('compare')">＋ Comparaison</button>
+        <button class="add-btn ig-only" onclick="addSlide('quote')" style="display:none">＋ Citation</button>
+        <button class="add-btn ig-only" onclick="addSlide('stat')"  style="display:none">＋ Statistiques</button>
+        <button class="add-btn ig-only" onclick="addSlide('cta')"   style="display:none">＋ Appel à l'action</button>
       </div>
     </div>
 
@@ -946,6 +1616,10 @@ main {
         <div class="preview-header">
           <span style="font-size:14px;color:var(--muted2);font-weight:600" id="preview-count"></span>
           <div style="display:flex;gap:10px;align-items:center;">
+            <button class="btn-edit-back" onclick="goBackToEditor()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M11 17l-5-5 5-5M18 17l-5-5 5-5"/></svg>
+              Modifier les slides
+            </button>
             <button class="btn-presentation" onclick="openPresentationMode()">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
               Mode Présentation
@@ -953,6 +1627,28 @@ main {
             <a class="btn-dl-all" id="btn-dl-all" href="#" onclick="downloadAll()">↓ Télécharger ZIP</a>
           </div>
         </div>
+
+        <!-- ── Re-theme bar ── -->
+        <div class="retheme-bar" id="retheme-bar">
+          <div class="retheme-bar-header">
+            <div style="display:flex;align-items:center;gap:10px;">
+              <span class="retheme-bar-title">Changer le thème</span>
+              <div class="retheme-spinner" id="retheme-spinner">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
+                Régénération…
+              </div>
+            </div>
+            <div class="retheme-current">
+              <span style="color:var(--muted2);font-size:11px;">Actuel :</span>
+              <div class="retheme-current-swatch" id="retheme-current-swatch"></div>
+              <span class="retheme-current-name" id="retheme-current-name">—</span>
+            </div>
+          </div>
+          <div class="retheme-scroll" id="retheme-scroll">
+            <!-- Pills générées par JS -->
+          </div>
+        </div>
+
         <div class="preview-grid" id="preview-grid"></div>
       </div>
     </div>
@@ -983,7 +1679,7 @@ main {
     <div class="presentation-progress-bar">
       <div class="presentation-progress-fill" id="presentation-progress-fill"></div>
     </div>
-    <button class="presentation-exit-btn" onclick="closePresentationMode()">✕ Fermer</button>
+    <button class="presentation-exit-btn" onclick="closePresentationMode()">X Fermer</button>
   </div>
   
   <!-- Bottom thumbnails -->
@@ -994,8 +1690,8 @@ main {
 <div class="md-modal-overlay" id="md-modal">
   <div class="md-modal">
     <div class="md-modal-header">
-      <h2>📄 Importer du Markdown</h2>
-      <button class="md-modal-close" onclick="closeMarkdownModal()">✕</button>
+      <h2>Import Markdown</h2>
+      <button class="md-modal-close" onclick="closeMarkdownModal()">X</button>
     </div>
     
     <div class="md-modal-tabs">
@@ -1037,7 +1733,7 @@ Contenu de la première slide...
       
       <!-- Preview -->
       <div class="md-preview-info" id="md-preview" style="display:none">
-        <div class="md-preview-info-title">✨ Aperçu des slides détectées:</div>
+        <div class="md-preview-info-title">Apercu des slides detectees:</div>
         <div class="md-preview-list" id="md-preview-list"></div>
       </div>
     </div>
@@ -1056,22 +1752,100 @@ Contenu de la première slide...
 let slides = [];
 let selectedTheme = 'kente_tech';
 let selectedFormat = 'png';
+let selectedPlatform = 'linkedin';
 let currentJobId = null;
 let themeColors = {};
-let parsedMarkdownData = null; // Stocke les données parsées du Markdown
+let parsedMarkdownData = null;
+let lastPayload = null;       // Dernier payload complet — pour re-thème sans retour à l'éditeur
+let isRethemeRunning = false; // Évite les clics multiples pendant la régénération
 
 // ── Init ──
 document.addEventListener('DOMContentLoaded', async () => {
+  initResponsive();
   await loadThemes();
   addSlide('cover');
   addSlide('content');
   addSlide('compare');
 });
 
+// ── Sidebar toggle ──
+function isMobileView() { return window.innerWidth < 768; }
+
+function toggleSidebar() {
+  if (isMobileView()) {
+    const shell    = document.querySelector('.shell');
+    const backdrop = document.getElementById('sidebar-backdrop');
+    const isOpen   = shell.classList.toggle('sidebar-open');
+    if (backdrop) backdrop.classList.toggle('visible', isOpen);
+  } else {
+    const shell = document.querySelector('.shell');
+    const btn   = document.getElementById('btn-hamburger');
+    const isCollapsed = shell.classList.toggle('sidebar-collapsed');
+    if (btn) btn.classList.toggle('is-open', !isCollapsed);
+  }
+}
+
+function closeSidebar() {
+  const shell    = document.querySelector('.shell');
+  const backdrop = document.getElementById('sidebar-backdrop');
+  shell.classList.remove('sidebar-open');
+  if (backdrop) backdrop.classList.remove('visible');
+}
+
+function initResponsive() {
+  // On mobile the sidebar starts hidden (drawer, closed)
+  // On desktop/tablet it starts open
+  const btn = document.getElementById('btn-hamburger');
+  if (!isMobileView() && btn) btn.classList.add('is-open');
+  // Handle resize: if going desktop→mobile, clean up desktop state
+  window.addEventListener('resize', () => {
+    const shell = document.querySelector('.shell');
+    if (!isMobileView()) {
+      // On desktop: remove mobile-only classes
+      shell.classList.remove('sidebar-open');
+      const backdrop = document.getElementById('sidebar-backdrop');
+      if (backdrop) backdrop.classList.remove('visible');
+    }
+  }, { passive: true });
+}
+
+// ── Platform ──
+function setPlatform(platform, el) {
+  selectedPlatform = platform;
+
+  // Sync nav-tabs (new visual system)
+  document.querySelectorAll('.nav-tab').forEach(b => b.classList.remove('active'));
+  const navTab = document.getElementById('nav-' + platform);
+  if (navTab) navTab.classList.add('active');
+
+  // Sync hidden plat-btns (legacy JS compat)
+  document.querySelectorAll('.plat-btn').forEach(b => b.classList.remove('active'));
+  const platBtn = document.getElementById('plat-' + platform);
+  if (platBtn) platBtn.classList.add('active');
+
+  // Show/hide IG-only slide type buttons
+  document.querySelectorAll('.ig-only').forEach(b => {
+    b.style.display = platform === 'instagram' ? '' : 'none';
+  });
+
+  // Update theme hint
+  const hint = document.getElementById('theme-platform-hint');
+  if (hint) hint.textContent = platform === 'instagram' ? '— IG' : '— LI';
+
+  // Auto-select a matching default theme for each platform
+  const igDefault = 'ig_aurora_dark';
+  const liDefault = 'kente_tech';
+  const defaultTheme = platform === 'instagram' ? igDefault : liDefault;
+  if (themeColors[defaultTheme]) selectedTheme = defaultTheme;
+
+  // Re-render theme grid with platform filter
+  renderThemeGrid();
+}
+
 // ── Themes ──
 async function loadThemes() {
   try {
-    const res = await fetch('api/themes'); // Utiliser un chemin relatif sans le premier slash pour HF
+    const res = await fetch('api/themes');
     if (!res.ok) throw new Error(`Status: ${res.status}`);
     const text = await res.text();
     try {
@@ -1090,23 +1864,59 @@ async function loadThemes() {
 function renderThemeGrid() {
   const grid = document.getElementById('theme-grid');
   const themeLabels = {
-    kente_tech: 'Kente Tech',
-    savanna_gold: 'Savanna Gold',
-    jungle_emerald: 'Jungle Pulse',
-    sahara_dune: 'Sahara Dune',
-    afro_futurism: 'Afro Future',
-    terracotta_sunset: 'Terracotta',
-    random: 'Esprit Libre ✦',
+    // LinkedIn themes
+    kente_tech:        'Kente Tech',
+    dark_purple:       'Dark Purple',
+    dark_blue:         'Dark Blue',
+    dark_green:        'Dark Green',
+    dark_red:          'Dark Red',
+    dark_orange:       'Dark Orange',
+    neon_synthwave:    'Synthwave',
+    ocean_breeze:      'Ocean',
+    royal_gold:        'Royal Gold',
+    forest_night:      'Forest',
+    crimson_tide:      'Crimson',
+    cosmic_void:       'Cosmic',
+    tropical_breeze:   'Tropical',
+    volcanic_fire:     'Volcanic',
+    aurora_borealis:   'Aurora',
+    savanna_gold:      'Savanna',
+    // Instagram themes
+    ig_aurora_dark:    'Aurora Dark',
+    ig_sunset_vibes:   'Sunset',
+    ig_minimal_white:  'Minimal',
+    ig_cream_luxury:   'Luxury',
+    ig_neon_pulse:     'Neon Pulse',
+    ig_ocean_deep:     'Ocean Deep',
+    ig_rose_pop:       'Rose Pop',
+    ig_sage_earth:     'Sage Earth',
+    ig_midnight_gold:  'Midnight Gold',
+    ig_coral_burst:    'Coral Burst',
+    random:            'Aléatoire',
   };
-  grid.innerHTML = Object.entries(themeColors).map(([name, t]) => `
+
+  // Filter themes by platform
+  const filtered = Object.entries(themeColors).filter(([name, t]) => {
+    if (name === 'random') return true;
+    if (selectedPlatform === 'instagram') return t.platform === 'instagram';
+    return t.platform === 'linkedin' || t.platform === 'all';
+  });
+
+  grid.innerHTML = filtered.map(([name, t]) => {
+    const isLight = t.is_light;
+    const lightStyle = isLight
+      ? `border:1px solid #ddd;background:#f5f5f5;color:#333;`
+      : '';
+    return `
     <div class="theme-pill ${name === selectedTheme ? 'active' : ''}"
          data-theme="${name}"
          onclick="selectTheme('${name}', this)"
-         style="--c1:${t.accent1};--c2:${t.accent2}">
-      <div style="background:linear-gradient(90deg,${t.accent1},${t.accent2});height:5px;border-radius:3px;margin-bottom:7px"></div>
-      ${themeLabels[name] || name}
+         style="${lightStyle}">
+      <div style="background:linear-gradient(90deg,${t.accent1},${t.accent2});height:5px;border-radius:3px;margin-bottom:6px"></div>
+      <span style="font-size:10px">${themeLabels[name] || name}</span>
+      ${isLight ? '<span class="theme-platform-tag" style="color:#888">☀ Light</span>' : ''}
     </div>
-  `).join('');
+  `}).join('');
 }
 
 function selectTheme(name, el) {
@@ -1125,12 +1935,18 @@ function setFormat(fmt, el) {
 function addSlide(type) {
   const id = Date.now();
   const defaults = {
-    cover:   { type:'cover',   badge:'Knowledge Drop', title:'Mon Titre', code:'model.fit()_', cta:'Swipe pour apprendre' },
-    content: { type:'content', badge:'Module 01',       title:'Nouveau Sujet', body:'Ton contenu ici...' },
-    compare: { type:'compare', badge:'Module 02',       title:'Comparaison', columns:[
+    cover:   { type:'cover',   badge:'Module 01', title:'Mon Titre', code:'model.fit()_', cta:'Swipe pour apprendre' },
+    content: { type:'content', badge:'',       title:'Nouveau Sujet', body:'Ton contenu ici...' },
+    compare: { type:'compare', badge:'',       title:'Comparaison', columns:[
       { title:'Option A', body:'Description A', tag:'Tag A' },
       { title:'Option B', body:'Description B', tag:'Tag B' },
     ]},
+    quote:   { type:'quote',   title:'La simplicité est la sophistication suprême.', author:'Léonard de Vinci' },
+    stat:    { type:'stat',    badge:'Chiffres clés', title:'En quelques chiffres', stats:[
+      { value:'87%', label:'des entreprises utilisent l\'IA' },
+      { value:'3x',  label:'plus de productivité' },
+    ]},
+    cta:     { type:'cta',     badge:'', title:'Prêt à passer à l\'action ?', body:'Rejoins des milliers de professionnels qui transforment leur carrière.', cta:'Suivez-moi' },
   };
   slides.push({ id, ...defaults[type] });
   renderSlides();
@@ -1168,6 +1984,21 @@ function updateSlide(id, key, value) {
   if (preview && (key === 'title')) preview.textContent = value || '—';
 }
 
+function updateStat(slideId, statIdx, key, value) {
+  const s = slides.find(s => s.id === slideId);
+  if (!s || !s.stats) return;
+  if (!s.stats[statIdx]) s.stats[statIdx] = {};
+  s.stats[statIdx][key] = value;
+}
+
+function addStat(slideId) {
+  const s = slides.find(s => s.id === slideId);
+  if (!s) return;
+  if (!s.stats) s.stats = [];
+  s.stats.push({ value: '', label: '' });
+  renderSlides();
+}
+
 function renderSlides() {
   const list = document.getElementById('slides-list');
   if (slides.length === 0) {
@@ -1178,36 +2009,45 @@ function renderSlides() {
 }
 
 function renderSlideCard(s, i) {
-  const badgeClass = { cover:'badge-cover', content:'badge-content', compare:'badge-compare' }[s.type];
-  const badgeLabel = { cover:'Couverture', content:'Contenu', compare:'Comparaison' }[s.type];
+  const badgeClass = {
+    cover:'badge-cover', content:'badge-content', compare:'badge-compare',
+    quote:'badge-quote', stat:'badge-stat', cta:'badge-cta',
+  }[s.type] || 'badge-content';
+  const badgeLabel = {
+    cover:'Couverture', content:'Contenu', compare:'Comparaison',
+    quote:'Citation', stat:'Statistiques', cta:'Call To Action',
+  }[s.type] || s.type;
 
   let fields = '';
 
   if (s.type === 'cover') {
     fields = `
       <div class="field-row">
-        <div class="field"><label>Badge</label><input type="text" value="${esc(s.badge)}" oninput="updateSlide(${s.id},'badge',this.value)"></div>
-        <div class="field"><label>CTA</label><input type="text" value="${esc(s.cta)}" oninput="updateSlide(${s.id},'cta',this.value)"></div>
+        <div class="field"><label>Titre principal</label><input type="text" value="${esc(s.title)}" oninput="updateSlide(${s.id},'title',this.value)"></div>
+        <div class="field"><label>Badge</label><input type="text" value="${esc(s.badge||'')}" oninput="updateSlide(${s.id},'badge',this.value)"></div>
       </div>
       <div class="field-row">
-        <div class="field"><label>Titre principal</label><input type="text" value="${esc(s.title)}" oninput="updateSlide(${s.id},'title',this.value)"></div>
-        <div class="field"><label>Code terminal</label><input type="text" value="${esc(s.code)}" oninput="updateSlide(${s.id},'code',this.value)"></div>
+        <div class="field"><label>CTA</label><input type="text" value="${esc(s.cta||'')}" oninput="updateSlide(${s.id},'cta',this.value)"></div>
+        <div class="field"><label>Sous-titre / Body</label><input type="text" value="${esc(s.body||'')}" oninput="updateSlide(${s.id},'body',this.value)"></div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>Code terminal (LinkedIn)</label><input type="text" value="${esc(s.code||'')}" oninput="updateSlide(${s.id},'code',this.value)"></div>
       </div>`;
   } else if (s.type === 'content') {
     fields = `
       <div class="field-row">
-        <div class="field"><label>Badge</label><input type="text" value="${esc(s.badge)}" oninput="updateSlide(${s.id},'badge',this.value)"></div>
         <div class="field"><label>Titre</label><input type="text" value="${esc(s.title)}" oninput="updateSlide(${s.id},'title',this.value)"></div>
+        <div class="field"><label>Badge</label><input type="text" value="${esc(s.badge||'')}" oninput="updateSlide(${s.id},'badge',this.value)"></div>
       </div>
       <div class="field"><label>Contenu (HTML autorisé)</label>
         <textarea oninput="updateSlide(${s.id},'body',this.value)">${esc(s.body||'')}</textarea>
       </div>`;
   } else if (s.type === 'compare') {
-    const c = s.columns || [{},{},];
+    const c = s.columns || [{},{}];
     fields = `
       <div class="field-row">
-        <div class="field"><label>Badge</label><input type="text" value="${esc(s.badge)}" oninput="updateSlide(${s.id},'badge',this.value)"></div>
         <div class="field"><label>Titre</label><input type="text" value="${esc(s.title)}" oninput="updateSlide(${s.id},'title',this.value)"></div>
+        <div class="field"><label>Badge</label><input type="text" value="${esc(s.badge||'')}" oninput="updateSlide(${s.id},'badge',this.value)"></div>
       </div>
       <div class="cols-grid">
         ${[0,1].map(ci => `
@@ -1217,6 +2057,44 @@ function renderSlideCard(s, i) {
             <div class="field"><label>Corps</label><textarea oninput="updateSlide(${s.id},'col.${ci}.body',this.value)">${esc(c[ci]?.body||'')}</textarea></div>
             <div class="field"><label>Tag</label><input type="text" value="${esc(c[ci]?.tag||'')}" oninput="updateSlide(${s.id},'col.${ci}.tag',this.value)"></div>
           </div>`).join('')}
+      </div>`;
+  } else if (s.type === 'quote') {
+    fields = `
+      <div class="field">
+        <label>Citation (texte principal)</label>
+        <textarea oninput="updateSlide(${s.id},'title',this.value)">${esc(s.title||'')}</textarea>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>Auteur</label><input type="text" value="${esc(s.author||'')}" oninput="updateSlide(${s.id},'author',this.value)"></div>
+        <div class="field"><label>Badge (optionnel)</label><input type="text" value="${esc(s.badge||'')}" oninput="updateSlide(${s.id},'badge',this.value)"></div>
+      </div>`;
+  } else if (s.type === 'stat') {
+    const stats = s.stats || [{value:'',label:''},{value:'',label:''}];
+    fields = `
+      <div class="field-row">
+        <div class="field"><label>Titre</label><input type="text" value="${esc(s.title||'')}" oninput="updateSlide(${s.id},'title',this.value)"></div>
+        <div class="field"><label>Badge</label><input type="text" value="${esc(s.badge||'')}" oninput="updateSlide(${s.id},'badge',this.value)"></div>
+      </div>
+      <div class="cols-grid">
+        ${stats.map((st, si) => `
+          <div class="col-block">
+            <div class="col-block-label">Stat ${si+1}</div>
+            <div class="field"><label>Valeur</label><input type="text" placeholder="87%" value="${esc(st.value||'')}" oninput="updateStat(${s.id},${si},'value',this.value)"></div>
+            <div class="field"><label>Libellé</label><input type="text" placeholder="Adoption IA" value="${esc(st.label||'')}" oninput="updateStat(${s.id},${si},'label',this.value)"></div>
+          </div>`).join('')}
+      </div>
+      <button class="add-btn" style="margin-top:8px" onclick="addStat(${s.id})">＋ Ajouter une stat</button>`;
+  } else if (s.type === 'cta') {
+    fields = `
+      <div class="field-row">
+        <div class="field"><label>Titre accrocheur</label><input type="text" value="${esc(s.title||'')}" oninput="updateSlide(${s.id},'title',this.value)"></div>
+        <div class="field"><label>Badge (optionnel)</label><input type="text" value="${esc(s.badge||'')}" oninput="updateSlide(${s.id},'badge',this.value)"></div>
+      </div>
+      <div class="field"><label>Sous-texte</label>
+        <textarea oninput="updateSlide(${s.id},'body',this.value)">${esc(s.body||'')}</textarea>
+      </div>
+      <div class="field"><label>Bouton CTA</label>
+        <input type="text" value="${esc(s.cta||'')}" oninput="updateSlide(${s.id},'cta',this.value)" placeholder="ex: Suivez-moi · Téléchargez">
       </div>`;
   }
 
@@ -1229,7 +2107,7 @@ function renderSlideCard(s, i) {
         <div class="slide-actions" onclick="event.stopPropagation()">
           <button class="icon-btn" onclick="moveSlide(${s.id},-1)" title="Monter">↑</button>
           <button class="icon-btn" onclick="moveSlide(${s.id},1)"  title="Descendre">↓</button>
-          <button class="icon-btn danger" onclick="removeSlide(${s.id})" title="Supprimer">✕</button>
+          <button class="icon-btn danger" onclick="removeSlide(${s.id})" title="Supprimer">X</button>
         </div>
       </div>
       <div class="slide-body" id="sbody-${s.id}">
@@ -1252,8 +2130,9 @@ async function startGenerate() {
   showProgress(true, 'Préparation…');
 
   const payload = {
-    theme:  selectedTheme,
-    format: selectedFormat,
+    theme:    selectedTheme,
+    format:   selectedFormat,
+    platform: selectedPlatform,
     footer: {
       series: document.getElementById('footer-series').value,
       author: document.getElementById('footer-author').value,
@@ -1264,12 +2143,15 @@ async function startGenerate() {
     }),
   };
 
+  // Mémoriser le payload pour le re-thème
+  lastPayload = payload;
+
   try {
     const res  = await fetch('api/generate', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
     const data = await res.json();
     if (data.error) { showStatus(data.error, 'error'); showProgress(false); btn.disabled = false; return; }
     currentJobId = data.job_id;
-    pollStatus(currentJobId);
+    pollStatus(currentJobId, false);
   } catch(e) {
     showStatus('Erreur réseau: ' + e.message, 'error');
     showProgress(false);
@@ -1277,26 +2159,141 @@ async function startGenerate() {
   }
 }
 
-async function pollStatus(jobId) {
-  let pct = 10;
+// ── Re-theme : régénère avec un autre thème, mêmes slides ──
+async function reTheme(themeName) {
+  if (!lastPayload || isRethemeRunning) return;
+  if (themeName === selectedTheme) return;
+
+  isRethemeRunning = true;
+  selectedTheme = themeName;
+
+  // Sync le sélecteur de la sidebar
+  document.querySelectorAll('.theme-pill').forEach(p => {
+    p.classList.toggle('active', p.dataset.theme === themeName);
+  });
+
+  // Afficher le spinner dans la barre
+  const spinner = document.getElementById('retheme-spinner');
+  spinner.classList.add('visible');
+
+  // Griser les pills pendant la régénération
+  document.querySelectorAll('.retheme-pill').forEach(p => {
+    p.style.opacity = p.dataset.theme === themeName ? '1' : '0.4';
+    p.style.pointerEvents = 'none';
+  });
+
+  const payload = { ...lastPayload, theme: themeName };
+  lastPayload = payload;
+
+  try {
+    const res  = await fetch('api/generate', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
+    const data = await res.json();
+    if (data.error) { showStatus(data.error, 'error'); return; }
+    pollStatus(data.job_id, true);
+  } catch(e) {
+    showStatus('Erreur réseau: ' + e.message, 'error');
+    isRethemeRunning = false;
+    spinner.classList.remove('visible');
+    document.querySelectorAll('.retheme-pill').forEach(p => {
+      p.style.opacity = '';
+      p.style.pointerEvents = '';
+    });
+  }
+}
+
+// ── Re-theme bar ──
+function renderRethemeBar() {
+  const bar = document.getElementById('retheme-bar');
+  const scroll = document.getElementById('retheme-scroll');
+  if (!bar || !scroll) return;
+
+  const themeLabels = {
+    kente_tech:'Kente Tech', dark_purple:'Dark Purple', dark_blue:'Dark Blue',
+    dark_green:'Dark Green', dark_red:'Dark Red', dark_orange:'Dark Orange',
+    neon_synthwave:'Synthwave', ocean_breeze:'Ocean', royal_gold:'Royal Gold',
+    forest_night:'Forest', crimson_tide:'Crimson', cosmic_void:'Cosmic',
+    tropical_breeze:'Tropical', volcanic_fire:'Volcanic', aurora_borealis:'Aurora',
+    savanna_gold:'Savanna', ig_aurora_dark:'Aurora Dark', ig_sunset_vibes:'Sunset',
+    ig_minimal_white:'Minimal', ig_cream_luxury:'Luxury', ig_neon_pulse:'Neon Pulse',
+    ig_ocean_deep:'Ocean Deep', ig_rose_pop:'Rose Pop', ig_sage_earth:'Sage Earth',
+    ig_midnight_gold:'Midnight', ig_coral_burst:'Coral', random:'Aléatoire',
+  };
+
+  // Filtrer par plateforme actuelle
+  const filtered = Object.entries(themeColors).filter(([name, t]) => {
+    if (name === 'random') return true;
+    return selectedPlatform === 'instagram' ? t.platform === 'instagram' : t.platform === 'linkedin';
+  });
+
+  const isIG = selectedPlatform === 'instagram';
+
+  scroll.innerHTML = filtered.map(([name, t]) => {
+    const isActive = name === selectedTheme;
+    const activeClass = isActive ? (isIG ? 'active-ig' : 'active') : '';
+    const lightTag = t.is_light ? '<span class="retheme-pill-light-tag">☀</span>' : '';
+    return `
+      <div class="retheme-pill ${activeClass}" data-theme="${name}" onclick="reTheme('${name}')" title="${themeLabels[name] || name}">
+        ${lightTag}
+        <div class="retheme-pill-swatch" style="background:linear-gradient(90deg,${t.accent1},${t.accent2})"></div>
+        <div class="retheme-pill-name">${themeLabels[name] || name}</div>
+      </div>`;
+  }).join('');
+
+  // Mettre à jour le "thème actuel"
+  const current = themeColors[selectedTheme];
+  if (current) {
+    document.getElementById('retheme-current-swatch').style.background =
+      `linear-gradient(90deg,${current.accent1},${current.accent2})`;
+    document.getElementById('retheme-current-name').textContent =
+      themeLabels[selectedTheme] || selectedTheme;
+  }
+
+  bar.classList.add('visible');
+}
+
+async function pollStatus(jobId, isRetheme = false) {
+  let pct = isRetheme ? 30 : 10;
   const interval = setInterval(async () => {
     const res  = await fetch('api/status/' + jobId);
     const data = await res.json();
     pct = Math.min(pct + 15, 90);
-    setProgress(pct, 'Génération en cours…');
+    if (!isRetheme) setProgress(pct, 'Génération en cours…');
 
     if (data.status === 'done') {
       clearInterval(interval);
-      setProgress(100, 'Terminé !');
-      setTimeout(() => showProgress(false), 800);
-      showStatus(`✓ ${data.files.length} slide(s) générée(s) avec succès.`, 'success');
-      renderPreview(data.files, jobId);
-      document.getElementById('btn-generate').disabled = false;
-      switchTab('preview', document.querySelectorAll('.tab')[1]);
+
+      if (isRetheme) {
+        // Re-thème terminé — juste mettre à jour la preview, pas la progress bar principale
+        const spinner = document.getElementById('retheme-spinner');
+        spinner.classList.remove('visible');
+        isRethemeRunning = false;
+        document.querySelectorAll('.retheme-pill').forEach(p => {
+          p.style.opacity = '';
+          p.style.pointerEvents = '';
+        });
+        renderPreview(data.files, jobId);
+        renderRethemeBar();       // Resync l'état actif
+        showStatus(`Thème appliqué : ${selectedTheme}`, 'success');
+      } else {
+        setProgress(100, 'Terminé !');
+        setTimeout(() => showProgress(false), 800);
+        showStatus(`${data.files.length} slide(s) generees avec succes.`, 'success');
+        renderPreview(data.files, jobId);
+        renderRethemeBar();       // Afficher la barre après première génération
+        document.getElementById('btn-generate').disabled = false;
+        switchTab('preview', document.querySelectorAll('.tab')[1]);
+      }
     }
     if (data.status === 'error') {
       clearInterval(interval);
-      showProgress(false);
+      const spinner = document.getElementById('retheme-spinner');
+      spinner.classList.remove('visible');
+      isRethemeRunning = false;
+      document.querySelectorAll('.retheme-pill').forEach(p => {
+        p.style.opacity = '';
+        p.style.pointerEvents = '';
+      });
+      if (!isRetheme) showProgress(false);
       showStatus('Erreur : ' + data.error, 'error');
       document.getElementById('btn-generate').disabled = false;
     }
@@ -1324,17 +2321,48 @@ function renderPreview(files, jobId) {
       </div>
     `;
   } else {
+    const isIG = selectedPlatform === 'instagram';
     document.getElementById('preview-count').textContent = `${pngFiles.length} slide(s) générée(s)`;
     document.querySelector('.btn-presentation').style.display = 'inline-flex';
-    grid.innerHTML = pngFiles.map((f, i) => `
-      <div class="preview-item" style="cursor: pointer;" onclick="openPresentationMode(${i})">
-        <img src="/${f}" alt="slide ${i+1}" loading="lazy">
-        <div class="preview-item-footer">
-          <span class="preview-item-name">slide_${String(i+1).padStart(2,'0')}</span>
-          <a class="preview-item-dl" href="/${f}" download onclick="event.stopPropagation()">↓</a>
-        </div>
-      </div>
-    `).join('');
+
+    // Platform badge in header
+    const existingBadge = document.querySelector('.ig-platform-badge');
+    if (existingBadge) existingBadge.remove();
+    if (isIG) {
+      const badge = document.createElement('div');
+      badge.className = 'ig-platform-badge';
+      badge.innerHTML = '📸 Instagram 1080×1080';
+      document.querySelector('.preview-header').prepend(badge);
+    }
+
+    // Construire un préfixe de nom de fichier depuis le series + jobId
+    const seriesRaw = document.getElementById('footer-series').value || 'carousel';
+    const seriesSlug = seriesRaw.replace(/[^a-zA-Z0-9À-ÿ]+/g, '_').replace(/^_|_$/g, '').slice(0, 30);
+
+    grid.innerHTML = pngFiles.map((f, i) => {
+      const num      = String(i + 1).padStart(2, '0');
+      const dlName   = `${seriesSlug}_slide_${num}.png`;
+      const label    = `Slide ${num}`;
+      return `
+        <div class="preview-item ${isIG ? 'ig-ratio' : ''}" style="cursor:pointer;" onclick="openPresentationMode(${i})">
+          <img src="/${f}" alt="slide ${i+1}" loading="lazy" style="${isIG ? 'aspect-ratio:4/5;' : 'aspect-ratio:1;'}">
+          <div class="preview-item-footer">
+            <span class="preview-item-name">${label}</span>
+            <a class="preview-item-dl"
+               href="/${f}"
+               download="${dlName}"
+               onclick="event.stopPropagation()"
+               title="Télécharger ${dlName}">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                <polyline points="7 10 12 15 17 10"/>
+                <line x1="12" y1="15" x2="12" y2="3"/>
+              </svg>
+              PNG
+            </a>
+          </div>
+        </div>`;
+    }).join('');
   }
 
   document.getElementById('btn-dl-all').dataset.job = jobId;
@@ -1351,6 +2379,15 @@ function switchTab(tab, el) {
   el.classList.add('active');
   document.getElementById('editor-area').classList.toggle('hidden', tab !== 'editor');
   document.getElementById('preview-area').classList.toggle('active', tab === 'preview');
+}
+
+function goBackToEditor() {
+  // Retour à l'éditeur depuis l'aperçu
+  const editorTab = document.querySelector('.tab');   // premier tab = Éditeur
+  switchTab('editor', editorTab);
+  // Scroll en haut de la liste de slides
+  const slidesList = document.getElementById('slides-list');
+  if (slidesList) slidesList.scrollTop = 0;
 }
 
 function showProgress(visible, label='') {
@@ -1508,13 +2545,13 @@ function showStructureAnalysis(analysis) {
   
   infoDiv.innerHTML = `
     <div style="color: #38c8a8; font-weight: 600; margin-bottom: 8px;">
-      ✨ Analyse intelligente du Markdown
+      Analyse intelligente du Markdown
     </div>
     <div style="color: #8890a4;">
-      <div>📊 Format détecté: <strong style="color: #e8eaf0;">${formatLabels[analysis.detected_format]}</strong></div>
-      <div>🎯 Confiance: <strong style="color: ${analysis.confidence === 'high' ? '#4ade80' : '#fbbf24'};">${analysis.confidence === 'high' ? '✓ Haute' : '⚡ Moyenne'}</strong></div>
-      ${analysis.reorganization_applied ? '<div>🔄 <strong style="color: #7c6af7;">Réorganisation automatique appliquée</strong></div>' : ''}
-      <div>📈 ${analysis.heading_counts.h1 || 0} titre(s), ${analysis.heading_counts.h2 || 0} sous-titre(s), ${analysis.total_paragraphs || 0} paragraphe(s)</div>
+      <div>Format detecte: <strong style="color: #e8eaf0;">${formatLabels[analysis.detected_format]}</strong></div>
+      <div>Confiance: <strong style="color: ${analysis.confidence === 'high' ? '#4ade80' : '#fbbf24'};">${analysis.confidence === 'high' ? 'Haute' : 'Moyenne'}</strong></div>
+      ${analysis.reorganization_applied ? '<div><strong style="color: #7c6af7;">Reorganisation automatique appliquee</strong></div>' : ''}
+      <div>${analysis.heading_counts.h1 || 0} titre(s), ${analysis.heading_counts.h2 || 0} sous-titre(s), ${analysis.total_paragraphs || 0} paragraphe(s)</div>
     </div>
   `;
   
@@ -1535,19 +2572,16 @@ function renderMarkdownPreview(data) {
   
   list.innerHTML = data.slides.map((s, i) => {
     const typeLabels = {
-      cover: '🎯 Couverture',
-      content: '📝 Contenu',
-      compare: '⚖️ Comparaison'
+      cover: 'Couverture', content: 'Contenu', compare: 'Comparaison',
+      quote: 'Citation', stat: 'Statistiques', cta: 'CTA',
     };
     const typeColors = {
-      cover: 'rgba(240,98,146,.15)',
-      content: 'rgba(56,200,168,.15)',
-      compare: 'rgba(124,106,247,.15)'
+      cover: 'rgba(240,98,146,.15)', content: 'rgba(56,200,168,.15)', compare: 'rgba(124,106,247,.15)',
+      quote: 'rgba(251,191,36,.15)', stat: 'rgba(52,211,238,.15)', cta: 'rgba(248,113,113,.15)',
     };
     const typeTextColors = {
-      cover: '#f06292',
-      content: '#38c8a8',
-      compare: '#7c6af7'
+      cover: '#f06292', content: '#38c8a8', compare: '#7c6af7',
+      quote: '#fbbf24', stat: '#22d3ee', cta: '#f87171',
     };
     
     return `
@@ -1595,7 +2629,7 @@ async function applyMarkdownImport() {
   // Message de succès intelligent
   const structureInfo = parsedMarkdownData.structure_analysis || {};
   const reorgMsg = structureInfo.reorganization_applied ? ' (réorganisé automatiquement)' : '';
-  showStatus(`✓ ${slides.length} slide(s) importée(s) avec succès${reorgMsg}!`, 'success');
+  showStatus(`${slides.length} slide(s) importees avec succes${reorgMsg}!`, 'success');
 }
 
 // ════════════════════════════════════════
