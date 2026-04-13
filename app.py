@@ -51,7 +51,10 @@ def _scan_job_folder(folder: Path) -> dict | None:
         return None
     job_id = folder.name
     files = list(folder.iterdir())
-    pngs  = sorted([f for f in files if f.suffix == '.png'], key=lambda f: f.name)
+    # cover_thumb.png is a library thumbnail saved before PDF cleanup — exclude from slide count
+    all_pngs  = sorted([f for f in files if f.suffix == '.png'], key=lambda f: f.name)
+    slide_pngs = [f for f in all_pngs if f.name != 'cover_thumb.png']
+    thumb_png  = next((f for f in all_pngs if f.name == 'cover_thumb.png'), None)
     pdfs  = [f for f in files if f.suffix == '.pdf']
     zips  = [f for f in files if f.suffix == '.zip']
 
@@ -68,16 +71,20 @@ def _scan_job_folder(folder: Path) -> dict | None:
         created_iso  = datetime.fromtimestamp(stat.st_mtime).isoformat()
         display_name = job_id
 
+    # Thumbnail: prefer first slide PNG, fall back to cover_thumb.png (PDF-only carousels)
+    has_any_png = len(slide_pngs) > 0 or thumb_png is not None
+    thumbnail   = f'/api/library/{job_id}/thumbnail' if has_any_png else None
+
     return {
         'job_id':       job_id,
         'display_name': display_name,
         'created_at':   created_iso,
-        'slide_count':  len(pngs),
+        'slide_count':  len(slide_pngs),
         'has_pdf':      len(pdfs) > 0,
-        'has_png':      len(pngs) > 0,
+        'has_png':      len(slide_pngs) > 0,
         'file_count':   len(files),
         'size_bytes':   total_size,
-        'thumbnail':    f'/api/library/{job_id}/thumbnail' if pngs else None,
+        'thumbnail':    thumbnail,
         'files': [
             {'name': f.name, 'type': f.suffix.lstrip('.'), 'size': f.stat().st_size}
             for f in sorted(files, key=lambda f: f.name) if f.is_file()
@@ -145,23 +152,31 @@ def api_library_rename(job_id):
 
 @app.route('/api/library/<path:job_id>/thumbnail')
 def api_library_thumbnail(job_id):
-    """Retourne le premier PNG d'un carousel comme miniature."""
+    """Retourne le premier PNG d'un carousel comme miniature.
+    Pour les carousels PDF, utilise cover_thumb.png comme fallback."""
     if '..' in job_id or job_id.startswith('/'):
         abort(400)
     folder = app.config['OUTPUT_DIR'] / job_id
-    pngs   = sorted(folder.glob('*.png')) if folder.exists() else []
-    if not pngs:
+    if not folder.exists():
         abort(404)
-    return send_file(str(pngs[0]), mimetype='image/png')
+    # Slide PNGs first, then cover_thumb.png fallback for PDF-only carousels
+    slide_pngs = sorted([f for f in folder.glob('*.png') if f.name != 'cover_thumb.png'])
+    if slide_pngs:
+        return send_file(str(slide_pngs[0]), mimetype='image/png')
+    thumb = folder / 'cover_thumb.png'
+    if thumb.exists():
+        return send_file(str(thumb), mimetype='image/png')
+    abort(404)
 
 
 @app.route('/api/library/<path:job_id>/slide/<int:index>')
 def api_library_slide(job_id, index):
-    """Retourne le PNG à l'index donné (pour le viewer lightbox)."""
+    """Retourne le PNG à l'index donné (pour le viewer lightbox).
+    Exclut cover_thumb.png des slides numérotées."""
     if '..' in job_id or job_id.startswith('/'):
         abort(400)
     folder = app.config['OUTPUT_DIR'] / job_id
-    pngs   = sorted(folder.glob('*.png')) if folder.exists() else []
+    pngs   = sorted([f for f in folder.glob('*.png') if f.name != 'cover_thumb.png']) if folder.exists() else []
     if index < 0 or index >= len(pngs):
         abort(404)
     return send_file(str(pngs[index]), mimetype='image/png')

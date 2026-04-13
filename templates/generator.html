@@ -243,7 +243,7 @@ body::before{
   animation:undoBar linear both;
   transform-origin:left;
 }
-@keyframes undoBar{from{scaleX:1}to{transform:scaleX(0)}}
+@keyframes undoBar{from{transform:scaleX(1)}to{transform:scaleX(0)}}
 .sort-select{
   padding:6px 12px;background:var(--card);border:1px solid var(--border2);
   border-radius:var(--radius-sm);color:var(--muted2);font-size:12px;
@@ -391,15 +391,28 @@ body::before{
 .btn-card.danger:hover{background:rgba(248,113,113,.08)}
 
 /* List view card */
-.list-view .carousel-card{flex-direction:row;align-items:center;border-radius:var(--radius-sm)}
-.list-view .card-thumb{width:64px;height:64px;aspect-ratio:unset;flex-shrink:0;border-radius:0}
-.list-view .card-thumb img{border-radius:0}
+.list-view .carousel-card{
+  flex-direction:row;align-items:stretch;border-radius:var(--radius-sm);
+  min-height:72px;
+}
+.list-view .card-thumb{
+  width:72px;min-width:72px;height:72px;aspect-ratio:unset;
+  flex-shrink:0;border-radius:var(--radius-sm) 0 0 var(--radius-sm);
+  overflow:hidden;
+}
+.list-view .card-thumb img{border-radius:0;height:100%;object-fit:cover}
 .list-view .card-thumb-overlay{display:none}
-.list-view .card-body{flex-direction:row;align-items:center;padding:10px 14px;gap:14px}
+.list-view .card-body{
+  flex-direction:row;align-items:center;
+  padding:10px 14px;gap:14px;flex:1;min-width:0;
+}
 .list-view .card-name-row{flex:1;min-width:0}
-.list-view .card-meta{flex-wrap:nowrap}
-.list-view .card-actions{padding-top:0;gap:6px;flex-shrink:0}
+.list-view .card-name{font-size:13px}
+.list-view .card-meta{flex-wrap:nowrap;align-items:center}
+.list-view .card-date{margin-left:0}
+.list-view .card-actions{padding-top:0;gap:6px;flex-shrink:0;min-width:0}
 .list-view .card-size{display:none}
+.list-view .btn-card{white-space:nowrap}
 
 /* ── Empty state ── */
 .empty-state{
@@ -534,12 +547,25 @@ body::before{
 ══════════════════════════════════════════ */
 @media(max-width:1023px){
   .topbar{padding:0 20px;gap:12px}
-  .stats-bar{flex-wrap:wrap}
-  .stat-item{min-width:50%;flex:none;padding:16px 20px}
-  .controls{padding:12px 20px;gap:10px;flex-wrap:wrap}
-  .search-wrap{max-width:100%;flex:1 1 200px}
+
+  /* Stats: 2 cols × 2 rows */
+  .stats-bar{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--border)}
+  .stat-item{min-width:0;flex:none;padding:18px 20px;border-right:none;border-bottom:1px solid var(--border)}
+  .stat-item:nth-child(odd){border-right:1px solid var(--border)}
+  .stat-item:nth-child(3),.stat-item:nth-child(4){border-bottom:none}
+
+  .controls-row{padding:10px 20px}
+  .controls-meta{padding:7px 20px}
+  .search-wrap{max-width:340px;flex:1 1 160px}
   .library-wrap{padding:20px}
-  .library-grid{grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+
+  /* Grid: 3 cols at 768-1023 */
+  .library-grid{grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
+
+  /* List view: slightly tighter */
+  .list-view .card-thumb{width:64px;min-width:64px;height:64px}
+
+  /* Lightbox */
   .lightbox-stage{padding:72px 16px 16px;gap:12px}
   .lightbox-actions{right:16px;bottom:12px;gap:6px}
   .btn-lb-action{padding:7px 12px;font-size:11px}
@@ -573,21 +599,42 @@ body::before{
   .controls-meta{padding:6px 14px}
   .filter-btn{padding:5px 9px;font-size:11px}
   .date-pill{padding:4px 9px;font-size:10px}
-  .sort-select{font-size:11px;padding:5px 8px}
+  .sort-select{font-size:11px;padding:5px 8px;width:100%}
   .date-range-wrap input[type="date"]{width:100px;font-size:10px}
   .date-sep{display:none}
+  /* Row 2: wrap date pills to second line */
+  .controls-row:nth-child(2){flex-wrap:wrap}
+  .filter-group{flex:1}
+  .date-group{flex:1 1 100%;order:3}
 
-  /* Grid: 2 cols */
+  /* Grid: 2 cols on mobile */
   .library-wrap{padding:12px 14px}
-  .library-grid{grid-template-columns:1fr 1fr;gap:10px}
+  .library-grid{grid-template-columns:repeat(2,1fr);gap:10px}
+
+  /* Card grid view */
   .card-thumb{aspect-ratio:1}
   .card-body{padding:10px 12px 12px;gap:7px}
   .card-name{font-size:12px}
   .meta-badge{font-size:9px;padding:2px 6px}
   .card-date{font-size:10px}
   .card-size{font-size:10px}
-  .card-actions{gap:4px;flex-wrap:wrap}
-  .btn-card{font-size:10px;padding:6px 4px}
+  /* Actions: 2×2 grid on grid-view cards */
+  .card-actions{gap:4px;display:grid;grid-template-columns:1fr 1fr}
+  .btn-card{font-size:10px;padding:7px 4px;justify-content:center}
+
+  /* List view on mobile: horizontal, tighter */
+  .list-view .carousel-card{min-height:62px}
+  .list-view .card-thumb{width:62px;min-width:62px;height:62px}
+  .list-view .card-body{padding:8px 10px;gap:8px;flex-wrap:wrap}
+  .list-view .card-name-row{flex:1 1 100%;min-width:0}
+  .list-view .card-meta{flex:0;order:2}
+  .list-view .card-actions{
+    flex:1 1 auto;order:3;
+    display:flex;grid-template-columns:unset;
+    gap:4px;min-width:0;
+  }
+  .list-view .card-name{font-size:12px}
+  .list-view .card-actions .btn-card{padding:5px 8px;font-size:10px;flex:1}
 
   /* Lightbox */
   .lightbox-topbar{padding:0 14px;height:52px}
@@ -601,12 +648,13 @@ body::before{
   .lb-dot{width:5px;height:5px}
   .lb-dot.active{width:14px}
   .lightbox-actions{
-    right:0;left:0;bottom:0;padding:10px 14px;
-    background:rgba(6,8,13,.7);backdrop-filter:blur(8px);
+    position:fixed;right:0;left:0;bottom:0;padding:10px 14px;
+    background:rgba(6,8,13,.85);backdrop-filter:blur(12px);
     border-top:1px solid var(--border);
     justify-content:center;gap:8px;
   }
-  .btn-lb-action{flex:1;justify-content:center;padding:9px 10px;font-size:11px}
+  .lightbox-img-wrap{max-height:calc(100vh - 220px)}
+  .btn-lb-action{flex:1;justify-content:center;padding:10px 10px;font-size:11px;max-width:180px}
 
   /* Modal */
   .modal-box{padding:20px;width:94%}
@@ -616,14 +664,6 @@ body::before{
   .toast-wrap{left:12px;right:12px;bottom:12px}
   .toast{font-size:12px;padding:10px 14px}
   .btn-undo{font-size:11px;padding:3px 8px}
-
-  /* List view on mobile: tighter */
-  .list-view .carousel-card{flex-direction:row}
-  .list-view .card-thumb{width:56px;height:56px}
-  .list-view .card-body{padding:8px 10px;gap:6px}
-  .list-view .card-name{font-size:12px}
-  .list-view .card-actions{gap:4px}
-  .list-view .btn-card{padding:5px 6px;font-size:10px}
 }
 
 /* ══════════════════════════════════════════
@@ -634,7 +674,7 @@ body::before{
   .btn-back-label{display:none}
   .btn-new{padding:6px 8px}
 
-  /* Stats: still 2×2 but tighter */
+  /* Stats: tighter */
   .stat-val{font-size:20px}
   .stat-item{padding:12px 12px}
 
@@ -648,33 +688,42 @@ body::before{
   .date-range-wrap{flex-wrap:wrap;gap:4px}
   .date-range-wrap input[type="date"]{width:90px;font-size:9px}
 
-  /* Grid: 1 col on very small */
-  .library-grid{grid-template-columns:1fr;gap:10px}
-  .library-grid.list-view{grid-template-columns:1fr}
+  /* Grid: 1 col on very small screens */
+  .library-grid:not(.list-view){grid-template-columns:1fr;gap:10px}
 
-  /* Card: horizontal compact in single col */
-  .carousel-card:not(.list-view .carousel-card){
-    flex-direction:row;align-items:stretch;
+  /* Grid-view card on 1-col: horizontal layout with square thumb */
+  .library-grid:not(.list-view) .carousel-card{
+    flex-direction:row;align-items:stretch;min-height:88px;
   }
-  .carousel-card:not(.list-view .carousel-card) .card-thumb{
-    width:90px;min-width:90px;aspect-ratio:unset;
-    border-radius:0;
+  .library-grid:not(.list-view) .carousel-card .card-thumb{
+    width:88px;min-width:88px;height:88px;aspect-ratio:unset;
+    flex-shrink:0;border-radius:var(--radius-sm) 0 0 var(--radius-sm);
   }
-  .carousel-card:not(.list-view .carousel-card) .card-thumb .card-thumb-overlay{display:none}
-  .carousel-card:not(.list-view .carousel-card) .card-body{padding:10px 12px 10px}
-  .slide-count-badge{display:none}
+  .library-grid:not(.list-view) .carousel-card .card-thumb .card-thumb-overlay{display:none}
+  .library-grid:not(.list-view) .carousel-card .card-body{
+    padding:10px 12px;gap:6px;justify-content:center;
+  }
+  .library-grid:not(.list-view) .carousel-card .slide-count-badge{display:none}
+  .library-grid:not(.list-view) .carousel-card .card-size{display:none}
+  /* Actions: row of equal buttons */
+  .library-grid:not(.list-view) .carousel-card .card-actions{
+    display:flex;grid-template-columns:unset;flex-wrap:nowrap;gap:4px;
+  }
+  .library-grid:not(.list-view) .carousel-card .btn-card{flex:1;font-size:10px;padding:6px 3px}
 
-  /* Card actions: wrap */
-  .card-actions{flex-wrap:wrap}
-  .btn-card{flex:1 1 calc(50% - 4px);justify-content:center;font-size:10px}
+  /* List view stays horizontal */
+  .list-view .carousel-card{min-height:58px}
+  .list-view .card-thumb{width:58px;min-width:58px;height:58px}
+  .list-view .card-body{padding:6px 8px;gap:5px}
+  .list-view .card-name{font-size:11px}
+  .list-view .card-actions .btn-card{padding:4px 5px;font-size:10px}
 
-  /* Lightbox: full screen */
-  .lightbox-img-wrap{padding:0}
+  /* Lightbox */
+  .lightbox-img-wrap{padding:0;max-height:calc(100vh - 200px)}
   .lightbox-img{border-radius:4px}
   .btn-nav{width:32px;height:32px}
-  .lb-dots{gap:3px}
-  .lb-dot{display:none} /* hide dots on tiny screens */
-  .lb-dot.active,.lb-dot:nth-child(-n+5){display:block} /* show max 5 */
+  .lb-dot{display:none}
+  .lb-dot.active,.lb-dot:nth-child(-n+5){display:block}
 
   /* Toast */
   .toast-wrap{left:8px;right:8px;bottom:8px}

@@ -281,11 +281,17 @@ def generate_carousel(
     if format == "pdf":
         final_pdf_name = f"{module_title}.pdf"
         final_pdf_path = os.path.join(output_dir, final_pdf_name)
-        
+
+        # Sauvegarder le 1er PNG comme miniature de bibliothèque avant nettoyage
+        import shutil as _shutil
+        if output_pngs:
+            thumb_dst = os.path.join(output_dir, "cover_thumb.png")
+            _shutil.copy2(output_pngs[0], thumb_dst)
+
         # Fusionner avec pypdf
         merge_pdfs(output_pdfs, final_pdf_path)
-        
-        # Nettoyage
+
+        # Nettoyage des intermédiaires (cover_thumb.png conservé)
         for f in output_pngs + output_pdfs + html_files:
             if os.path.exists(f):
                 try:
