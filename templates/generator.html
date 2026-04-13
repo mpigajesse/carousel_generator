@@ -132,6 +132,51 @@ body::before{
 }
 .filter-btn:hover{border-color:var(--border3);color:var(--text)}
 .filter-btn.active{background:rgba(108,92,231,.15);border-color:var(--accent);color:var(--accent-hi)}
+.filter-btn[data-filter="trash"].active{background:rgba(248,113,113,.1);border-color:rgba(248,113,113,.4);color:var(--danger)}
+.filter-btn[data-filter="trash"]:hover{border-color:rgba(248,113,113,.3);color:var(--danger)}
+.trash-badge{
+  display:inline-flex;align-items:center;justify-content:center;
+  min-width:16px;height:16px;padding:0 4px;
+  background:var(--danger);border-radius:100px;
+  font-size:9px;font-weight:800;color:#fff;margin-left:4px;
+  line-height:1;
+}
+
+/* ── Soft-deleted card ── */
+.carousel-card.soft-deleted{
+  opacity:.45;filter:grayscale(.6);
+  border-color:rgba(248,113,113,.15);
+  transform:none !important;box-shadow:none !important;
+}
+.carousel-card.soft-deleted .card-thumb-overlay{display:none !important}
+.soft-delete-banner{
+  position:absolute;top:0;left:0;right:0;
+  padding:6px 10px;
+  background:rgba(248,113,113,.18);backdrop-filter:blur(4px);
+  font-size:10px;font-weight:700;color:var(--danger);
+  letter-spacing:.06em;text-transform:uppercase;
+  display:flex;align-items:center;gap:6px;
+  border-bottom:1px solid rgba(248,113,113,.2);
+}
+.btn-card.restore{border-color:rgba(52,211,153,.25);color:var(--success)}
+.btn-card.restore:hover{background:rgba(52,211,153,.08);border-color:var(--success)}
+
+/* ── Undo toast ── */
+.toast.undo{border-color:rgba(251,191,36,.35);color:var(--warn);padding-right:8px}
+.btn-undo{
+  margin-left:8px;padding:4px 10px;
+  background:rgba(251,191,36,.15);border:1px solid rgba(251,191,36,.3);
+  border-radius:6px;color:var(--warn);font-size:12px;font-weight:700;
+  cursor:pointer;transition:all .12s;white-space:nowrap;flex-shrink:0;
+}
+.btn-undo:hover{background:rgba(251,191,36,.25)}
+.undo-bar{
+  height:3px;background:var(--warn);border-radius:0 0 3px 3px;
+  position:absolute;bottom:0;left:0;
+  animation:undoBar linear both;
+  transform-origin:left;
+}
+@keyframes undoBar{from{scaleX:1}to{transform:scaleX(0)}}
 .sort-select{
   padding:7px 12px;background:var(--card);border:1px solid var(--border2);
   border-radius:var(--radius-sm);color:var(--muted2);font-size:12px;
@@ -460,6 +505,10 @@ body::before{
     <button class="filter-btn active" data-filter="all">Tous</button>
     <button class="filter-btn" data-filter="png"><span>PNG</span></button>
     <button class="filter-btn" data-filter="pdf"><span>PDF</span></button>
+    <button class="filter-btn" data-filter="trash" id="filter-trash-btn">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="display:inline-block;vertical-align:middle"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+      Corbeille<span class="trash-badge" id="trash-badge" style="display:none">0</span>
+    </button>
   </div>
   <select class="sort-select" id="sort-select">
     <option value="date-desc">Plus récent</option>
@@ -551,10 +600,30 @@ let lbIndex    = 0;
 // Confirm callback
 let confirmCb  = null;
 
+// ── Soft delete (localStorage) ──
+const TRASH_KEY = 'carousel_trash_v1';
+
+function loadTrash() {
+  try { return new Set(JSON.parse(localStorage.getItem(TRASH_KEY) || '[]')); }
+  catch { return new Set(); }
+}
+function saveTrash(set) {
+  localStorage.setItem(TRASH_KEY, JSON.stringify([...set]));
+}
+let trashSet = loadTrash();
+
+function updateTrashBadge() {
+  const badge = document.getElementById('trash-badge');
+  const count = trashSet.size;
+  badge.textContent = count;
+  badge.style.display = count > 0 ? '' : 'none';
+}
+
 // ═══════════════════════════════════════════
 //  INIT
 // ═══════════════════════════════════════════
 document.addEventListener('DOMContentLoaded', () => {
+  updateTrashBadge();
   loadLibrary();
 
   document.getElementById('search-input').addEventListener('input', e => {
@@ -603,24 +672,31 @@ async function loadLibrary() {
 }
 
 function updateStats(data) {
-  document.getElementById('stat-total').textContent  = data.total || 0;
-  document.getElementById('stat-slides').textContent = data.total_slides || 0;
-  document.getElementById('stat-size').textContent   = formatSize(data.total_size || 0);
-  const recent = data.items?.[0];
+  const active = (data.items || []).filter(i => !trashSet.has(i.job_id));
+  document.getElementById('stat-total').textContent  = active.length;
+  document.getElementById('stat-slides').textContent = active.reduce((s, i) => s + i.slide_count, 0);
+  document.getElementById('stat-size').textContent   = formatSize(active.reduce((s, i) => s + i.size_bytes, 0));
+  const recent = active[0];
   document.getElementById('stat-recent').textContent = recent ? formatDateShort(recent.created_at) : '—';
+  updateTrashBadge();
 }
 
 // ═══════════════════════════════════════════
 //  FILTER + SORT
 // ═══════════════════════════════════════════
 function applyFilters() {
+  const isTrash = activeFilter === 'trash';
+
   filtered = allItems.filter(item => {
+    const inTrash     = trashSet.has(item.job_id);
     const matchSearch = !searchQuery || item.display_name.toLowerCase().includes(searchQuery);
+    if (isTrash) return inTrash && matchSearch;
+
     const matchFilter =
       activeFilter === 'all' ? true :
       activeFilter === 'pdf' ? item.has_pdf :
       activeFilter === 'png' ? item.has_png : true;
-    return matchSearch && matchFilter;
+    return !inTrash && matchSearch && matchFilter;
   });
 
   filtered.sort((a, b) => {
@@ -629,7 +705,7 @@ function applyFilters() {
       case 'name-asc':    return a.display_name.localeCompare(b.display_name);
       case 'slides-desc': return b.slide_count - a.slide_count;
       case 'size-desc':   return b.size_bytes - a.size_bytes;
-      default:            return b.created_at.localeCompare(a.created_at); // date-desc
+      default:            return b.created_at.localeCompare(a.created_at);
     }
   });
 
@@ -640,23 +716,29 @@ function applyFilters() {
 //  RENDER GRID
 // ═══════════════════════════════════════════
 function showGrid(items) {
-  const grid = document.getElementById('library-grid');
+  const grid    = document.getElementById('library-grid');
+  const isTrash = activeFilter === 'trash';
   grid.className = `library-grid${activeView === 'list' ? ' list-view' : ''}`;
 
   if (!items.length) {
+    const emptyMsg = isTrash
+      ? ['🗑️', 'Corbeille vide', 'Les carousels supprimés apparaîtront ici.']
+      : searchQuery || activeFilter !== 'all'
+        ? ['◫', 'Aucun résultat', 'Essayez d\'autres filtres.']
+        : ['◫', 'Aucun carousel généré', 'Créez votre premier carousel depuis l\'éditeur.'];
     grid.innerHTML = `
       <div class="empty-state" style="grid-column:1/-1">
-        <div class="empty-icon">◫</div>
-        <h3>${searchQuery || activeFilter !== 'all' ? 'Aucun résultat' : 'Aucun carousel généré'}</h3>
-        <p>${searchQuery || activeFilter !== 'all' ? 'Essayez d\'autres filtres.' : 'Créez votre premier carousel depuis l\'éditeur.'}</p>
+        <div class="empty-icon">${emptyMsg[0]}</div>
+        <h3>${emptyMsg[1]}</h3>
+        <p>${emptyMsg[2]}</p>
       </div>`;
     return;
   }
 
-  grid.innerHTML = items.map((item, i) => buildCard(item, i)).join('');
+  grid.innerHTML = items.map((item, i) => buildCard(item, i, isTrash)).join('');
 }
 
-function buildCard(item, i) {
+function buildCard(item, i, isTrash = false) {
   const thumbUrl = item.thumbnail ? `${item.thumbnail}?t=${Date.now()}` : null;
   const thumb = thumbUrl
     ? `<img src="${thumbUrl}" alt="${esc(item.display_name)}" loading="lazy">`
@@ -671,27 +753,60 @@ function buildCard(item, i) {
     item.has_png     ? `<span class="meta-badge badge-png">PNG</span>` : '',
   ].filter(Boolean).join('');
 
-  const previewBtn = item.has_png || item.has_pdf
-    ? `<button class="btn-preview-quick" onclick="event.stopPropagation();openLightbox('${esc(item.job_id)}', '${esc(item.display_name)}', ${item.slide_count})">
+  const previewBtn = !isTrash && (item.has_png || item.has_pdf)
+    ? `<button class="btn-preview-quick" onclick="event.stopPropagation();openLightbox('${esc(item.job_id)}','${esc(item.display_name)}',${item.slide_count})">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
         Aperçu
        </button>` : '';
 
+  const trashBanner = isTrash
+    ? `<div class="soft-delete-banner">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+        Corbeille
+       </div>` : '';
+
+  const actions = isTrash
+    ? `<button class="btn-card restore" onclick="event.stopPropagation();restoreItem('${esc(item.job_id)}','${esc(item.display_name)}')">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4"/></svg>
+        Restaurer
+       </button>
+       <button class="btn-card danger" onclick="event.stopPropagation();confirmDelete('${esc(item.job_id)}','${esc(item.display_name)}')">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg>
+        Supprimer définitivement
+       </button>`
+    : `<button class="btn-card primary" onclick="openLightbox('${esc(item.job_id)}','${esc(item.display_name)}',${item.slide_count})">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        Voir
+       </button>
+       <a class="btn-card" href="/api/library/${esc(item.job_id)}/download" onclick="event.stopPropagation()">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        ZIP
+       </a>
+       <button class="btn-card danger" onclick="event.stopPropagation();softDelete('${esc(item.job_id)}','${esc(item.display_name)}')">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+        Sup.
+       </button>`;
+
+  const cardClass = `carousel-card${isTrash ? ' soft-deleted' : ''}`;
+  const clickAction = isTrash ? '' : `onclick="openLightbox('${esc(item.job_id)}','${esc(item.display_name)}',${item.slide_count})"`;
+
   return `
-<div class="carousel-card" style="animation-delay:${i*0.04}s" onclick="openLightbox('${esc(item.job_id)}','${esc(item.display_name)}',${item.slide_count})">
-  <div class="card-thumb">
+<div class="${cardClass}" style="animation-delay:${i*0.04}s" ${clickAction}>
+  <div class="card-thumb" style="position:relative">
     ${thumb}
+    ${trashBanner}
     <div class="card-thumb-overlay">${previewBtn}</div>
-    ${item.slide_count > 1 ? `<div class="slide-count-badge">${item.slide_count} slides</div>` : ''}
+    ${item.slide_count > 1 && !isTrash ? `<div class="slide-count-badge">${item.slide_count} slides</div>` : ''}
   </div>
   <div class="card-body">
     <div class="card-name-row">
       <span class="card-name" title="${esc(item.display_name)}">${esc(item.display_name)}</span>
+      ${!isTrash ? `
       <input class="card-name-input" value="${esc(item.display_name)}" data-job="${esc(item.job_id)}"
              onkeydown="handleRenameKey(event, this)" onblur="cancelRename(this)">
       <button class="btn-rename-icon" title="Renommer" onclick="event.stopPropagation();startRename(this.parentElement)">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-      </button>
+      </button>` : ''}
     </div>
     <div class="card-meta">
       ${badges}
@@ -699,18 +814,7 @@ function buildCard(item, i) {
     </div>
     <span class="card-size">${formatSize(item.size_bytes)}</span>
     <div class="card-actions" onclick="event.stopPropagation()">
-      <button class="btn-card primary" onclick="openLightbox('${esc(item.job_id)}','${esc(item.display_name)}',${item.slide_count})">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-        Voir
-      </button>
-      <a class="btn-card" href="/api/library/${esc(item.job_id)}/download" onclick="event.stopPropagation()">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-        ZIP
-      </a>
-      <button class="btn-card danger" onclick="event.stopPropagation();confirmDelete('${esc(item.job_id)}','${esc(item.display_name)}')">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg>
-        Sup.
-      </button>
+      ${actions}
     </div>
   </div>
 </div>`;
@@ -772,11 +876,54 @@ async function doRename(jobId, newName, inputEl) {
 }
 
 // ═══════════════════════════════════════════
-//  DELETE
+//  SOFT DELETE (frontend only — localStorage)
+// ═══════════════════════════════════════════
+function softDelete(jobId, name) {
+  trashSet.add(jobId);
+  saveTrash(trashSet);
+  updateTrashBadge();
+  applyFilters();
+
+  // Undo toast with 5s countdown bar
+  const wrap = document.getElementById('toast-wrap');
+  const el   = document.createElement('div');
+  el.className = 'toast undo';
+  el.style.position = 'relative';
+  el.style.overflow  = 'hidden';
+  el.innerHTML = `
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg>
+    <span style="flex:1">"${esc(name)}" déplacé en corbeille</span>
+    <button class="btn-undo" onclick="undoSoftDelete('${esc(jobId)}', this.closest('.toast'))">↩ Annuler</button>
+    <div class="undo-bar" style="animation-duration:5s"></div>`;
+  wrap.appendChild(el);
+
+  const timer = setTimeout(() => el.remove(), 5000);
+  el.dataset.timer = timer;
+}
+
+function undoSoftDelete(jobId, toastEl) {
+  clearTimeout(Number(toastEl.dataset.timer));
+  toastEl.remove();
+  trashSet.delete(jobId);
+  saveTrash(trashSet);
+  updateTrashBadge();
+  applyFilters();
+}
+
+function restoreItem(jobId, name) {
+  trashSet.delete(jobId);
+  saveTrash(trashSet);
+  updateTrashBadge();
+  applyFilters();
+  toast(`"${name}" restauré`, 'success');
+}
+
+// ═══════════════════════════════════════════
+//  HARD DELETE (suppression disque)
 // ═══════════════════════════════════════════
 function confirmDelete(jobId, name) {
   document.getElementById('confirm-msg').textContent =
-    `"${name}" sera supprimé définitivement (dossier + tous les fichiers).`;
+    `"${name}" sera supprimé définitivement du serveur (dossier + tous les fichiers). Cette action est irréversible.`;
   document.getElementById('confirm-ok').onclick = () => doDelete(jobId);
   document.getElementById('confirm-modal').classList.add('open');
 }
@@ -791,7 +938,10 @@ async function doDelete(jobId) {
   try {
     const res = await fetch(`/api/library/${encodeURIComponent(jobId)}`, {method: 'DELETE'});
     if (!res.ok) throw new Error('Erreur de suppression');
-    toast('Carousel supprimé', 'success');
+    trashSet.delete(jobId);
+    saveTrash(trashSet);
+    updateTrashBadge();
+    toast('Carousel supprimé définitivement', 'success');
     loadLibrary();
   } catch(e) {
     toast(e.message, 'error');
