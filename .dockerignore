@@ -48,10 +48,16 @@ static/generated/
 
 # ── Documentation et tests ──
 PLAN.md
-DEPLOYMENT_GUIDE.md
 test_*.py
 test_*.md
 *.backup
+
+# ── Hugging Face (supprimé) ──
+hf-deploy/
+Dockerfile.hf
+main.py
+README_hf.md
+requirements_hf.txt
 
 # ── Fichiers de développement ──
 .env

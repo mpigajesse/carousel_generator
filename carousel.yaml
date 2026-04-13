@@ -1,6 +1,6 @@
 footer:
   series: "AI Series"
-  author: "ton_compte"
+  author: "@Sohaib Baroud"
 
 slides:
   - type: cover
@@ -10,7 +10,7 @@ slides:
     cta: "Swipe pour apprendre"
 
   - type: content
-    badge: "Module 17 · 01"
+    badge: ""
     title: "C'est quoi le Deep Learning ?"
     body: |
       Le Deep Learning est une branche du Machine Learning inspirée du cerveau humain,
@@ -21,7 +21,7 @@ slides:
       Le réseau apprend lui-même depuis les données brutes (pixels, son).
 
   - type: content
-    badge: "Module 17 · 02"
+    badge: ""
     title: "Le Neurone Artificiel"
     body: |
       C'est l'unité de base du réseau. Il fonctionne en 4 étapes :<br><br>
@@ -33,7 +33,7 @@ slides:
       </ul>
 
   - type: compare
-    badge: "Module 17 · 03"
+    badge: ""
     title: "Du Neurone au Réseau"
     columns:
       - title: "Neurone"
@@ -50,7 +50,7 @@ slides:
         tag: "Reconnaissance complexe"
 
   - type: content
-    badge: "Module 17 · 08"
+    badge: ""
     title: "Transformers : La Révolution"
     body: |
       Publié par Google en 2017, il a rendu les RNN presque obsolètes.<br><br>

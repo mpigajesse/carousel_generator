@@ -12,7 +12,7 @@ import threading
 from pathlib import Path
 from flask import Flask, render_template, request, jsonify, send_file, abort
 from generate import generate_carousel
-from themes import THEMES, get_theme
+from themes import THEMES, IG_THEMES, get_theme
 from md_parser import parse_markdown_to_slides, _analyze_structure
 
 app = Flask(__name__)
@@ -37,15 +37,29 @@ def index():
 @app.route('/api/themes/', methods=['GET'])
 def api_themes():
     """Retourne les thèmes disponibles avec aperçu des couleurs."""
+    platform = request.args.get('platform', 'all')
     try:
         result = {}
-        for name, t in THEMES.items():
+        theme_sources = {}
+        if platform == 'instagram':
+            theme_sources = dict(IG_THEMES)
+        elif platform == 'linkedin':
+            theme_sources = dict(THEMES)
+        else:
+            theme_sources = {**THEMES, **IG_THEMES}
+
+        for name, t in theme_sources.items():
             result[name] = {
-                'accent1': t['accent1'],
-                'accent2': t['accent2'],
-                'bg':      t['bg'],
+                'accent1':  t['accent1'],
+                'accent2':  t['accent2'],
+                'bg':       t['bg'],
+                'is_light': t.get('is_light', False),
+                'platform': 'instagram' if name in IG_THEMES else 'linkedin',
             }
-        result['random'] = {'accent1': '#ffffff', 'accent2': '#aaaaaa', 'bg': '#111111'}
+        result['random'] = {
+            'accent1': '#ffffff', 'accent2': '#aaaaaa', 'bg': '#111111',
+            'is_light': False, 'platform': 'all',
+        }
         return jsonify(result)
     except Exception as e:
         app.logger.error(f"Error in api_themes: {str(e)}")
@@ -60,7 +74,8 @@ def api_generate():
     slides_raw = data.get('slides', [])
     theme_name = data.get('theme', 'dark_purple')
     fmt        = data.get('format', 'png')
-    footer     = data.get('footer', {'series': 'My Series', 'author': 'author'})
+    platform   = data.get('platform', 'linkedin')
+    footer     = data.get('footer', {'series': 'My Series', 'author': '@Sohaib Baroud'})
 
     if not slides_raw:
         return jsonify({'error': 'Aucune slide fournie'}), 400
@@ -82,7 +97,7 @@ def api_generate():
     def run():
         try:
             out_dir = app.config['OUTPUT_DIR'] / job_id
-            files = generate_carousel_from_dict(config, theme_name, str(out_dir), fmt)
+            files = generate_carousel_from_dict(config, theme_name, str(out_dir), fmt, platform)
             jobs[job_id]['status'] = 'done'
             # Store relative paths for frontend (without leading /)
             jobs[job_id]['files'] = [f"static/generated/{job_id}/{Path(f).name}" for f in files]
@@ -115,7 +130,8 @@ def api_download(job_id):
             if f.suffix in ('.png', '.pdf'):
                 zf.write(f, f.name)
 
-    return send_file(str(zip_path), as_attachment=True, download_name='carousel.zip')
+    download_name = f'{job_id}.zip'
+    return send_file(str(zip_path), as_attachment=True, download_name=download_name)
 
 
 @app.route('/api/import-markdown', methods=['POST'])
@@ -203,7 +219,8 @@ def _sanitize_folder_name(name: str) -> str:
     return clean if clean else 'carousel'
 
 
-def generate_carousel_from_dict(config: dict, theme_name: str, output_dir: str, fmt: str):
+def generate_carousel_from_dict(config: dict, theme_name: str, output_dir: str, fmt: str,
+                                platform: str = "linkedin"):
     """Génère le carousel directement depuis un dict Python (sans fichier YAML)."""
     import yaml, tempfile
 
@@ -212,7 +229,7 @@ def generate_carousel_from_dict(config: dict, theme_name: str, output_dir: str, 
         tmp_path = tmp.name
 
     try:
-        files = generate_carousel(tmp_path, theme_name, output_dir, fmt)
+        files = generate_carousel(tmp_path, theme_name, output_dir, fmt, platform)
     finally:
         os.unlink(tmp_path)
 
@@ -222,5 +239,5 @@ def generate_carousel_from_dict(config: dict, theme_name: str, output_dir: str, 
 # ─────────────────────────────────────────
 
 if __name__ == '__main__':
-    print("🚀 Carousel Generator Web — http://localhost:5000")
-    app.run(debug=True, port=5000)
+    print("Carousel Generator Web — http://localhost:5000")
+    app.run(debug=True, port=5000, use_reloader=False)
