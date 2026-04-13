@@ -5,11 +5,14 @@ Accès      : http://localhost:5000
 """
 
 import os
+import re
 import uuid
 import json
+import shutil
 import zipfile
 import threading
 from pathlib import Path
+from datetime import datetime
 from flask import Flask, render_template, request, jsonify, send_file, abort
 from generate import generate_carousel
 from themes import THEMES, IG_THEMES, get_theme
@@ -31,6 +34,156 @@ jobs = {}
 def index():
     theme_names = list(THEMES.keys()) + ['random']
     return render_template('index.html', themes=theme_names)
+
+
+@app.route('/generator')
+def generator():
+    return render_template('generator.html')
+
+
+# ─────────────────────────────────────────
+#  LIBRARY API — lecture disque (persistante)
+# ─────────────────────────────────────────
+
+def _scan_job_folder(folder: Path) -> dict | None:
+    """Lit un dossier de job et retourne ses métadonnées."""
+    if not folder.is_dir():
+        return None
+    job_id = folder.name
+    files = list(folder.iterdir())
+    pngs  = sorted([f for f in files if f.suffix == '.png'], key=lambda f: f.name)
+    pdfs  = [f for f in files if f.suffix == '.pdf']
+    zips  = [f for f in files if f.suffix == '.zip']
+
+    total_size = sum(f.stat().st_size for f in files if f.is_file())
+    stat = folder.stat()
+
+    # Extraire date / heure / nom depuis le job_id
+    m = re.match(r'^(\d{4}-\d{2}-\d{2})_(\d{2}-\d{2}-\d{2})_(.+)$', job_id)
+    if m:
+        date_part, time_part, name_part = m.group(1), m.group(2), m.group(3)
+        created_iso = f"{date_part}T{time_part.replace('-', ':')}"
+        display_name = name_part.replace('_', ' ')
+    else:
+        created_iso  = datetime.fromtimestamp(stat.st_mtime).isoformat()
+        display_name = job_id
+
+    return {
+        'job_id':       job_id,
+        'display_name': display_name,
+        'created_at':   created_iso,
+        'slide_count':  len(pngs),
+        'has_pdf':      len(pdfs) > 0,
+        'has_png':      len(pngs) > 0,
+        'file_count':   len(files),
+        'size_bytes':   total_size,
+        'thumbnail':    f'/api/library/{job_id}/thumbnail' if pngs else None,
+        'files': [
+            {'name': f.name, 'type': f.suffix.lstrip('.'), 'size': f.stat().st_size}
+            for f in sorted(files, key=lambda f: f.name) if f.is_file()
+        ],
+    }
+
+
+@app.route('/api/library')
+def api_library():
+    """Liste tous les carousels générés (lecture disque)."""
+    out_dir = app.config['OUTPUT_DIR']
+    items = []
+    for folder in sorted(out_dir.iterdir(), key=lambda f: f.stat().st_mtime, reverse=True):
+        meta = _scan_job_folder(folder)
+        if meta:
+            items.append(meta)
+
+    total_slides = sum(i['slide_count'] for i in items)
+    total_size   = sum(i['size_bytes']   for i in items)
+    return jsonify({'items': items, 'total': len(items),
+                    'total_slides': total_slides, 'total_size': total_size})
+
+
+@app.route('/api/library/<path:job_id>', methods=['DELETE'])
+def api_library_delete(job_id):
+    """Supprime un carousel (dossier + tous ses fichiers)."""
+    if '..' in job_id or job_id.startswith('/'):
+        abort(400)
+    folder = app.config['OUTPUT_DIR'] / job_id
+    if not folder.exists():
+        abort(404)
+    shutil.rmtree(folder)
+    jobs.pop(job_id, None)
+    return jsonify({'ok': True})
+
+
+@app.route('/api/library/<path:job_id>/rename', methods=['PATCH'])
+def api_library_rename(job_id):
+    """Renomme l'affichage d'un carousel (renomme le dossier sur le disque)."""
+    if '..' in job_id or job_id.startswith('/'):
+        abort(400)
+    data     = request.json or {}
+    new_name = data.get('name', '').strip()
+    if not new_name:
+        return jsonify({'error': 'Nom invalide'}), 400
+
+    folder = app.config['OUTPUT_DIR'] / job_id
+    if not folder.exists():
+        abort(404)
+
+    # Conserver la date/heure, remplacer la partie nom
+    m = re.match(r'^(\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2})_(.+)$', job_id)
+    prefix   = m.group(1) if m else job_id
+    new_slug = _sanitize_folder_name(new_name)
+    new_id   = f"{prefix}_{new_slug}"
+
+    new_folder = app.config['OUTPUT_DIR'] / new_id
+    if new_folder.exists():
+        return jsonify({'error': 'Un carousel avec ce nom existe déjà'}), 409
+
+    folder.rename(new_folder)
+    jobs.pop(job_id, None)
+    return jsonify({'ok': True, 'new_job_id': new_id})
+
+
+@app.route('/api/library/<path:job_id>/thumbnail')
+def api_library_thumbnail(job_id):
+    """Retourne le premier PNG d'un carousel comme miniature."""
+    if '..' in job_id or job_id.startswith('/'):
+        abort(400)
+    folder = app.config['OUTPUT_DIR'] / job_id
+    pngs   = sorted(folder.glob('*.png')) if folder.exists() else []
+    if not pngs:
+        abort(404)
+    return send_file(str(pngs[0]), mimetype='image/png')
+
+
+@app.route('/api/library/<path:job_id>/slide/<int:index>')
+def api_library_slide(job_id, index):
+    """Retourne le PNG à l'index donné (pour le viewer lightbox)."""
+    if '..' in job_id or job_id.startswith('/'):
+        abort(400)
+    folder = app.config['OUTPUT_DIR'] / job_id
+    pngs   = sorted(folder.glob('*.png')) if folder.exists() else []
+    if index < 0 or index >= len(pngs):
+        abort(404)
+    return send_file(str(pngs[index]), mimetype='image/png')
+
+
+@app.route('/api/library/<path:job_id>/download')
+def api_library_download(job_id):
+    """Télécharge un carousel en ZIP (lecture disque, sans mémoire jobs)."""
+    if '..' in job_id or job_id.startswith('/'):
+        abort(400)
+    folder = app.config['OUTPUT_DIR'] / job_id
+    if not folder.exists():
+        abort(404)
+
+    zip_path = folder / 'carousel.zip'
+    with zipfile.ZipFile(zip_path, 'w') as zf:
+        for f in folder.iterdir():
+            if f.suffix in ('.png', '.pdf'):
+                zf.write(f, f.name)
+
+    return send_file(str(zip_path), as_attachment=True,
+                     download_name=f'{job_id}.zip')
 
 
 @app.route('/api/themes', methods=['GET'])
