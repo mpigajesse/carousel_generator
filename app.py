@@ -163,6 +163,20 @@ def api_import_markdown():
         return jsonify({'error': f'Erreur de parsing: {str(e)}'}), 500
 
 
+@app.route('/api/download-structure')
+def api_download_structure():
+    """Télécharge STRUCTURE_COMPLETE.md — le guide de structure pour les skills Claude Code."""
+    structure_path = Path(__file__).parent / 'STRUCTURE_COMPLETE.md'
+    if not structure_path.exists():
+        abort(404, description='STRUCTURE_COMPLETE.md introuvable')
+    return send_file(
+        str(structure_path),
+        as_attachment=True,
+        download_name='STRUCTURE_COMPLETE.md',
+        mimetype='text/markdown'
+    )
+
+
 @app.route('/api/upload-markdown', methods=['POST'])
 def api_upload_markdown():
     """Reçoit un fichier Markdown et retourne les slides parsées avec analyse de structure."""

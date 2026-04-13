@@ -399,6 +399,34 @@ aside > * { min-width: var(--sidebar-w); }
   color: var(--accent);
 }
 
+.btn-structure {
+  width: 100%;
+  padding: 10px 14px;
+  background: transparent;
+  border: 1px dashed rgba(0,203,169,.3);
+  border-radius: var(--radius-sm);
+  color: rgba(0,203,169,.6);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  letter-spacing: .04em;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+.btn-structure:hover {
+  background: rgba(0,203,169,.06);
+  border-color: var(--accent2);
+  border-style: solid;
+  color: var(--accent2);
+}
+.btn-structure:active { opacity: .8; }
+
 /* ── Main area ── */
 main {
   display: flex;
@@ -1555,6 +1583,10 @@ main {
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
           Importer Markdown
         </button>
+        <a class="btn-structure" href="/api/download-structure" download="STRUCTURE_COMPLETE.md" title="Télécharger le guide de structure pour créer des skills dans Claude Code">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+          Skill — Guide de structure MD
+        </a>
       </div>
 
     </div><!-- end .sidebar-scroll -->
