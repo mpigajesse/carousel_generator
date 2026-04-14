@@ -481,13 +481,28 @@ def api_generate():
     time_str = now.strftime('%H-%M-%S')
     series_name = _sanitize_folder_name(footer.get('series', 'carousel'))
     job_id = f"{date_str}_{time_str}_{series_name}"
-    jobs[job_id] = {'status': 'running', 'files': [], 'error': None}
+    jobs[job_id] = {
+        'status': 'running',
+        'files': [],
+        'error': None,
+        'current_slide': 0,
+        'total_slides': len(slides_raw),
+        'phase': 'preparing',
+    }
 
     def run():
+        jobs[job_id]['phase'] = 'rendering'
+
+        def progress_cb(current, total):
+            jobs[job_id]['current_slide'] = current
+            jobs[job_id]['total_slides'] = total
+
         try:
             out_dir = app.config['OUTPUT_DIR'] / job_id
-            files = generate_carousel_from_dict(config, theme_name, str(out_dir), fmt, platform)
+            files = generate_carousel_from_dict(config, theme_name, str(out_dir), fmt, platform,
+                                                progress_cb=progress_cb)
             jobs[job_id]['status'] = 'done'
+            jobs[job_id]['phase'] = 'done'
             jobs[job_id]['files'] = [f"static/generated/{job_id}/{Path(f).name}" for f in files]
         except Exception:
             app.logger.exception(f"Error generating job {job_id}")
@@ -633,22 +648,12 @@ def _sanitize_folder_name(name: str) -> str:
 
 
 def generate_carousel_from_dict(config: dict, theme_name: str, output_dir: str, fmt: str,
-                                platform: str = "linkedin"):
-    """Génère le carousel directement depuis un dict Python (sans fichier YAML)."""
-    import tempfile
-
-    import yaml
-
-    with tempfile.NamedTemporaryFile('w', suffix='.yaml', delete=False, encoding='utf-8') as tmp:
-        yaml.dump(config, tmp, allow_unicode=True)
-        tmp_path = tmp.name
-
-    try:
-        files = generate_carousel(tmp_path, theme_name, output_dir, fmt, platform)
-    finally:
-        os.unlink(tmp_path)
-
-    return files
+                                platform: str = "linkedin", progress_cb=None):
+    """Génère le carousel directement depuis un dict Python (sans fichier YAML intermédiaire)."""
+    return generate_carousel(
+        None, theme_name, output_dir, fmt, platform,
+        config_dict=config, progress_cb=progress_cb
+    )
 
 
 # ─────────────────────────────────────────
