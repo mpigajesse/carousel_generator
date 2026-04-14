@@ -2129,17 +2129,14 @@ main {
 
     <div class="md-modal-footer-multi">
       <button class="md-btn" onclick="closeMarkdownModal()">Annuler</button>
-      <button class="md-btn" id="md-apply-btn" onclick="applyMarkdownImport()" disabled>
-        ← Charger dans l'éditeur
-      </button>
       <div style="display:flex;align-items:center;gap:10px;margin-left:auto">
         <span style="font-size:11px;color:var(--muted2);white-space:nowrap;font-weight:600;letter-spacing:.04em">Format :</span>
         <div class="format-row" style="width:120px">
           <button class="fmt-btn active" data-fmt="png" onclick="setFormat('png', this)">PNG</button>
           <button class="fmt-btn" data-fmt="pdf" onclick="setFormat('pdf', this)">PDF</button>
         </div>
-        <button class="md-btn primary" id="md-gen-btn" onclick="generateFromMarkdown()" disabled>
-          ▶ Générer
+        <button class="md-btn primary" id="md-apply-btn" onclick="applyMarkdownImport()" disabled>
+          ← Importer dans l'éditeur
         </button>
       </div>
     </div>
@@ -3248,33 +3245,21 @@ function _refreshMdButtons() {
   const activeTab = document.querySelector('.md-tab.active')?.dataset?.tab ||
     (document.getElementById('tab-paste').classList.contains('active') ? 'paste' : 'upload');
 
-  let hasValid = false;
-  let multipleValid = false;
+  let firstValid = null;
 
   if (activeTab !== 'upload') { // paste tab
     const valid = mdBlocks.filter(b => b.parsed);
-    hasValid      = valid.length > 0;
-    multipleValid = valid.length > 1;
-    // Compat single → "Charger dans l'éditeur"
-    parsedMarkdownData = valid.length === 1 ? valid[0].parsed : null;
+    firstValid = valid.length > 0 ? valid[0].parsed : null;
+    parsedMarkdownData = firstValid;
   } else {
     const valid = mdFileQueue.filter(q => q.parsed);
-    hasValid      = valid.length > 0;
-    multipleValid = valid.length > 1;
+    firstValid = valid.length > 0 ? valid[0].parsed : null;
+    parsedMarkdownData = firstValid;
   }
 
   const applyBtn = document.getElementById('md-apply-btn');
-  const genBtn   = document.getElementById('md-gen-btn');
   if (applyBtn) {
-    applyBtn.disabled = !parsedMarkdownData;
-    applyBtn.textContent = parsedMarkdownData ? '← Charger dans l\'éditeur' : '← Charger dans l\'éditeur';
-  }
-  if (genBtn) {
-    genBtn.disabled = !hasValid;
-    const n = multipleValid
-      ? (activeTab !== 'upload' ? mdBlocks.filter(b=>b.parsed).length : mdFileQueue.filter(q=>q.parsed).length)
-      : 1;
-    genBtn.textContent = n > 1 ? `▶ Générer ${n} carousels` : '▶ Générer directement';
+    applyBtn.disabled = !firstValid;
   }
 }
 
@@ -3299,7 +3284,6 @@ document.addEventListener('DOMContentLoaded', () => {
 // ── Actions du modal ──
 
 function applyMarkdownImport() {
-  // Charger le 1er bloc parsé dans l'éditeur (mode simple)
   const data = parsedMarkdownData;
   if (!data) return showStatus('Aucune donnée valide', 'error');
   slides = data.slides.map((s, i) => ({ id: Date.now() + i, ...s }));
@@ -3308,7 +3292,7 @@ function applyMarkdownImport() {
   renderSlides();
   closeMarkdownModal();
   const reorg = data.structure_analysis?.reorganization_applied ? ' (réorganisé)' : '';
-  showStatus(`${slides.length} slide(s) importées${reorg}`, 'success');
+  showStatus(`${slides.length} slide(s) importées${reorg} — choisis la plateforme et clique "Générer le carousel"`, 'success');
 }
 
 async function generateFromMarkdown() {
