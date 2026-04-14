@@ -2132,9 +2132,16 @@ main {
       <button class="md-btn" id="md-apply-btn" onclick="applyMarkdownImport()" disabled>
         ← Charger dans l'éditeur
       </button>
-      <button class="md-btn primary" id="md-gen-btn" onclick="generateFromMarkdown()" disabled style="margin-left:auto">
-        ▶ Générer directement
-      </button>
+      <div style="display:flex;align-items:center;gap:10px;margin-left:auto">
+        <span style="font-size:11px;color:var(--muted2);white-space:nowrap;font-weight:600;letter-spacing:.04em">Format :</span>
+        <div class="format-row" style="width:120px">
+          <button class="fmt-btn active" data-fmt="png" onclick="setFormat('png', this)">PNG</button>
+          <button class="fmt-btn" data-fmt="pdf" onclick="setFormat('pdf', this)">PDF</button>
+        </div>
+        <button class="md-btn primary" id="md-gen-btn" onclick="generateFromMarkdown()" disabled>
+          ▶ Générer
+        </button>
+      </div>
     </div>
   </div>
 </div>
@@ -3060,6 +3067,10 @@ function openMarkdownModal() {
   _renderMdBlocks();
   _renderFileQueue();
   _refreshMdButtons();
+  // Sync format buttons in modal with current selectedFormat
+  document.querySelectorAll('.fmt-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.fmt === selectedFormat);
+  });
   // Ajouter un premier bloc vide
   addMdBlock();
 }
