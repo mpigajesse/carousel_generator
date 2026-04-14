@@ -1937,8 +1937,8 @@ main {
           Format de sortie
         </div>
         <div class="format-row">
-          <button class="fmt-btn active" data-fmt="png" onclick="setFormat('png', this)">PNG</button>
-          <button class="fmt-btn" data-fmt="pdf" onclick="setFormat('pdf', this)">PDF</button>
+          <button class="fmt-btn active" data-fmt="png" onclick="setFormat('png')">PNG</button>
+          <button class="fmt-btn" data-fmt="pdf" onclick="setFormat('pdf')">PDF</button>
         </div>
       </div>
 
@@ -2173,8 +2173,8 @@ main {
       <div style="display:flex;align-items:center;gap:10px;margin-left:auto">
         <span style="font-size:11px;color:var(--muted2);white-space:nowrap;font-weight:600;letter-spacing:.04em">Format :</span>
         <div class="format-row" style="width:120px">
-          <button class="fmt-btn active" data-fmt="png" onclick="setFormat('png', this)">PNG</button>
-          <button class="fmt-btn" data-fmt="pdf" onclick="setFormat('pdf', this)">PDF</button>
+          <button class="fmt-btn active" data-fmt="png" onclick="setFormat('png')">PNG</button>
+          <button class="fmt-btn" data-fmt="pdf" onclick="setFormat('pdf')">PDF</button>
         </div>
         <button class="md-btn primary" id="md-apply-btn" disabled>
           ← Importer dans l'éditeur
@@ -2387,10 +2387,12 @@ function selectTheme(name, el) {
   el.classList.add('active');
 }
 
-function setFormat(fmt, el) {
+function setFormat(fmt) {
   selectedFormat = fmt;
-  document.querySelectorAll('.fmt-btn').forEach(b => b.classList.remove('active'));
-  el.classList.add('active');
+  // Synchronise TOUS les boutons format (sidebar + modal) selon le format choisi
+  document.querySelectorAll('.fmt-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.fmt === fmt);
+  });
 }
 
 // ── Slide management ──
