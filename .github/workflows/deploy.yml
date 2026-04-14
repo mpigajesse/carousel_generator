@@ -106,12 +106,13 @@ jobs:
             sleep 5
           done
 
-      # 5. Smoke test HTTP
+      # 5. Smoke test HTTP (depuis l'intérieur du conteneur — pas de port exposé sur l'hôte)
       - name: Smoke test
         run: |
-          HTTP=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:5000/login)
+          HTTP=$(docker exec carousel-generator \
+            curl -s -o /dev/null -w "%{http_code}" http://localhost:5000/login)
           if [ "$HTTP" = "200" ]; then
-            echo "✓ Smoke test OK — /login répond HTTP 200"
+            echo "✓ Smoke test OK — /login répond HTTP 200 (via docker exec)"
           else
             echo "ERREUR : /login répond HTTP $HTTP"
             docker compose logs --tail=30 carousel
