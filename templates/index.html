@@ -3209,13 +3209,17 @@ function openMarkdownModal() {
   mdFileQueue = [];
   _renderMdBlocks();
   _renderFileQueue();
-  // Reset bouton au comportement par défaut (import simple)
+  // Reset bouton + badge (pas encore de contenu parsé)
   const applyBtn = document.getElementById('md-apply-btn');
   if (applyBtn) {
     applyBtn.disabled = true;
     applyBtn.textContent = '← Importer dans l\'éditeur';
+    applyBtn.title = '';
     applyBtn.onclick = applyMarkdownImport;
   }
+  _badgeEnabled = false;
+  const badge = document.getElementById('slide-count-badge');
+  if (badge) { badge.classList.add('hidden'); badge.textContent = ''; }
   // Sync format buttons in modal with current selectedFormat
   document.querySelectorAll('.fmt-btn').forEach(b => {
     b.classList.toggle('active', b.dataset.fmt === selectedFormat);
@@ -3420,10 +3424,31 @@ function _refreshMdButtons() {
   applyBtn.disabled = count === 0;
 
   // Toujours charger dans l'éditeur — jamais lancer la génération depuis le modal
-  applyBtn.textContent = count > 1
-    ? `← Importer le 1er dans l'éditeur (${count} fichiers)`
-    : '← Importer dans l\'éditeur';
   applyBtn.onclick = applyMarkdownImport;
+
+  // Calcul du total de slides sur tous les éléments valides
+  const totalSlides = validItems.reduce((acc, item) => acc + (item.data.slides?.length || 0), 0);
+
+  if (count > 1) {
+    // Détail par fichier : ex. "3 fichiers · 19 slides (8 + 6 + 5)"
+    const perFile = validItems.map(item => item.data.slides?.length || 0).join(' + ');
+    applyBtn.textContent = `← Importer dans l'éditeur`;
+    applyBtn.title = `${count} fichiers · ${totalSlides} slides (${perFile})`;
+  } else {
+    applyBtn.textContent = '← Importer dans l\'éditeur';
+    applyBtn.title = '';
+  }
+
+  // Mettre à jour le badge du bouton "Générer" en temps réel depuis le modal
+  if (totalSlides > 0) {
+    _badgeEnabled = true;
+    _cancelBadgeCountdown();
+    _updateSlideBadge(totalSlides);
+  } else {
+    _badgeEnabled = false;
+    const badge = document.getElementById('slide-count-badge');
+    if (badge) { badge.classList.add('hidden'); badge.textContent = ''; }
+  }
 }
 
 // ── Drag & Drop ──
