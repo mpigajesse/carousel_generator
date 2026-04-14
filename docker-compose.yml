@@ -46,8 +46,10 @@ services:
           cpus: "0.5"
 
     # ── Health check ──
+    # Route /health dédiée (publique, sans rate limit) — définie dans app.py
+    # Le healthcheck sur /login (rate-limité à 30 req/h) rendait le conteneur unhealthy.
     healthcheck:
-      test: ["CMD", "curl", "-f", "-s", "http://localhost:5000/login"]
+      test: ["CMD", "curl", "-f", "-s", "http://localhost:5000/health"]
       interval: 30s
       timeout: 10s
       retries: 3

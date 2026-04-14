@@ -102,6 +102,12 @@ except ImportError:
     warnings.warn("flask-limiter non installé — le rate limiting sur /login est désactivé.", RuntimeWarning, stacklevel=2)
     def _login_limit(f):
         return f
+    # Stub `limiter` pour que @limiter.exempt reste valide sans flask-limiter
+    class _LimiterStub:
+        @staticmethod
+        def exempt(f):
+            return f
+    limiter = _LimiterStub()
 
 
 # Stockage en mémoire des jobs en cours
@@ -173,8 +179,8 @@ def security_headers(response):
 # ─────────────────────────────────────────
 
 # Routes publiques (pas besoin d'être connecté)
-_PUBLIC_PREFIXES = ('/login', '/static/css/', '/static/js/', '/static/fonts/',
-                    '/static/img/', '/favicon')
+_PUBLIC_PREFIXES = ('/login', '/health', '/static/css/', '/static/js/',
+                    '/static/fonts/', '/static/img/', '/favicon')
 
 @app.before_request
 def require_login():
@@ -227,6 +233,17 @@ def login():
 def logout():
     session.clear()
     return redirect(url_for('login') + '?toast=disconnected')
+
+
+# ─────────────────────────────────────────
+#  HEALTH CHECK (Docker + monitoring externe)
+# ─────────────────────────────────────────
+# Route publique, légère, exemptée d'auth et de rate-limit.
+# Utilisée par le healthcheck docker-compose et Traefik.
+@app.route('/health')
+@limiter.exempt
+def health():
+    return {'status': 'ok'}, 200
 
 # ─────────────────────────────────────────
 #  ROUTES
