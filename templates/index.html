@@ -2329,6 +2329,7 @@ let themeColors = {};
 let parsedMarkdownData = null;
 let lastPayload = null;
 let isRethemeRunning = false;
+let _badgeEnabled = false; // badge masqué tant que l'utilisateur n'a pas importé
 
 // ── Multi-job tracker ──
 const activeJobs = new Map(); // jobId → { name, total, startTime, current, status, phase, files, error }
@@ -2591,6 +2592,7 @@ function renderSlides() {
 }
 
 function _updateSlideBadge(count) {
+  if (!_badgeEnabled) return; // ignorer pendant l'init ou si pas d'import
   const badge = document.getElementById('slide-count-badge');
   if (!badge) return;
   const prev = badge.textContent;
@@ -2880,6 +2882,7 @@ function _startBadgeCountdown(seconds = 60) {
         badge.classList.remove('fade-out', 'countdown');
         badge.classList.add('hidden');
         badge.textContent = '';
+        _badgeEnabled = false; // remettre à zéro → prochain import réactive le badge
       }, 420);
     } else {
       badge.textContent = `${_badgeCountdownSec}s`;
@@ -3600,6 +3603,8 @@ function applyMarkdownImport() {
   slides = data.slides.map((s, i) => ({ id: Date.now() + i, ...s }));
   if (data.footer?.series) document.getElementById('footer-series').value = data.footer.series;
   if (data.footer?.author) document.getElementById('footer-author').value = data.footer.author;
+  _badgeEnabled = true; // activer le badge uniquement après un import explicite
+  _cancelBadgeCountdown();
   renderSlides();
   closeMarkdownModal();
   const reorg = data.structure_analysis?.reorganization_applied ? ' (réorganisé)' : '';
