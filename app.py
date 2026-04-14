@@ -10,17 +10,28 @@ import os
 import re
 import secrets
 import shutil
-import zipfile
 import threading
-from pathlib import Path
+import zipfile
 from datetime import datetime, timedelta
+from pathlib import Path
 from urllib.parse import urlparse
-from flask import (Flask, render_template, request, jsonify,
-                   send_file, abort, session, redirect, url_for)
+
+from flask import (
+    Flask,
+    abort,
+    jsonify,
+    redirect,
+    render_template,
+    request,
+    send_file,
+    session,
+    url_for,
+)
 from werkzeug.utils import secure_filename
+
 from generate import generate_carousel
-from themes import THEMES, IG_THEMES
-from md_parser import parse_markdown_to_slides, _analyze_structure
+from md_parser import _analyze_structure, parse_markdown_to_slides
+from themes import IG_THEMES, THEMES
 
 # Support optionnel pour .env (pip install python-dotenv)
 try:
@@ -88,7 +99,7 @@ try:
 except ImportError:
     # flask-limiter non installé — continuer sans rate limiting (avertir)
     import warnings
-    warnings.warn("flask-limiter non installé — le rate limiting sur /login est désactivé.", RuntimeWarning)
+    warnings.warn("flask-limiter non installé — le rate limiting sur /login est désactivé.", RuntimeWarning, stacklevel=2)
     def _login_limit(f):
         return f
 
@@ -624,8 +635,9 @@ def _sanitize_folder_name(name: str) -> str:
 def generate_carousel_from_dict(config: dict, theme_name: str, output_dir: str, fmt: str,
                                 platform: str = "linkedin"):
     """Génère le carousel directement depuis un dict Python (sans fichier YAML)."""
-    import yaml
     import tempfile
+
+    import yaml
 
     with tempfile.NamedTemporaryFile('w', suffix='.yaml', delete=False, encoding='utf-8') as tmp:
         yaml.dump(config, tmp, allow_unicode=True)

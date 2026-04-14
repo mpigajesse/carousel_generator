@@ -4,15 +4,16 @@ Reorganise automatiquement du Markdown non-structuré en slides standardisées.
 """
 
 import re
-import yaml
-from typing import List, Dict, Any
+from typing import Any, Dict, List
 from urllib.parse import urlparse
+
+import yaml
 
 
 def parse_markdown_to_slides(md_content: str) -> Dict[str, Any]:
     """
     Parse du contenu Markdown et retourne une structure de carousel complète.
-    
+
     Support avancé:
     - Réorganisation automatique du contenu non-structuré
     - Détection de thèmes/logiques pour regrouper le contenu
@@ -25,7 +26,7 @@ def parse_markdown_to_slides(md_content: str) -> Dict[str, Any]:
     - Détection automatique du type de slide (cover vs content vs compare)
     - Découpage intelligent des gros blocs de texte
     """
-    
+
     # 1. Extraire le front matter YAML si présent
     front_matter = {}
     content = md_content.strip()  # Strip leading/trailing whitespace first
@@ -36,13 +37,13 @@ def parse_markdown_to_slides(md_content: str) -> Dict[str, Any]:
             content = content[front_matter_match.end():]
         except yaml.YAMLError:
             pass
-    
+
     # 2. Nettoyage préliminaire
     content = _clean_content(content)
-    
+
     # 3. Analyser la structure du contenu
     structure = _analyze_structure(content)
-    
+
     # 4. Parser selon la structure détectée
     # Le front matter est déjà extrait de `content` — les séparateurs restants sont réels.
     # Priorité: separators > headings > lists > unstructured
@@ -56,13 +57,13 @@ def parse_markdown_to_slides(md_content: str) -> Dict[str, Any]:
     else:
         # Contenu complètement non structuré → réorganisation intelligente
         slides = _reorganize_unstructured_content(content)
-    
+
     # 5. Réorganiser les slides selon la structure standard
     slides = _reorganize_slides(slides, structure)
-    
+
     # 6. Enrichir les slides
     slides = _enrich_slides(slides)
-    
+
     # 7. Construire la structure finale
     raw_author = front_matter.get('author', front_matter.get('username', ''))
     # Normaliser : ton_compte / vide → auteur par défaut
@@ -72,7 +73,7 @@ def parse_markdown_to_slides(md_content: str) -> Dict[str, Any]:
         'series': front_matter.get('series', front_matter.get('title', 'Series')),
         'author': author
     }
-    
+
     return {
         'footer': footer,
         'slides': slides,
@@ -84,20 +85,20 @@ def _clean_content(content: str) -> str:
     """Nettoie le contenu Markdown des éléments inutiles."""
     # Supprimer les commentaires HTML
     content = re.sub(r'<!--.*?-->', '', content, flags=re.DOTALL)
-    
+
     # Normaliser les sauts de ligne multiples
     content = re.sub(r'\n{4,}', '\n\n\n', content)
-    
+
     # Supprimer les espaces en fin de ligne
     content = '\n'.join(line.rstrip() for line in content.split('\n'))
-    
+
     return content.strip()
 
 
 def _analyze_structure(content: str) -> Dict[str, Any]:
     """Analyse la structure du contenu Markdown pour déterminer la meilleure approche."""
     lines = content.split('\n')
-    
+
     # Compter les éléments structurels
     heading_counts = {'h1': 0, 'h2': 0, 'h3': 0}
     # Ignorer les séparateurs qui font partie du front matter YAML
@@ -105,7 +106,7 @@ def _analyze_structure(content: str) -> Dict[str, Any]:
     list_items = 0
     code_blocks = 0
     paragraphs = 0
-    
+
     for line in lines:
         if re.match(r'^#\s+', line):
             heading_counts['h1'] += 1
@@ -119,19 +120,19 @@ def _analyze_structure(content: str) -> Dict[str, Any]:
             code_blocks += 1
         elif line.strip() and not line.strip().startswith('#'):
             paragraphs += 1
-    
+
     # Détecter la hiérarchie des headings
     has_heading_hierarchy = (heading_counts['h1'] > 0 or heading_counts['h2'] > 0)
-    
+
     # Détecter les patterns de comparaison
     compare_indicators = 0
     for line in lines:
         if re.search(r'\bvs\.?\b|\bversus\b|\bcompar[ée]\b|\bdifference\b', line, re.IGNORECASE):
             compare_indicators += 1
-    
+
     # Calculer la densité de contenu
     total_lines = len([ln for ln in lines if ln.strip()])
-    
+
     return {
         'heading_counts': heading_counts,
         'has_explicit_separators': has_separators,
@@ -149,16 +150,16 @@ def _analyze_structure(content: str) -> Dict[str, Any]:
 def _parse_with_separators(content: str) -> List[Dict[str, Any]]:
     """Parse le Markdown en utilisant --- ou *** comme séparateur de slides."""
     sections = re.split(r'\n(?:---+|\*\*\*+)\s*\n', content.strip())
-    
+
     slides = []
     for section in sections:
         section = section.strip()
         if not section:
             continue
-        
+
         slide = _parse_section_to_slide(section)
         slides.append(slide)
-    
+
     return slides
 
 
@@ -178,19 +179,19 @@ def _parse_with_headings(content: str) -> List[Dict[str, Any]]:
                     slides.append(_parse_section_to_slide(slide_text))
                 current_slide_lines = []
             # heading trouvé — la slide précédente a été sauvegardée ci-dessus
-        
+
         current_slide_lines.append(line)
-    
+
     # Dernière slide
     if current_slide_lines:
         slide_text = '\n'.join(current_slide_lines).strip()
         if slide_text:
             slides.append(_parse_section_to_slide(slide_text))
-    
+
     # Si aucune slide détectée (pas de headings), créer une seule slide
     if not slides and content.strip():
         slides.append(_parse_section_to_slide(content.strip()))
-    
+
     return slides
 
 
@@ -200,7 +201,7 @@ def _parse_with_lists(content: str) -> List[Dict[str, Any]]:
     slides = []
     current_list = []
     current_title = ''
-    
+
     for line in lines:
         # Détecter un heading
         heading_match = re.match(r'^(#{1,2})\s+(.+)$', line)
@@ -215,7 +216,7 @@ def _parse_with_lists(content: str) -> List[Dict[str, Any]]:
                 current_list = []
             current_title = heading_match.group(2).strip()
             continue
-        
+
         # Détecter un item de liste
         list_match = re.match(r'^[-*]\s+(.+)$', line.strip())
         if list_match:
@@ -224,7 +225,7 @@ def _parse_with_lists(content: str) -> List[Dict[str, Any]]:
             # Ligne normale → potentiel titre ou description
             if not current_title:
                 current_title = line.strip()
-    
+
     # Dernière liste
     if current_list:
         slides.append({
@@ -232,7 +233,7 @@ def _parse_with_lists(content: str) -> List[Dict[str, Any]]:
             'title': current_title or 'Content',
             'body': _markdown_to_html('\n'.join(current_list))
         })
-    
+
     return slides
 
 
@@ -243,11 +244,11 @@ def _reorganize_unstructured_content(content: str) -> List[Dict[str, Any]]:
     """
     lines = content.split('\n')
     slides = []
-    
+
     # Stratégie 1: Détecter les paragraphes thématiques
     paragraphs = []
     current_para = []
-    
+
     for line in lines:
         if not line.strip():
             if current_para:
@@ -255,10 +256,10 @@ def _reorganize_unstructured_content(content: str) -> List[Dict[str, Any]]:
                 current_para = []
         else:
             current_para.append(line.strip())
-    
+
     if current_para:
         paragraphs.append('\n'.join(current_para).strip())
-    
+
     # Si on a des paragraphes, les transformer en slides
     if len(paragraphs) >= 2:
         for i, para in enumerate(paragraphs):
@@ -266,7 +267,7 @@ def _reorganize_unstructured_content(content: str) -> List[Dict[str, Any]]:
             para_lines = para.split('\n')
             title = para_lines[0][:60] if para_lines[0] else f'Section {i+1}'
             body = '\n'.join(para_lines[1:]) if len(para_lines) > 1 else para
-            
+
             slides.append({
                 'type': 'content',
                 'title': title,
@@ -277,14 +278,14 @@ def _reorganize_unstructured_content(content: str) -> List[Dict[str, Any]]:
         words = content.split()
         chunk_size = 80  # mots par slide
         chunks = [' '.join(words[i:i+chunk_size]) for i in range(0, len(words), chunk_size)]
-        
+
         for i, chunk in enumerate(chunks):
             slides.append({
                 'type': 'content',
                 'title': f'Part {i+1}',
                 'body': chunk
             })
-    
+
     return slides
 
 
@@ -295,10 +296,10 @@ def _reorganize_slides(slides: List[Dict[str, Any]], structure: Dict[str, Any]) 
     """
     if not slides:
         return slides
-    
+
     # Identifier les types de slides
     has_cover = any(s.get('type') == 'cover' for s in slides)
-    
+
     # Si pas de cover, en créer une depuis la première slide
     if not has_cover and slides:
         first_slide = slides[0]
@@ -309,27 +310,27 @@ def _reorganize_slides(slides: List[Dict[str, Any]], structure: Dict[str, Any]) 
             'code': '',
             'cta': 'Swipe to learn'
         }
-        
+
         # Extraire du code si présent
         if first_slide.get('body'):
             code_match = re.search(r'```(?:\w+)?\n(.*?)```', first_slide['body'], re.DOTALL)
             if code_match:
                 cover_slide['code'] = code_match.group(1).strip().split('\n')[0][:20]
-        
+
         slides[0] = cover_slide
-    
+
     # Réorganiser: comparer les slides détectées
     # S'assurer que les slides de comparaison sont bien formattées
     for slide in slides:
         if slide.get('type') == 'compare' and 'columns' not in slide:
             if slide.get('body'):
                 slide['columns'] = _extract_compare_columns(
-                    slide['body'], 
+                    slide['body'],
                     slide['body'].split('\n')
                 )
                 if 'body' in slide:
                     del slide['body']
-    
+
     # Améliorer la détection des comparaisons — uniquement sur le titre (jamais sur le body)
     for slide in slides:
         if slide.get('type') == 'content' and slide.get('title'):
@@ -347,7 +348,7 @@ def _reorganize_slides(slides: List[Dict[str, Any]], structure: Dict[str, Any]) 
 def _parse_section_to_slide(section: str) -> Dict[str, Any]:
     """Analyse une section de texte et détermine le type de slide approprié."""
     lines = section.strip().split('\n')
-    
+
     # Extraire le premier heading comme titre
     title = ''
     body_lines = []
@@ -360,13 +361,13 @@ def _parse_section_to_slide(section: str) -> Dict[str, Any]:
         # Pas de heading, utiliser la première ligne comme titre
         title = lines[0].strip()
         body_lines = lines[1:]
-    
+
     # Nettoyer et formater le body
     body = '\n'.join(body_lines).strip()
-    
+
     # Détecter le type de slide
     slide_type = _detect_slide_type(title, body, lines)
-    
+
     slide = {
         'type': slide_type,
         'title': title,
@@ -385,13 +386,13 @@ def _parse_section_to_slide(section: str) -> Dict[str, Any]:
         slide['badge'] = ''
         # Convertir le Markdown en HTML pour le body
         slide['body'] = _markdown_to_html(body)
-    
+
     # Détecter si c'est une slide de comparaison
     if slide_type == 'compare':
         slide['columns'] = _extract_compare_columns(body, lines)
         if 'body' in slide:
             del slide['body']
-    
+
     return slide
 
 
@@ -792,13 +793,13 @@ def _inline_formatting(text: str) -> str:
     for key, code_content in code_segments.items():
         safe_code = code_content.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
         text = text.replace(key, f'<code>{safe_code}</code>')
-    
+
     # Bold
     text = re.sub(r'\*\*(.+?)\*\*', r'<strong>\1</strong>', text)
-    
+
     # Italic
     text = re.sub(r'\*(.+?)\*', r'<em>\1</em>', text)
-    
+
     # Links — sanitize href to block javascript: / data: URIs
     def _make_link(m: re.Match) -> str:
         # Échapper le label explicitement (la passe globale a déjà traité le texte environnant,
@@ -809,7 +810,7 @@ def _inline_formatting(text: str) -> str:
         return f'<a href="{href}" style="color:var(--accent2);text-decoration:underline;">{label}</a>'
 
     text = re.sub(r'\[([^\]]+)\]\(([^)]+)\)', _make_link, text)
-    
+
     # Strikethrough
     text = re.sub(r'~~(.+?)~~', r'<del style="opacity:0.6;">\1</del>', text)
 
@@ -820,7 +821,7 @@ def _enrich_slides(slides: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
     """Enrichit les slides avec des badges et métadonnées automatiques."""
     if not slides:
         return slides
-    
+
     # Si la première slide n'est pas une cover OU si elle n'a pas de corps
     first_slide = slides[0]
     needs_cover = (first_slide['type'] != 'cover' or
@@ -842,18 +843,18 @@ def _enrich_slides(slides: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
                 'code': '',
                 'cta': 'Swipe to learn'
             }
-            
+
             # Extraire du code si présent
             if first_slide.get('body'):
                 code_match = re.search(r'```(?:\w+)?\n(.*?)```', first_slide['body'], re.DOTALL)
                 if code_match:
                     cover_slide['code'] = code_match.group(1).strip().split('\n')[0][:20]
-            
+
             # Remplacer la première slide par la cover
             slides[0] = cover_slide
-    
+
     # Ajouter des badges automatiques aux slides de contenu
-    for i, slide in enumerate(slides):
+    for _i, slide in enumerate(slides):
         if slide['type'] in ('content', 'compare') and not slide.get('badge'):
             slide['badge'] = ''
 

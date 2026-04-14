@@ -2,8 +2,8 @@
 themes.py - Gestion des thèmes et palettes de couleurs
 15 thèmes prédéfinis premium + générateur aléatoire avancé
 """
-import random
 import colorsys
+import random
 
 THEMES = {
     # ═══════════════════════════════════════════
@@ -578,7 +578,7 @@ def generate_palette(base_hue, scheme="complementary"):
         hues = split_complementary_hues(base_hue)
     else:
         hues = [base_hue, (base_hue + 0.5) % 1.0, (base_hue + 0.33) % 1.0]
-    
+
     return hues
 
 def random_theme():
@@ -588,59 +588,59 @@ def random_theme():
     """
     # Teinte de base aléatoire
     base_hue = random.random()
-    
+
     # Choix aléatoire du schéma de couleurs
     schemes = ["complementary", "triadic", "analogous", "split_complementary"]
     scheme = random.choice(schemes)
-    
+
     # Générer les teintes
     hues = generate_palette(base_hue, scheme)
     hue1, hue2, hue3 = hues[0], hues[1], hues[2]
-    
+
     # Variation aléatoire de la saturation et luminosité pour plus de diversité
     sat_range = (0.75, 0.95)  # Saturation élevée pour des couleurs vives
     light_range = (0.55, 0.75)  # Luminosité moyenne-haute pour lisibilité
-    
+
     sat1 = random.uniform(*sat_range)
     sat2 = random.uniform(*sat_range) * 0.9
     sat3 = random.uniform(*sat_range) * 0.85
-    
+
     light1 = random.uniform(*light_range)
     light2 = random.uniform(*light_range)
     light3 = random.uniform(*light_range) * 0.95
-    
+
     # Accents principaux
     accent1 = hsl_to_hex(hue1, sat1, light1)
     accent2 = hsl_to_hex(hue2, sat2, light2)
     accent3 = hsl_to_hex(hue3, sat3, light3)
-    
+
     # Arrière-plans sombres profonds
     bg_light = random.uniform(0.04, 0.08)
     bg2_light = random.uniform(0.08, 0.14)
     bg_sat = random.uniform(0.4, 0.7)
-    
+
     bg = hsl_to_hex(hue1, bg_sat * 0.7, bg_light)
     bg2 = hsl_to_hex(hue1, bg_sat, bg2_light)
-    
+
     # Blobs décoratifs
     blob1 = hsl_to_hex(hue1, 0.7, 0.25)
     blob2 = hsl_to_hex(hue2, 0.6, 0.20)
-    
+
     # Texte
     text = "#ffffff"
     text_muted = hsl_to_hex(hue1, 0.15, 0.60 + random.uniform(0, 0.1))
-    
+
     # Éléments UI
     badge_bg = hsl_to_hex(hue1, 0.5, 0.08 + random.uniform(0, 0.04))
     terminal_bg = hsl_to_hex(hue1, 0.5, 0.06 + random.uniform(0, 0.03))
-    
+
     # Bordure terminal avec la couleur accent1
     r, g, b = hex_to_rgb(accent1)
     terminal_border = f"rgba({r},{g},{b},.3)"
-    
+
     # Dégradé avec les 3 accents
     rule = f"linear-gradient(90deg, {accent1}, {accent2}, {accent3})"
-    
+
     return {
         "bg": bg,
         "bg2": bg2,

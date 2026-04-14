@@ -5,14 +5,16 @@ Usage: python generate.py --config carousel.yaml --theme dark_purple --output ou
 """
 
 import argparse
+import asyncio
 import os
+import platform
 import re
 import sys
-import yaml
-import asyncio
-import platform
 from pathlib import Path
+
+import yaml
 from jinja2 import Environment, FileSystemLoader
+
 from themes import get_theme
 
 # Fix Windows asyncio event loop for Playwright
@@ -77,12 +79,12 @@ def _extract_module_title(slides: list, footer: dict) -> str:
     Priorité: footer.series > premier slide title > fallback générique.
     """
     import re
-    
+
     # 1. Utiliser footer.series si disponible et significatif
     series = footer.get("series", "").strip()
     if series and series.lower() not in ("series", "my series", "ai series"):
         return _sanitize_filename(series)
-    
+
     # 2. Utiliser le titre de la première slide (cover)
     if slides:
         first_title = slides[0].get("title", "").strip()
@@ -90,7 +92,7 @@ def _extract_module_title(slides: list, footer: dict) -> str:
             # Nettoyer le titre des numéros de module "01 / 06 - "
             clean_title = re.sub(r'^\d+\s*/\s*\d+\s*[-–—:]\s*', '', first_title)
             return _sanitize_filename(clean_title)
-    
+
     # 3. Fallback
     return _sanitize_filename("carousel")
 
@@ -272,7 +274,7 @@ def generate_carousel(
                 print(f"  {pdf_filename}")
                 output_pdfs.append(pdf_path)
                 output_pngs.append(temp_path) # Garder une reference pour nettoyage
-            
+
             page.close()
 
         browser.close()
