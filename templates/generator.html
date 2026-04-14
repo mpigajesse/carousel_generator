@@ -209,6 +209,68 @@ body::before{
   line-height:1;
 }
 
+/* ── Multi-select ── */
+.btn-select-mode{
+  display:flex;align-items:center;gap:6px;
+  padding:6px 12px;background:var(--card);border:1px solid var(--border2);
+  border-radius:var(--radius-sm);color:var(--muted2);font-size:12px;font-weight:600;
+  cursor:pointer;transition:all .15s;white-space:nowrap;
+}
+.btn-select-mode:hover{border-color:var(--border3);color:var(--text)}
+.btn-select-mode.active{background:rgba(108,92,231,.15);border-color:var(--accent);color:var(--accent-hi)}
+
+.card-select-check{
+  position:absolute;top:8px;left:8px;z-index:10;
+  width:22px;height:22px;border-radius:50%;
+  border:2px solid rgba(255,255,255,.55);
+  background:rgba(0,0,0,.45);backdrop-filter:blur(4px);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;pointer-events:auto;
+  opacity:0;transition:opacity .15s,background .15s,border-color .15s,transform .15s;
+  transform:scale(.8);
+}
+.select-mode .card-select-check,
+.carousel-card:hover .card-select-check{ opacity:1;transform:scale(1); }
+.carousel-card.selected .card-select-check{
+  background:var(--accent);border-color:var(--accent);opacity:1;transform:scale(1);
+}
+.carousel-card.selected{
+  outline:2px solid var(--accent);outline-offset:-2px;
+  box-shadow:0 0 0 4px rgba(108,92,231,.18) !important;
+}
+
+.bulk-bar{
+  position:fixed;bottom:0;left:0;right:0;z-index:400;
+  background:rgba(12,17,30,.97);backdrop-filter:blur(20px);
+  border-top:1px solid var(--accent);
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+  padding:12px 32px;
+  transform:translateY(100%);
+  transition:transform .35s cubic-bezier(.34,1.3,.64,1);
+}
+.bulk-bar.show{transform:translateY(0)}
+.bulk-count{
+  font-family:'Syne',sans-serif;font-weight:700;font-size:14px;
+  color:var(--accent-hi);margin-right:4px;white-space:nowrap;min-width:90px;
+}
+.btn-bulk{
+  display:flex;align-items:center;gap:6px;
+  padding:8px 16px;border-radius:var(--radius-sm);
+  font-size:12px;font-weight:600;cursor:pointer;
+  border:1px solid var(--border2);background:var(--card2);color:var(--text);
+  transition:all .15s;white-space:nowrap;
+}
+.btn-bulk:hover{border-color:var(--border3);background:var(--card)}
+.btn-bulk.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn-bulk.primary:hover{background:var(--accent-hi);border-color:var(--accent-hi)}
+.btn-bulk.success{background:var(--success);border-color:var(--success);color:#000}
+.btn-bulk.success:hover{opacity:.88}
+.btn-bulk.danger{border-color:rgba(248,113,113,.4);color:var(--danger)}
+.btn-bulk.danger:hover{background:rgba(248,113,113,.12);border-color:var(--danger)}
+.btn-bulk.ghost{background:transparent;border-color:transparent;color:var(--muted2)}
+.btn-bulk.ghost:hover{color:var(--text);background:rgba(255,255,255,.04)}
+.bulk-sep{width:1px;height:24px;background:var(--border2);margin:0 4px;flex-shrink:0}
+
 /* ── Soft-deleted card ── */
 .carousel-card.soft-deleted{
   opacity:.45;filter:grayscale(.6);
@@ -835,6 +897,11 @@ body::before{
       <input class="search-input" id="search-input" type="text" placeholder="Rechercher par nom, date…">
     </div>
     <div style="margin-left:auto;display:flex;gap:6px;align-items:center">
+      <button class="btn-select-mode" id="btn-select-mode" onclick="toggleSelectMode()" title="Sélection multiple">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        Sélectionner
+      </button>
+      <div style="width:1px;height:18px;background:var(--border2)"></div>
       <button class="view-btn active" id="view-grid" title="Vue grille" onclick="setView('grid')">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
       </button>
@@ -1256,6 +1323,7 @@ function clearSearch() {
 //  RENDER GRID (with date grouping)
 // ═══════════════════════════════════════════
 function showGrid(items) {
+  _refreshBulkBar(); // sync les boutons d'action selon vue corbeille/normale
   const grid    = document.getElementById('library-grid');
   const isTrash = activeFilter === 'trash';
   grid.className = `library-grid${activeView === 'list' ? ' list-view' : ''}`;
@@ -1352,11 +1420,16 @@ function buildCard(item, i, isTrash = false) {
        </button>`;
 
   const cardClass = `carousel-card${isTrash ? ' soft-deleted' : ''}`;
-  const clickAction = isTrash ? '' : `onclick="openLightbox('${esc(item.job_id)}','${esc(item.display_name)}',${item.slide_count},${item.has_pdf})"`;
+  const clickAction = isTrash
+    ? `onclick="if(selectMode){event.stopPropagation();toggleCardSelect('${esc(item.job_id)}')}"`
+    : `onclick="if(selectMode){toggleCardSelect('${esc(item.job_id)}');}else{openLightbox('${esc(item.job_id)}','${esc(item.display_name)}',${item.slide_count},${item.has_pdf})}"`;
+
+  const checkboxSvg = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>`;
 
   return `
-<div class="${cardClass}" style="animation-delay:${i*0.04}s" ${clickAction}>
+<div class="${cardClass}" data-job-id="${esc(item.job_id)}" style="animation-delay:${i*0.04}s" ${clickAction}>
   <div class="card-thumb" style="position:relative">
+    <div class="card-select-check" onclick="event.stopPropagation();toggleCardSelect('${esc(item.job_id)}')" title="Sélectionner">${checkboxSvg}</div>
     ${thumb}
     ${trashBanner}
     <div class="card-thumb-overlay">${previewBtn}</div>
@@ -1705,6 +1778,177 @@ function toast(msg, type='success') {
   wrap.appendChild(el);
   setTimeout(() => el.remove(), 3500);
 }
+
+// ═══════════════════════════════════════════
+//  MULTI-SELECT
+// ═══════════════════════════════════════════
+let selectedIds = new Set();
+let selectMode  = false;
+
+function toggleSelectMode() {
+  selectMode = !selectMode;
+  const btn  = document.getElementById('btn-select-mode');
+  const grid = document.getElementById('library-grid');
+  btn.classList.toggle('active', selectMode);
+  grid.classList.toggle('select-mode', selectMode);
+  if (!selectMode) {
+    selectedIds.clear();
+    _refreshBulkBar();
+    // retirer la classe selected de toutes les cartes
+    document.querySelectorAll('.carousel-card.selected').forEach(c => c.classList.remove('selected'));
+  }
+}
+
+function toggleCardSelect(jobId) {
+  const card = document.querySelector(`.carousel-card[data-job-id="${jobId}"]`);
+  if (!card) return;
+  if (selectedIds.has(jobId)) {
+    selectedIds.delete(jobId);
+    card.classList.remove('selected');
+  } else {
+    selectedIds.add(jobId);
+    card.classList.add('selected');
+  }
+  _refreshBulkBar();
+}
+
+function selectAll() {
+  document.querySelectorAll('.carousel-card[data-job-id]').forEach(card => {
+    const id = card.dataset.jobId;
+    if (id) { selectedIds.add(id); card.classList.add('selected'); }
+  });
+  _refreshBulkBar();
+}
+
+function clearSelection() {
+  selectedIds.clear();
+  document.querySelectorAll('.carousel-card.selected').forEach(c => c.classList.remove('selected'));
+  _refreshBulkBar();
+}
+
+function _refreshBulkBar() {
+  const bar      = document.getElementById('bulk-bar');
+  const countEl  = document.getElementById('bulk-count');
+  const isTrash  = document.querySelector('[data-filter="trash"]')?.classList.contains('active');
+  const n = selectedIds.size;
+  if (!bar) return;
+
+  bar.classList.toggle('show', n > 0);
+  if (countEl) countEl.textContent = `${n} sélectionné${n > 1 ? 's' : ''}`;
+
+  // Afficher les bonnes actions selon vue (corbeille ou normale)
+  document.getElementById('bulk-actions-normal').style.display = isTrash ? 'none' : 'flex';
+  document.getElementById('bulk-actions-trash').style.display  = isTrash ? 'flex' : 'none';
+}
+
+// ── Bulk soft-delete (corbeille)
+function bulkSoftDelete() {
+  const ids = [...selectedIds];
+  if (!ids.length) return;
+  if (!confirm(`Déplacer ${ids.length} carousel(s) dans la corbeille ?`)) return;
+  ids.forEach(id => trashSet.add(id));
+  saveTrash(trashSet);
+  updateTrashBadge();
+  clearSelection();
+  toggleSelectMode();
+  applyFilters();
+  toast(`${ids.length} carousel(s) déplacé(s) en corbeille`, 'info');
+}
+
+// ── Bulk restore
+function bulkRestore() {
+  const ids = [...selectedIds];
+  if (!ids.length) return;
+  ids.forEach(id => trashSet.delete(id));
+  saveTrash(trashSet);
+  updateTrashBadge();
+  clearSelection();
+  toggleSelectMode();
+  applyFilters();
+  toast(`${ids.length} carousel(s) restauré(s)`, 'success');
+}
+
+// ── Bulk permanent delete
+async function bulkDelete() {
+  const ids = [...selectedIds];
+  if (!ids.length) return;
+  if (!confirm(`Supprimer définitivement ${ids.length} carousel(s) ? Cette action est irréversible.`)) return;
+  let ok = 0, fail = 0;
+  await Promise.all(ids.map(async id => {
+    try {
+      const res = await fetch(`/api/library/${encodeURIComponent(id)}/delete`, { method: 'DELETE' });
+      if (res.ok) { trashSet.delete(id); ok++; }
+      else fail++;
+    } catch { fail++; }
+  }));
+  saveTrash(trashSet);
+  updateTrashBadge();
+  clearSelection();
+  toggleSelectMode();
+  loadLibrary();
+  toast(`${ok} supprimé(s)${fail ? ` · ${fail} erreur(s)` : ''}`, ok ? 'success' : 'error');
+}
+
+// ── Bulk download (ZIP séquentiel pour ne pas surcharger le navigateur)
+async function bulkDownload() {
+  const ids = [...selectedIds];
+  if (!ids.length) return;
+  toast(`Téléchargement de ${ids.length} carousel(s)…`, 'info');
+  for (const id of ids) {
+    const a = document.createElement('a');
+    a.href = `/api/library/${encodeURIComponent(id)}/download`;
+    a.download = '';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    await new Promise(r => setTimeout(r, 600)); // pause entre chaque pour éviter le blocage
+  }
+}
 </script>
+
+<!-- ══ BULK ACTION BAR ══ -->
+<div class="bulk-bar" id="bulk-bar">
+  <span class="bulk-count" id="bulk-count">0 sélectionné</span>
+  <button class="btn-bulk ghost" onclick="selectAll()">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+    Tout sélectionner
+  </button>
+  <button class="btn-bulk ghost" onclick="clearSelection()">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    Désélectionner
+  </button>
+
+  <div class="bulk-sep"></div>
+
+  <!-- Actions vue normale -->
+  <div id="bulk-actions-normal" style="display:flex;gap:8px;align-items:center">
+    <button class="btn-bulk success" onclick="bulkDownload()">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Télécharger ZIP
+    </button>
+    <button class="btn-bulk danger" onclick="bulkSoftDelete()">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+      Mettre en corbeille
+    </button>
+  </div>
+
+  <!-- Actions vue corbeille -->
+  <div id="bulk-actions-trash" style="display:none;gap:8px;align-items:center">
+    <button class="btn-bulk primary" onclick="bulkRestore()">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4"/></svg>
+      Restaurer
+    </button>
+    <button class="btn-bulk danger" onclick="bulkDelete()">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg>
+      Supprimer définitivement
+    </button>
+  </div>
+
+  <div class="bulk-sep"></div>
+  <button class="btn-bulk ghost" onclick="toggleSelectMode()">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    Annuler
+  </button>
+</div>
 </body>
 </html>
