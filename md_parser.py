@@ -5,7 +5,7 @@ Reorganise automatiquement du Markdown non-structuré en slides standardisées.
 
 import re
 import yaml
-from typing import List, Dict, Any, Tuple, Optional
+from typing import List, Dict, Any
 from urllib.parse import urlparse
 
 
@@ -130,7 +130,7 @@ def _analyze_structure(content: str) -> Dict[str, Any]:
             compare_indicators += 1
     
     # Calculer la densité de contenu
-    total_lines = len([l for l in lines if l.strip()])
+    total_lines = len([ln for ln in lines if ln.strip()])
     
     return {
         'heading_counts': heading_counts,
@@ -167,8 +167,7 @@ def _parse_with_headings(content: str) -> List[Dict[str, Any]]:
     lines = content.split('\n')
     slides = []
     current_slide_lines = []
-    first_heading_found = False
-    
+
     for line in lines:
         heading_match = re.match(r'^(#{1,2})\s+(.+)$', line)
         if heading_match:
@@ -178,7 +177,7 @@ def _parse_with_headings(content: str) -> List[Dict[str, Any]]:
                 if slide_text:
                     slides.append(_parse_section_to_slide(slide_text))
                 current_slide_lines = []
-            first_heading_found = True
+            # heading trouvé — la slide précédente a été sauvegardée ci-dessus
         
         current_slide_lines.append(line)
     

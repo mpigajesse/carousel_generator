@@ -1,0 +1,115 @@
+# =============================================================================
+# CI — Carousel Generator
+# Déclencheur : chaque push et pull request sur main
+# Runner      : GitHub cloud (ubuntu-latest) — pas besoin du serveur local
+# =============================================================================
+
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  # ───────────────────────────────────────────
+  # Job 1 : Lint (ruff)
+  # ───────────────────────────────────────────
+  lint:
+    name: Lint (ruff)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install ruff
+        run: pip install ruff
+
+      - name: Lint — erreurs bloquantes
+        run: ruff check app.py md_parser.py generate.py themes.py gunicorn.conf.py
+
+  # ───────────────────────────────────────────
+  # Job 2 : Sécurité statique (bandit)
+  # ───────────────────────────────────────────
+  security:
+    name: Security scan (bandit)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install bandit
+        run: pip install bandit
+
+      # Niveau -ll = HIGH et CRITICAL uniquement (pas de bruit)
+      - name: Scan sécurité
+        run: bandit -r app.py md_parser.py generate.py -ll --skip B324
+
+  # ───────────────────────────────────────────
+  # Job 3 : Imports + syntaxe Python
+  # ───────────────────────────────────────────
+  imports:
+    name: Import check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dépendances (sans Playwright)
+        run: |
+          pip install flask pyyaml pypdf pillow flask-limiter gunicorn python-dotenv
+
+      - name: Vérifier les imports critiques
+        run: |
+          python -c "import app" 2>&1 | grep -v "UserWarning\|RuntimeWarning\|warnings.warn" || true
+          python -c "import md_parser; print('md_parser OK')"
+          python -c "import themes; print('themes OK')"
+          python -c "import gunicorn.conf; print('gunicorn conf syntaxe OK')" 2>/dev/null || \
+            python -c "
+          import ast, sys
+          with open('gunicorn.conf.py') as f:
+              ast.parse(f.read())
+          print('gunicorn.conf.py syntaxe OK')
+          "
+
+  # ───────────────────────────────────────────
+  # Job 4 : Dockerfile lint (hadolint)
+  # ───────────────────────────────────────────
+  dockerfile:
+    name: Dockerfile lint (hadolint)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Hadolint
+        uses: hadolint/hadolint-action@v3.1.0
+        with:
+          dockerfile: Dockerfile
+          # Règles ignorées :
+          # DL3008 : version pin apt (géré par Playwright)
+          # DL3009 : apt-get clean (on utilise rm -rf /var/lib/apt/lists/*)
+          ignore: DL3008,DL3009

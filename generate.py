@@ -192,7 +192,6 @@ def generate_carousel(
 
     # Générer le HTML de chaque slide
     html_files = []
-    png_files_info = []  # (num, title, path)
     for i, slide in enumerate(slides):
         # Calculer la taille du texte en fonction de la longueur du contenu
         slide = _calculate_text_size(slide)

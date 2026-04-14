@@ -9,8 +9,6 @@ Authentification : définir APP_PASSWORD dans l'environnement (ou fichier .env).
 import os
 import re
 import secrets
-import uuid
-import json
 import shutil
 import zipfile
 import threading
@@ -21,7 +19,7 @@ from flask import (Flask, render_template, request, jsonify,
                    send_file, abort, session, redirect, url_for)
 from werkzeug.utils import secure_filename
 from generate import generate_carousel
-from themes import THEMES, IG_THEMES, get_theme
+from themes import THEMES, IG_THEMES
 from md_parser import parse_markdown_to_slides, _analyze_structure
 
 # Support optionnel pour .env (pip install python-dotenv)
@@ -249,7 +247,6 @@ def _scan_job_folder(folder: Path) -> dict | None:
     slide_pngs = [f for f in all_pngs if f.name != 'cover_thumb.png']
     thumb_png  = next((f for f in all_pngs if f.name == 'cover_thumb.png'), None)
     pdfs  = [f for f in files if f.suffix == '.pdf']
-    zips  = [f for f in files if f.suffix == '.zip']
 
     total_size = sum(f.stat().st_size for f in files if f.is_file())
     stat = folder.stat()
@@ -627,7 +624,8 @@ def _sanitize_folder_name(name: str) -> str:
 def generate_carousel_from_dict(config: dict, theme_name: str, output_dir: str, fmt: str,
                                 platform: str = "linkedin"):
     """Génère le carousel directement depuis un dict Python (sans fichier YAML)."""
-    import yaml, tempfile
+    import yaml
+    import tempfile
 
     with tempfile.NamedTemporaryFile('w', suffix='.yaml', delete=False, encoding='utf-8') as tmp:
         yaml.dump(config, tmp, allow_unicode=True)

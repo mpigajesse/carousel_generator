@@ -1,0 +1,15 @@
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "B", "I"]
+ignore = [
+    "E501",  # line too long
+    "B008",  # function calls in default arguments (Flask patterns)
+    "B904",  # raise from
+]
+
+[tool.ruff.lint.per-file-ignores]
+"generate.py" = ["E402"]
+"app.py"      = ["E402"]

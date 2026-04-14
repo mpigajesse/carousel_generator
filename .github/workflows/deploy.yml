@@ -1,0 +1,137 @@
+# =============================================================================
+# CD — Carousel Generator
+# Déclencheur : push sur main APRÈS que la CI passe (needs: ci)
+# Runner      : self-hosted installé sur le serveur Ubuntu local
+#
+# PRÉREQUIS (à faire une seule fois sur le serveur) :
+#   Voir README.md section "Déploiement" ou suivre les étapes ci-dessous :
+#
+#   1. Sur GitHub → Settings → Actions → Runners → New self-hosted runner
+#   2. Sélectionner Linux / x64, copier les commandes d'installation
+#   3. Sur le serveur Ubuntu :
+#        mkdir -p /opt/actions-runner && cd /opt/actions-runner
+#        # (coller les commandes GitHub)
+#        sudo ./svc.sh install    # installe comme service systemd
+#        sudo ./svc.sh start
+#   4. Cloner le repo sur le serveur :
+#        git clone https://github.com/mpigajesse/carousel_generator.git \
+#          /opt/carousel_generator
+#   5. Créer le .env :
+#        cp /opt/carousel_generator/.env.example /opt/carousel_generator/.env
+#        nano /opt/carousel_generator/.env   # remplir APP_PASSWORD + SECRET_KEY
+#
+# SECRETS GITHUB REQUIS (Settings → Secrets → Actions) :
+#   Aucun — le runner tourne directement sur le serveur, pas besoin de SSH.
+# =============================================================================
+
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+
+# Un seul déploiement à la fois (évite les conflits de build)
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+jobs:
+  # ───────────────────────────────────────────
+  # CI doit passer avant de déployer
+  # ───────────────────────────────────────────
+  ci:
+    name: CI Gate
+    uses: ./.github/workflows/ci.yml
+
+  # ───────────────────────────────────────────
+  # Déploiement sur le serveur Ubuntu local
+  # ───────────────────────────────────────────
+  deploy:
+    name: Deploy (Ubuntu local)
+    runs-on: self-hosted
+    needs: ci
+    environment: production
+
+    env:
+      APP_DIR: /opt/carousel_generator
+
+    steps:
+      # 1. Récupérer le code le plus récent
+      - name: Pull latest code
+        working-directory: ${{ env.APP_DIR }}
+        run: |
+          git fetch origin main
+          git reset --hard origin/main
+          echo "✓ Code mis à jour : $(git log -1 --format='%h %s')"
+
+      # 2. Vérifier que le .env existe (ne jamais démarrer sans secrets)
+      - name: Vérifier .env
+        working-directory: ${{ env.APP_DIR }}
+        run: |
+          if [ ! -f .env ]; then
+            echo "ERREUR : le fichier .env est manquant sur le serveur."
+            echo "Créez-le : cp .env.example .env && nano .env"
+            exit 1
+          fi
+          if ! grep -q "APP_PASSWORD=." .env || ! grep -q "SECRET_KEY=." .env; then
+            echo "ERREUR : APP_PASSWORD ou SECRET_KEY vide dans .env"
+            exit 1
+          fi
+          echo "✓ .env présent et non vide"
+
+      # 3. Build de l'image Docker et redémarrage
+      - name: Build & restart (docker compose)
+        working-directory: ${{ env.APP_DIR }}
+        run: |
+          docker compose pull 2>/dev/null || true
+          docker compose up -d --build --remove-orphans
+          echo "✓ Conteneur redémarré"
+
+      # 4. Attendre que le conteneur soit healthy
+      - name: Wait for health check
+        run: |
+          echo "Attente du démarrage du conteneur…"
+          for i in $(seq 1 12); do
+            STATUS=$(docker inspect --format='{{.State.Health.Status}}' carousel-generator 2>/dev/null || echo "unknown")
+            echo "  [${i}/12] status: $STATUS"
+            if [ "$STATUS" = "healthy" ]; then
+              echo "✓ Conteneur healthy"
+              break
+            fi
+            if [ $i -eq 12 ]; then
+              echo "ERREUR : le conteneur n'est pas healthy après 60s"
+              docker compose logs --tail=50 carousel
+              exit 1
+            fi
+            sleep 5
+          done
+
+      # 5. Smoke test HTTP
+      - name: Smoke test
+        run: |
+          HTTP=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:5000/login)
+          if [ "$HTTP" = "200" ]; then
+            echo "✓ Smoke test OK — /login répond HTTP 200"
+          else
+            echo "ERREUR : /login répond HTTP $HTTP"
+            docker compose logs --tail=30 carousel
+            exit 1
+          fi
+
+      # 6. Nettoyage des images Docker obsolètes
+      - name: Cleanup images obsolètes
+        run: |
+          docker image prune -f --filter "until=24h" 2>/dev/null || true
+          echo "✓ Images obsolètes supprimées"
+
+      # 7. Résumé du déploiement
+      - name: Résumé
+        working-directory: ${{ env.APP_DIR }}
+        run: |
+          echo ""
+          echo "═══════════════════════════════════════"
+          echo "  ✓ Déploiement réussi"
+          echo "  Commit : $(git log -1 --format='%h — %s')"
+          echo "  Date   : $(date '+%Y-%m-%d %H:%M:%S')"
+          echo "  Image  : $(docker inspect --format='{{.Id}}' carousel-generator | cut -c1-12)"
+          echo "═══════════════════════════════════════"

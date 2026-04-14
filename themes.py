@@ -4,7 +4,6 @@ themes.py - Gestion des thèmes et palettes de couleurs
 """
 import random
 import colorsys
-import math
 
 THEMES = {
     # ═══════════════════════════════════════════
@@ -535,9 +534,9 @@ IG_THEMES = {
 }
 
 
-def hsl_to_hex(h, s, l):
+def hsl_to_hex(h, s, lightness):
     """Convertit HSL (0-1 chacun) en hex."""
-    r, g, b = colorsys.hls_to_rgb(h, l, s)
+    r, g, b = colorsys.hls_to_rgb(h, lightness, s)
     return "#{:02x}{:02x}{:02x}".format(int(r*255), int(g*255), int(b*255))
 
 def hex_to_rgb(hex_color):
