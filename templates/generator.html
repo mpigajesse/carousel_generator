@@ -1686,17 +1686,22 @@ function formatDateShort(iso) {
 }
 
 function esc(str) {
-  return String(str).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  // Escape HTML special chars including single quote (needed for onclick="..." attributes)
+  return String(str)
+    .replace(/&/g,'&amp;').replace(/"/g,'&quot;')
+    .replace(/'/g,'&#39;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
 
 function toast(msg, type='success') {
   const wrap = document.getElementById('toast-wrap');
   const el   = document.createElement('div');
   el.className = `toast ${type}`;
-  el.innerHTML = (type === 'success'
+  // Icon injected as trusted static HTML; message as safe text node (XSS prevention)
+  el.insertAdjacentHTML('afterbegin', type === 'success'
     ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>'
     : '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>'
-  ) + msg;
+  );
+  el.appendChild(document.createTextNode(msg));
   wrap.appendChild(el);
   setTimeout(() => el.remove(), 3500);
 }

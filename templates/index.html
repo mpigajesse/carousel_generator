@@ -2194,7 +2194,9 @@ function renderSlideCard(s, i) {
 }
 
 function esc(str) {
-  return String(str || '').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  return String(str || '')
+    .replace(/&/g,'&amp;').replace(/"/g,'&quot;')
+    .replace(/'/g,'&#39;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
 
 // ── Generate ──
@@ -2854,7 +2856,9 @@ function showToast(msg, type = 'success') {
     color:${c.text};font-size:13px;font-weight:600;font-family:'DM Sans',sans-serif;
     box-shadow:0 8px 24px rgba(0,0,0,.4);
     animation:_toastIn .22s ease both;`;
-  el.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">${c.icon}</svg>${msg}`;
+  // Icon is trusted static SVG path data; message appended as text node (XSS prevention)
+  el.insertAdjacentHTML('afterbegin', `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">${c.icon}</svg>`);
+  el.appendChild(document.createTextNode(msg));
   wrap.appendChild(el);
   setTimeout(() => { el.style.opacity = '0'; el.style.transition = 'opacity .3s'; setTimeout(() => el.remove(), 300); }, 3200);
 }

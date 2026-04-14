@@ -6,6 +6,7 @@ Reorganise automatiquement du Markdown non-structuré en slides standardisées.
 import re
 import yaml
 from typing import List, Dict, Any, Tuple, Optional
+from urllib.parse import urlparse
 
 
 def parse_markdown_to_slides(md_content: str) -> Dict[str, Any]:
@@ -33,7 +34,7 @@ def parse_markdown_to_slides(md_content: str) -> Dict[str, Any]:
         try:
             front_matter = yaml.safe_load(front_matter_match.group(1)) or {}
             content = content[front_matter_match.end():]
-        except:
+        except yaml.YAMLError:
             pass
     
     # 2. Nettoyage préliminaire
@@ -532,7 +533,9 @@ def _markdown_to_html(md: str) -> str:
                 html_lines.append('</code></pre>')
                 in_code_block = False
             else:
-                lang = stripped[3:].strip()
+                # Allowlist: only alphanumerics + safe symbols for language names
+                raw_lang = stripped[3:].strip()
+                lang = re.sub(r'[^a-zA-Z0-9_\-+#]', '', raw_lang)
                 html_lines.append(f'<pre style="background:rgba(0,0,0,.3);padding:16px;border-radius:8px;margin:12px 0;"><code class="language-{lang}">')
                 in_code_block = True
             continue
@@ -761,6 +764,15 @@ def _build_html_table(table_lines: List[str]) -> str:
     return '\n'.join(html_parts)
 
 
+def _safe_href(url: str) -> str:
+    """Bloque les URLs javascript:, data: et vbscript: dans les attributs href."""
+    url = url.strip()
+    scheme = urlparse(url).scheme.lower()
+    if scheme in ('javascript', 'data', 'vbscript'):
+        return '#'
+    return url
+
+
 def _inline_formatting(text: str) -> str:
     """Applique le formatage inline: **gras**, *italique*, `code`."""
     # Extraire d'abord les segments code inline pour les protéger de l'échappement HTML
@@ -788,8 +800,16 @@ def _inline_formatting(text: str) -> str:
     # Italic
     text = re.sub(r'\*(.+?)\*', r'<em>\1</em>', text)
     
-    # Links
-    text = re.sub(r'\[([^\]]+)\]\(([^)]+)\)', r'<a href="\2" style="color:var(--accent2);text-decoration:underline;">\1</a>', text)
+    # Links — sanitize href to block javascript: / data: URIs
+    def _make_link(m: re.Match) -> str:
+        # Échapper le label explicitement (la passe globale a déjà traité le texte environnant,
+        # mais m.group(1) est le groupe brut capturé avant cette substitution)
+        raw_label = m.group(1)
+        label = raw_label.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;').replace('"', '&quot;')
+        href  = _safe_href(m.group(2))
+        return f'<a href="{href}" style="color:var(--accent2);text-decoration:underline;">{label}</a>'
+
+    text = re.sub(r'\[([^\]]+)\]\(([^)]+)\)', _make_link, text)
     
     # Strikethrough
     text = re.sub(r'~~(.+?)~~', r'<del style="opacity:0.6;">\1</del>', text)

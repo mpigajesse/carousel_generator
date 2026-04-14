@@ -188,7 +188,7 @@ body::before{
     </div>
 
     <!-- Form -->
-    <form method="POST" action="{{ url_for('login', next=request.args.get('next','')) }}" autocomplete="off">
+    <form method="POST" action="{{ url_for('login', next=safe_next) }}" autocomplete="off">
       <label class="field-label" for="password">Mot de passe</label>
       <div class="field-wrap">
         <svg class="field-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">

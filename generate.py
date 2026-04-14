@@ -296,8 +296,8 @@ def generate_carousel(
             if os.path.exists(f):
                 try:
                     os.remove(f)
-                except:
-                    pass
+                except OSError as e:
+                    print(f"Avertissement : impossible de supprimer {f} : {e}")
         print(f"PDF parfait genere via fusion : {final_pdf_path}")
         return [final_pdf_path]
 
