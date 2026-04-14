@@ -796,6 +796,193 @@ main {
   letter-spacing: .1em;
 }
 
+/* ══ Jobs Panel — floating task manager ══ */
+.jobs-panel {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 300;
+  width: 370px;
+  background: var(--card);
+  border: 1px solid var(--border2);
+  border-radius: 14px;
+  box-shadow: 0 24px 64px rgba(0,0,0,.55), 0 0 0 1px rgba(255,255,255,.04);
+  overflow: hidden;
+  display: none;
+  animation: panelIn .25s cubic-bezier(.34,1.56,.64,1) both;
+}
+@keyframes panelIn { from{opacity:0;transform:translateY(16px) scale(.97)} to{opacity:1;transform:none} }
+.jobs-panel.visible { display: block; }
+.jobs-panel-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 13px 16px;
+  cursor: pointer;
+  user-select: none;
+  border-bottom: 1px solid var(--border);
+  background: var(--card2);
+}
+.jobs-panel-title {
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--text);
+  flex: 1;
+  letter-spacing: -.01em;
+}
+.jobs-panel-badge {
+  background: var(--accent);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 99px;
+  min-width: 20px;
+  text-align: center;
+  transition: background .3s;
+}
+.jobs-panel-badge.all-done { background: var(--success); }
+.jobs-panel-badge.has-error { background: var(--danger); }
+.jobs-panel-chevron {
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface2);
+  border-radius: 6px;
+  color: var(--muted2);
+  transition: transform .2s;
+}
+.jobs-panel.collapsed .jobs-panel-chevron { transform: rotate(180deg); }
+.jobs-panel-list {
+  max-height: 440px;
+  overflow-y: auto;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.jobs-panel.collapsed .jobs-panel-list { display: none; }
+/* Individual job card */
+.jcard {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: border-color .25s;
+}
+.jcard.jrunning { border-color: rgba(108,92,231,.35); }
+.jcard.jdone    { border-color: rgba(52,211,153,.35); }
+.jcard.jerror   { border-color: rgba(248,113,113,.35); }
+.jcard-top { display: flex; align-items: center; gap: 8px; }
+.jcard-dot {
+  width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+}
+.jcard.jrunning .jcard-dot { background: var(--accent); animation: jdPulse 1s infinite; }
+.jcard.jdone    .jcard-dot { background: var(--success); }
+.jcard.jerror   .jcard-dot { background: var(--danger); }
+@keyframes jdPulse { 0%,100%{opacity:1} 50%{opacity:.35} }
+.jcard-name {
+  font-size: 12px; font-weight: 600; color: var(--text);
+  flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.jcard-time { font-family:'DM Mono',monospace; font-size:10px; color:var(--muted); }
+.jcard-bar-track {
+  height: 3px; background: var(--surface); border-radius: 2px; overflow: hidden;
+}
+.jcard-bar-fill {
+  height: 100%; width: 0%; border-radius: 2px;
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+  transition: width .45s ease;
+}
+.jcard.jdone  .jcard-bar-fill { background: var(--success); width: 100%; }
+.jcard.jerror .jcard-bar-fill { background: var(--danger); }
+.jcard-meta { font-size: 11px; color: var(--muted2); }
+.jcard-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+.jcard-btn {
+  font-size: 11px; padding: 5px 10px; border-radius: 6px;
+  border: 1px solid var(--border2); background: var(--card);
+  color: var(--muted2); cursor: pointer; transition: all .15s;
+  text-decoration: none; display: inline-flex; align-items: center; gap: 4px;
+}
+.jcard-btn:hover { border-color: var(--accent); color: var(--accent); }
+.jcard-btn.primary { background: var(--accent); border-color: var(--accent); color:#fff; }
+.jcard-btn.primary:hover { background: var(--accent-hi); }
+.jcard-btn.success { background: var(--success); border-color: var(--success); color:#fff; }
+.jcard-btn.success:hover { filter: brightness(1.1); }
+
+/* Multi-MD modal enhancements */
+.md-blocks-list { display: flex; flex-direction: column; gap: 10px; }
+.md-block-item {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px;
+  position: relative;
+}
+.md-block-header {
+  display: flex; align-items: center; gap: 8px; margin-bottom: 8px;
+}
+.md-block-num {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px; color: var(--accent); font-weight: 600;
+  background: rgba(108,92,231,.12);
+  padding: 2px 7px; border-radius: 99px;
+}
+.md-block-title { font-size: 12px; color: var(--muted2); flex: 1; }
+.md-block-remove {
+  width: 22px; height: 22px; border-radius: 5px;
+  border: none; background: transparent; color: var(--muted);
+  cursor: pointer; font-size: 14px; display: flex; align-items: center; justify-content: center;
+  transition: all .15s;
+}
+.md-block-remove:hover { background: rgba(248,113,113,.15); color: var(--danger); }
+.md-block-textarea {
+  width: 100%; height: 110px; resize: vertical; min-height: 80px;
+  background: var(--bg); border: 1px solid var(--border); border-radius: 7px;
+  color: var(--text); font-family: 'DM Mono', monospace; font-size: 11.5px;
+  line-height: 1.6; padding: 10px 12px; outline: none;
+  transition: border-color .15s;
+}
+.md-block-textarea:focus { border-color: var(--accent); }
+.md-block-status {
+  margin-top: 6px; font-size: 11px; color: var(--muted2);
+  display: flex; align-items: center; gap: 6px; min-height: 18px;
+}
+.md-block-status.ok { color: var(--success); }
+.md-block-status.err { color: var(--danger); }
+.md-add-block-btn {
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 14px; border-radius: 8px;
+  border: 1px dashed var(--border2); background: transparent;
+  color: var(--muted2); font-size: 12px; cursor: pointer;
+  transition: all .2s; width: 100%;
+}
+.md-add-block-btn:hover { border-color: var(--accent); color: var(--accent); background: rgba(108,92,231,.05); }
+.md-files-list { display: flex; flex-direction: column; gap: 6px; margin-top: 12px; }
+.md-file-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 12px; background: var(--surface2);
+  border: 1px solid var(--border); border-radius: 8px;
+}
+.md-file-item-icon { font-size: 16px; }
+.md-file-item-name { font-size: 12px; color: var(--text); flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.md-file-item-size { font-size: 11px; color: var(--muted); }
+.md-file-item-status { font-size: 11px; font-weight: 600; }
+.md-file-item-status.ok  { color: var(--success); }
+.md-file-item-status.err { color: var(--danger); }
+.md-file-remove { background: none; border: none; color: var(--muted); cursor: pointer; padding: 2px 6px; border-radius: 4px; }
+.md-file-remove:hover { color: var(--danger); background: rgba(248,113,113,.12); }
+.md-modal-footer-multi {
+  display: flex; gap: 8px; flex-wrap: wrap; align-items: center;
+  padding: 14px 20px; border-top: 1px solid var(--border); background: var(--card2);
+}
+
 /* ── Re-theme bar ── */
 .retheme-bar {
   background: var(--card);
@@ -1896,64 +2083,74 @@ main {
   <div class="presentation-thumbnails" id="presentation-thumbnails"></div>
 </div>
 
-<!-- ══ MARKDOWN IMPORT MODAL ══ -->
+<!-- ══ MARKDOWN IMPORT MODAL (multi-bloc / multi-fichiers) ══ -->
 <div class="md-modal-overlay" id="md-modal">
   <div class="md-modal">
     <div class="md-modal-header">
       <h2>Import Markdown</h2>
-      <button class="md-modal-close" onclick="closeMarkdownModal()">X</button>
+      <button class="md-modal-close" onclick="closeMarkdownModal()">✕</button>
     </div>
-    
+
     <div class="md-modal-tabs">
-      <button class="md-tab active" onclick="switchMdTab('paste', this)">Coller le contenu</button>
-      <button class="md-tab" onclick="switchMdTab('upload', this)">Uploader un fichier</button>
+      <button class="md-tab active" onclick="switchMdTab('paste', this)">Coller (multi-blocs)</button>
+      <button class="md-tab" onclick="switchMdTab('upload', this)">Fichiers (.md)</button>
     </div>
-    
+
     <div class="md-modal-body">
-      <!-- Tab: Paste -->
+
+      <!-- Tab: Paste (multi-blocs) -->
       <div class="md-tab-content active" id="tab-paste">
-        <textarea class="md-textarea" id="md-content" placeholder="Collez votre contenu Markdown ici...
-
-# Exemple de structure
-
-## Slide 1: Introduction
-Contenu de la première slide...
-
-## Slide 2: Concepts clés
-- Point important 1
-- Point important 2
-- Point important 3
-
-## Slide 3: Comparaison
-**Option A**: Description...
-
-**Option B**: Description..."></textarea>
+        <div class="md-blocks-list" id="md-blocks-list">
+          <!-- Blocs injectés par JS -->
+        </div>
+        <button class="md-add-block-btn" onclick="addMdBlock()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Ajouter un autre carousel
+        </button>
       </div>
-      
-      <!-- Tab: Upload -->
+
+      <!-- Tab: Upload (multi-fichiers) -->
       <div class="md-tab-content" id="tab-upload">
         <div class="md-file-drop" id="md-file-drop" onclick="document.getElementById('md-file-input').click()">
           <div class="md-file-drop-icon">📁</div>
-          <div class="md-file-drop-text">Cliquez ou glissez un fichier .md ici</div>
-          <div class="md-file-drop-hint">Formats supportés: .md, .markdown</div>
+          <div class="md-file-drop-text">Cliquez ou glissez vos fichiers .md ici</div>
+          <div class="md-file-drop-hint">Multi-sélection supportée — chaque fichier = 1 carousel</div>
         </div>
-        <input type="file" id="md-file-input" accept=".md,.markdown" style="display:none" onchange="handleFileUpload(event)">
-        <div id="md-file-name" style="margin-top:12px;font-size:12px;color:var(--muted2)"></div>
+        <input type="file" id="md-file-input" accept=".md,.markdown" multiple style="display:none" onchange="handleFileUpload(event)">
+        <div class="md-files-list" id="md-files-list"></div>
       </div>
-      
-      <!-- Preview -->
+
+      <!-- Preview de structure (mode paste unique) -->
       <div class="md-preview-info" id="md-preview" style="display:none">
-        <div class="md-preview-info-title">Apercu des slides detectees:</div>
+        <div class="md-preview-info-title">Aperçu des slides détectées :</div>
         <div class="md-preview-list" id="md-preview-list"></div>
       </div>
     </div>
-    
-    <div class="md-modal-footer">
+
+    <div class="md-modal-footer-multi">
       <button class="md-btn" onclick="closeMarkdownModal()">Annuler</button>
-      <button class="md-btn primary" id="md-apply-btn" onclick="applyMarkdownImport()" disabled>
-        Appliquer aux slides
+      <button class="md-btn" id="md-apply-btn" onclick="applyMarkdownImport()" disabled>
+        ← Charger dans l'éditeur
+      </button>
+      <button class="md-btn primary" id="md-gen-btn" onclick="generateFromMarkdown()" disabled style="margin-left:auto">
+        ▶ Générer directement
       </button>
     </div>
+  </div>
+</div>
+
+<!-- ══ JOBS PANEL — suivi temps réel de toutes les générations ══ -->
+<div class="jobs-panel" id="jobs-panel">
+  <div class="jobs-panel-header" onclick="toggleJobsPanel()">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="color:var(--accent)"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+    <span class="jobs-panel-title">Générations</span>
+    <span class="jobs-panel-badge" id="jobs-badge">0</span>
+    <div class="jobs-panel-chevron">
+      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg>
+    </div>
+  </div>
+  <div class="jobs-panel-list" id="jobs-panel-list">
+    <!-- Cards injectées par JS -->
   </div>
 </div>
 
@@ -1963,11 +2160,20 @@ let slides = [];
 let selectedTheme = 'kente_tech';
 let selectedFormat = 'png';
 let selectedPlatform = 'linkedin';
-let currentJobId = null;
 let themeColors = {};
 let parsedMarkdownData = null;
-let lastPayload = null;       // Dernier payload complet — pour re-thème sans retour à l'éditeur
-let isRethemeRunning = false; // Évite les clics multiples pendant la régénération
+let lastPayload = null;
+let isRethemeRunning = false;
+
+// ── Multi-job tracker ──
+const activeJobs = new Map(); // jobId → { name, total, startTime, current, status, phase, files, error }
+let _pollTimer  = null;
+let _overlayJob = null;        // jobId affiché dans l'overlay plein-panneau
+
+// ── Multi-MD state ──
+let mdBlocks     = [];         // [{ id, content, parsed }]  — onglet Paste
+let mdFileQueue  = [];         // [{ name, size, content, parsed }] — onglet Upload
+let _mdBlockIdSeq = 0;
 
 // ── Init ──
 document.addEventListener('DOMContentLoaded', async () => {
@@ -2332,13 +2538,192 @@ function esc(str) {
     .replace(/'/g,'&#39;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
 
-// ── Generate ──
+// ────────────────────────────────────────────
+//  MULTI-JOB TRACKER
+// ────────────────────────────────────────────
+
+function _ensurePoller() {
+  if (_pollTimer) return;
+  _pollTimer = setInterval(_pollAllJobs, 500);
+}
+
+async function _pollAllJobs() {
+  const running = [...activeJobs.entries()].filter(([, m]) => m.status === 'running');
+  if (!running.length) { clearInterval(_pollTimer); _pollTimer = null; return; }
+
+  await Promise.all(running.map(async ([jobId, meta]) => {
+    try {
+      const res  = await fetch('api/status/' + jobId);
+      const data = await res.json();
+      Object.assign(meta, {
+        current: data.current_slide ?? meta.current,
+        total:   data.total_slides  ?? meta.total,
+        status:  data.status,
+        phase:   data.phase || meta.phase,
+        files:   data.files  || [],
+        error:   data.error,
+      });
+      _updateJobCard(jobId);
+      if (jobId === _overlayJob) _syncOverlay(meta);
+      if (data.status === 'done' || data.status === 'error') {
+        _onJobDone(jobId, meta);
+      }
+    } catch (_) {}
+  }));
+}
+
+function _syncOverlay(meta) {
+  const pct = meta.total > 0 ? Math.round((meta.current / meta.total) * 85) + 5 : 8;
+  const label = meta.phase === 'rendering' && meta.total > 0
+    ? `Capture slide ${meta.current + 1} / ${meta.total}…`
+    : ({ preparing: 'Préparation…', done: 'Terminé !' }[meta.phase] || 'Génération…');
+  setProgress(pct, label, meta.current, meta.total);
+}
+
+function _onJobDone(jobId, meta) {
+  _updateJobCard(jobId);
+  _refreshPanelBadge();
+
+  if (jobId === _overlayJob) {
+    if (meta.status === 'done') {
+      setProgress(100, 'Terminé !', meta.total, meta.total);
+      setTimeout(() => {
+        showProgress(false);
+        renderPreview(meta.files, jobId);
+        renderRethemeBar();
+        switchTab('preview', document.querySelectorAll('.tab')[1]);
+      }, 700);
+      showStatus(`${meta.files.length} slide(s) générées avec succès.`, 'success');
+    } else {
+      showProgress(false);
+      showStatus('Erreur : ' + (meta.error || 'inconnue'), 'error');
+    }
+    document.getElementById('btn-generate').disabled = false;
+  }
+}
+
+// Lance un job et l'ajoute au tracker
+function _startJobTracking(jobId, name, totalSlides, isOverlay = true) {
+  const meta = {
+    name, total: totalSlides, startTime: Date.now(),
+    current: 0, status: 'running', phase: 'preparing', files: [], error: null,
+  };
+  activeJobs.set(jobId, meta);
+  if (isOverlay) _overlayJob = jobId;
+  _addJobCard(jobId, name);
+  _refreshPanelBadge();
+  _ensurePoller();
+}
+
+// ────────────────────────────────────────────
+//  JOBS PANEL
+// ────────────────────────────────────────────
+
+function toggleJobsPanel() {
+  document.getElementById('jobs-panel').classList.toggle('collapsed');
+}
+
+function _refreshPanelBadge() {
+  const panel   = document.getElementById('jobs-panel');
+  const badge   = document.getElementById('jobs-badge');
+  const running = [...activeJobs.values()].filter(m => m.status === 'running').length;
+  const errors  = [...activeJobs.values()].filter(m => m.status === 'error').length;
+  const total   = activeJobs.size;
+
+  badge.textContent = running > 0 ? running : total;
+  badge.className   = 'jobs-panel-badge' +
+    (running > 0 ? '' : errors > 0 ? ' has-error' : ' all-done');
+
+  panel.classList.toggle('visible', total > 0);
+}
+
+function _elapsedStr(startTime) {
+  const s  = Math.floor((Date.now() - startTime) / 1000);
+  const mm = String(Math.floor(s / 60)).padStart(2, '0');
+  const ss = String(s % 60).padStart(2, '0');
+  return `${mm}:${ss}`;
+}
+
+function _addJobCard(jobId, name) {
+  const list = document.getElementById('jobs-panel-list');
+  const card = document.createElement('div');
+  card.className = 'jcard jrunning';
+  card.id = `jcard-${CSS.escape(jobId)}`;
+  card.innerHTML = `
+    <div class="jcard-top">
+      <div class="jcard-dot"></div>
+      <div class="jcard-name" title="${esc(name)}">${esc(name)}</div>
+      <div class="jcard-time" id="jtime-${CSS.escape(jobId)}">00:00</div>
+    </div>
+    <div class="jcard-bar-track"><div class="jcard-bar-fill" id="jbar-${CSS.escape(jobId)}"></div></div>
+    <div class="jcard-meta" id="jmeta-${CSS.escape(jobId)}">Préparation…</div>`;
+  list.prepend(card);
+
+  // Timer interne de la card
+  const timerEl = card.querySelector(`#jtime-${CSS.escape(jobId)}`);
+  const meta    = activeJobs.get(jobId);
+  const t = setInterval(() => {
+    if (!meta || meta.status !== 'running') { clearInterval(t); return; }
+    if (timerEl) timerEl.textContent = _elapsedStr(meta.startTime);
+  }, 1000);
+}
+
+function _updateJobCard(jobId) {
+  const meta  = activeJobs.get(jobId);
+  if (!meta) return;
+  const card  = document.getElementById(`jcard-${CSS.escape(jobId)}`);
+  const bar   = document.getElementById(`jbar-${CSS.escape(jobId)}`);
+  const metaEl= document.getElementById(`jmeta-${CSS.escape(jobId)}`);
+  if (!card) return;
+
+  const pct = meta.total > 0 ? Math.round((meta.current / meta.total) * 100) : 0;
+  if (bar) bar.style.width = (meta.status === 'done' ? 100 : pct) + '%';
+
+  if (meta.status === 'running') {
+    if (metaEl) metaEl.textContent = meta.total > 0
+      ? `Slide ${meta.current} / ${meta.total} capturées`
+      : 'Préparation…';
+  } else if (meta.status === 'done') {
+    card.className = 'jcard jdone';
+    if (metaEl) metaEl.innerHTML = '';
+    // Ajouter boutons d'action
+    if (!card.querySelector('.jcard-actions')) {
+      const acts = document.createElement('div');
+      acts.className = 'jcard-actions';
+      acts.innerHTML = `
+        <button class="jcard-btn success" onclick="viewJobInLibrary('${esc(jobId)}')">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          Voir dans la bibliothèque
+        </button>
+        <button class="jcard-btn" onclick="this.closest('.jcard').remove();activeJobs.delete('${esc(jobId)}');_refreshPanelBadge()">✕</button>`;
+      card.appendChild(acts);
+    }
+  } else if (meta.status === 'error') {
+    card.className = 'jcard jerror';
+    if (metaEl) metaEl.textContent = meta.error || 'Erreur';
+    if (!card.querySelector('.jcard-actions')) {
+      const acts = document.createElement('div');
+      acts.className = 'jcard-actions';
+      acts.innerHTML = `<button class="jcard-btn" onclick="this.closest('.jcard').remove();activeJobs.delete('${esc(jobId)}');_refreshPanelBadge()">Fermer</button>`;
+      card.appendChild(acts);
+    }
+  }
+}
+
+function viewJobInLibrary(jobId) {
+  window.location.href = '/generator#' + encodeURIComponent(jobId);
+}
+
+// ────────────────────────────────────────────
+//  GENERATE — multi-job compatible
+// ────────────────────────────────────────────
+
 async function startGenerate() {
   if (slides.length === 0) return showStatus('Ajoute au moins une slide.', 'error');
 
-  const btn = document.getElementById('btn-generate');
+  const btn  = document.getElementById('btn-generate');
+  const name = document.getElementById('footer-series').value || 'Carousel';
   btn.disabled = true;
-
   showProgress(true, slides.length);
 
   const payload = {
@@ -2349,21 +2734,15 @@ async function startGenerate() {
       series: document.getElementById('footer-series').value,
       author: document.getElementById('footer-author').value,
     },
-    slides: slides.map(s => {
-      const { id, ...rest } = s;
-      return rest;
-    }),
+    slides: slides.map(({ id, ...rest }) => rest),
   };
-
-  // Mémoriser le payload pour le re-thème
   lastPayload = payload;
 
   try {
     const res  = await fetch('api/generate', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
     const data = await res.json();
     if (data.error) { showStatus(data.error, 'error'); showProgress(false); btn.disabled = false; return; }
-    currentJobId = data.job_id;
-    pollStatus(currentJobId, false);
+    _startJobTracking(data.job_id, name, slides.length, true);
   } catch(e) {
     showStatus('Erreur réseau: ' + e.message, 'error');
     showProgress(false);
@@ -2463,77 +2842,32 @@ function renderRethemeBar() {
   bar.classList.add('visible');
 }
 
+// Re-thème : polling simple car c'est un job secondaire (pas d'overlay plein-panneau)
 async function pollStatus(jobId, isRetheme = false) {
-  // Labels de phase affichés dans l'overlay
-  const PHASE_LABELS = {
-    preparing: 'Préparation…',
-    rendering: 'Capture des slides…',
-    done:      'Terminé !',
-  };
+  if (!isRetheme) return; // Les vrais jobs passent par _startJobTracking()
 
   const interval = setInterval(async () => {
     let data;
-    try {
-      const res = await fetch('api/status/' + jobId);
-      data = await res.json();
-    } catch (_) {
-      return; // Erreur réseau transitoire — on réessaie au prochain tick
-    }
-
-    const current = data.current_slide ?? 0;
-    const total   = data.total_slides  ?? 0;
-    const phase   = data.phase || 'rendering';
-
-    if (!isRetheme) {
-      // Progression réelle basée sur les slides capturées côté serveur
-      const captured_pct = total > 0 ? Math.round((current / total) * 85) + 5 : 8;
-      const label = phase === 'rendering' && total > 0
-        ? `Capture slide ${current + 1} / ${total}…`
-        : (PHASE_LABELS[phase] || 'Génération en cours…');
-      setProgress(captured_pct, label, current, total);
-    }
+    try { const r = await fetch('api/status/' + jobId); data = await r.json(); }
+    catch (_) { return; }
 
     if (data.status === 'done') {
       clearInterval(interval);
-
-      if (isRetheme) {
-        const spinner = document.getElementById('retheme-spinner');
-        spinner.classList.remove('visible');
-        isRethemeRunning = false;
-        document.querySelectorAll('.retheme-pill').forEach(p => {
-          p.style.opacity = '';
-          p.style.pointerEvents = '';
-        });
-        renderPreview(data.files, jobId);
-        renderRethemeBar();
-        showStatus(`Thème appliqué : ${selectedTheme}`, 'success');
-      } else {
-        setProgress(100, 'Terminé !', total, total);
-        setTimeout(() => {
-          showProgress(false);
-          renderPreview(data.files, jobId);
-          renderRethemeBar();
-          switchTab('preview', document.querySelectorAll('.tab')[1]);
-        }, 700);
-        showStatus(`${data.files.length} slide(s) générées avec succès.`, 'success');
-        document.getElementById('btn-generate').disabled = false;
-      }
+      document.getElementById('retheme-spinner').classList.remove('visible');
+      isRethemeRunning = false;
+      document.querySelectorAll('.retheme-pill').forEach(p => { p.style.opacity = ''; p.style.pointerEvents = ''; });
+      renderPreview(data.files, jobId);
+      renderRethemeBar();
+      showStatus(`Thème appliqué : ${selectedTheme}`, 'success');
     }
-
     if (data.status === 'error') {
       clearInterval(interval);
-      const spinner = document.getElementById('retheme-spinner');
-      spinner.classList.remove('visible');
+      document.getElementById('retheme-spinner').classList.remove('visible');
       isRethemeRunning = false;
-      document.querySelectorAll('.retheme-pill').forEach(p => {
-        p.style.opacity = '';
-        p.style.pointerEvents = '';
-      });
-      if (!isRetheme) showProgress(false);
-      showStatus('Erreur : ' + (data.error || 'inconnue'), 'error');
-      document.getElementById('btn-generate').disabled = false;
+      document.querySelectorAll('.retheme-pill').forEach(p => { p.style.opacity = ''; p.style.pointerEvents = ''; });
+      showStatus('Erreur re-thème : ' + (data.error || 'inconnue'), 'error');
     }
-  }, 500); // Polling 500ms au lieu de 1200ms — réactivité améliorée
+  }, 500);
 }
 
 // ── Preview ──
@@ -2713,13 +3047,21 @@ function showStatus(msg, type) {
 }
 
 // ── Markdown Import ──
+// ─────────────────────────────────────────────
+//  MARKDOWN MODAL — multi-blocs / multi-fichiers
+// ─────────────────────────────────────────────
+
 function openMarkdownModal() {
   document.getElementById('md-modal').classList.add('visible');
-  document.getElementById('md-content').value = '';
   document.getElementById('md-preview').style.display = 'none';
-  document.getElementById('md-apply-btn').disabled = true;
-  document.getElementById('md-file-name').textContent = '';
   parsedMarkdownData = null;
+  mdBlocks = [];
+  mdFileQueue = [];
+  _renderMdBlocks();
+  _renderFileQueue();
+  _refreshMdButtons();
+  // Ajouter un premier bloc vide
+  addMdBlock();
 }
 
 function closeMarkdownModal() {
@@ -2733,206 +3075,294 @@ function switchMdTab(tab, el) {
   document.getElementById('tab-' + tab).classList.add('active');
 }
 
-// Gestion du drag & drop
-const mdFileDrop = document.getElementById('md-file-drop');
-if (mdFileDrop) {
-  mdFileDrop.addEventListener('dragover', (e) => {
-    e.preventDefault();
-    mdFileDrop.classList.add('dragover');
-  });
-  
-  mdFileDrop.addEventListener('dragleave', () => {
-    mdFileDrop.classList.remove('dragover');
-  });
-  
-  mdFileDrop.addEventListener('drop', (e) => {
-    e.preventDefault();
-    mdFileDrop.classList.remove('dragover');
-    const files = e.dataTransfer.files;
-    if (files.length > 0) {
-      handleMarkdownFile(files[0]);
-    }
-  });
+// ── Multi-bloc paste ──
+
+function addMdBlock(content = '') {
+  const id = ++_mdBlockIdSeq;
+  mdBlocks.push({ id, content, parsed: null });
+  _renderMdBlocks();
+  // Focus sur le nouveau textarea
+  setTimeout(() => {
+    const ta = document.getElementById(`mdta-${id}`);
+    if (ta) ta.focus();
+  }, 50);
 }
 
-function handleFileUpload(event) {
-  const file = event.target.files[0];
-  if (file) {
-    handleMarkdownFile(file);
-  }
+function removeMdBlock(id) {
+  mdBlocks = mdBlocks.filter(b => b.id !== id);
+  _renderMdBlocks();
+  _refreshMdButtons();
 }
 
-function handleMarkdownFile(file) {
-  if (!file.name.endsWith('.md') && !file.name.endsWith('.markdown')) {
-    showStatus('Format non supporté. Utilisez .md ou .markdown', 'error');
+function _renderMdBlocks() {
+  const list = document.getElementById('md-blocks-list');
+  if (!list) return;
+  list.innerHTML = mdBlocks.map((b, idx) => `
+    <div class="md-block-item" id="mdblock-${b.id}">
+      <div class="md-block-header">
+        <span class="md-block-num">Carousel ${idx + 1}</span>
+        <span class="md-block-title" id="mdbtitle-${b.id}">—</span>
+        ${mdBlocks.length > 1
+          ? `<button class="md-block-remove" onclick="removeMdBlock(${b.id})" title="Supprimer">✕</button>`
+          : ''}
+      </div>
+      <textarea class="md-block-textarea" id="mdta-${b.id}"
+        placeholder="# Titre du carousel
+
+## Slide 1 : Introduction
+Votre contenu ici...
+
+## Slide 2 : Points clés
+- Point 1
+- Point 2"
+        oninput="_onBlockInput(${b.id})">${esc(b.content)}</textarea>
+      <div class="md-block-status" id="mdst-${b.id}"></div>
+    </div>`).join('');
+}
+
+let _blockParseTimers = {};
+function _onBlockInput(id) {
+  clearTimeout(_blockParseTimers[id]);
+  _blockParseTimers[id] = setTimeout(() => _parseBlock(id), 600);
+}
+
+async function _parseBlock(id) {
+  const block = mdBlocks.find(b => b.id === id);
+  if (!block) return;
+  const ta = document.getElementById(`mdta-${id}`);
+  const content = ta ? ta.value : '';
+  block.content = content;
+
+  const statusEl = document.getElementById(`mdst-${id}`);
+  const titleEl  = document.getElementById(`mdbtitle-${id}`);
+
+  if (!content.trim()) {
+    block.parsed = null;
+    if (statusEl) { statusEl.className = 'md-block-status'; statusEl.textContent = ''; }
+    if (titleEl) titleEl.textContent = '—';
+    _refreshMdButtons();
     return;
   }
-  
-  document.getElementById('md-file-name').textContent = `📄 ${file.name}`;
-  
+
+  if (statusEl) { statusEl.className = 'md-block-status'; statusEl.textContent = 'Analyse…'; }
+
+  try {
+    const res  = await fetch('api/import-markdown', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ content }),
+    });
+    const data = await res.json();
+    if (data.error) {
+      block.parsed = null;
+      if (statusEl) { statusEl.className = 'md-block-status err'; statusEl.textContent = '✕ ' + data.error; }
+      if (titleEl) titleEl.textContent = '—';
+    } else {
+      block.parsed = data;
+      const n     = data.slides.length;
+      const title = data.slides[0]?.title || 'Sans titre';
+      if (statusEl) { statusEl.className = 'md-block-status ok'; statusEl.textContent = `✓ ${n} slide(s) détectées`; }
+      if (titleEl) titleEl.textContent = title;
+      // Compat: si 1 seul bloc, alimenter parsedMarkdownData pour le bouton "Charger dans l'éditeur"
+      if (mdBlocks.length === 1) parsedMarkdownData = data;
+    }
+  } catch (e) {
+    if (statusEl) { statusEl.className = 'md-block-status err'; statusEl.textContent = '✕ Erreur réseau'; }
+  }
+  _refreshMdButtons();
+}
+
+// ── Multi-file upload ──
+
+function handleFileUpload(event) {
+  const files = Array.from(event.target.files);
+  files.forEach(f => {
+    if (!f.name.match(/\.(md|markdown)$/i)) return;
+    if (mdFileQueue.find(q => q.name === f.name)) return; // dédoublonnage
+    mdFileQueue.push({ name: f.name, size: f.size, content: null, parsed: null, error: null });
+    _readFile(f);
+  });
+  event.target.value = ''; // permettre re-sélection
+  _renderFileQueue();
+}
+
+function _readFile(file) {
   const reader = new FileReader();
-  reader.onload = (e) => {
-    const content = e.target.result;
-    parseMarkdownContent(content);
+  reader.onload = async (e) => {
+    const item = mdFileQueue.find(q => q.name === file.name);
+    if (!item) return;
+    item.content = e.target.result;
+    _renderFileQueue();
+    // Parser côté serveur
+    try {
+      const res  = await fetch('api/import-markdown', {
+        method: 'POST', headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({ content: item.content }),
+      });
+      const data = await res.json();
+      if (data.error) { item.error = data.error; }
+      else { item.parsed = data; }
+    } catch (_) { item.error = 'Erreur réseau'; }
+    _renderFileQueue();
+    _refreshMdButtons();
   };
   reader.readAsText(file);
 }
 
-// Parse le contenu Markdown quand l'utilisateur tape ou colle
-let mdParseTimeout = null;
-document.addEventListener('DOMContentLoaded', () => {
-  const mdContent = document.getElementById('md-content');
-  if (mdContent) {
-    mdContent.addEventListener('input', () => {
-      clearTimeout(mdParseTimeout);
-      mdParseTimeout = setTimeout(() => {
-        const content = mdContent.value;
-        if (content.trim().length > 10) {
-          parseMarkdownContent(content);
-        } else {
-          document.getElementById('md-preview').style.display = 'none';
-          document.getElementById('md-apply-btn').disabled = true;
-        }
-      }, 500); // Délai de 500ms pour éviter trop d'appels
-    });
-  }
-});
-
-async function parseMarkdownContent(content) {
-  try {
-    const res = await fetch('api/import-markdown', {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({ content })
-    });
-
-    const data = await res.json();
-
-    if (data.error) {
-      showStatus(data.error, 'error');
-      return;
-    }
-
-    parsedMarkdownData = data;
-    renderMarkdownPreview(data);
-    document.getElementById('md-apply-btn').disabled = false;
-    
-    // Afficher l'analyse de structure intelligente
-    if (data.structure_analysis) {
-      showStructureAnalysis(data.structure_analysis);
-    }
-  } catch (e) {
-    showStatus('Erreur réseau: ' + e.message, 'error');
-  }
+function removeFileFromQueue(name) {
+  mdFileQueue = mdFileQueue.filter(q => q.name !== name);
+  _renderFileQueue();
+  _refreshMdButtons();
 }
 
-function showStructureAnalysis(analysis) {
-  // Créer un élément d'information sur la structure
-  const infoDiv = document.createElement('div');
-  infoDiv.className = 'structure-info';
-  infoDiv.style.cssText = `
-    background: rgba(56,200,168,.08);
-    border: 1px solid rgba(56,200,168,.2);
-    border-radius: 8px;
-    padding: 12px;
-    margin: 12px 0;
-    font-size: 12px;
-  `;
-  
-  const formatLabels = {
-    'separators': '📑 Séparateurs (---/***)',
-    'headings': '📑 Headings (# ## ###)',
-    'lists': '📑 Listes structurées',
-    'unstructured': '🔄 Contenu réorganisé'
-  };
-  
-  infoDiv.innerHTML = `
-    <div style="color: #38c8a8; font-weight: 600; margin-bottom: 8px;">
-      Analyse intelligente du Markdown
-    </div>
-    <div style="color: #8890a4;">
-      <div>Format detecte: <strong style="color: #e8eaf0;">${formatLabels[analysis.detected_format]}</strong></div>
-      <div>Confiance: <strong style="color: ${analysis.confidence === 'high' ? '#4ade80' : '#fbbf24'};">${analysis.confidence === 'high' ? 'Haute' : 'Moyenne'}</strong></div>
-      ${analysis.reorganization_applied ? '<div><strong style="color: #7c6af7;">Reorganisation automatique appliquee</strong></div>' : ''}
-      <div>${analysis.heading_counts.h1 || 0} titre(s), ${analysis.heading_counts.h2 || 0} sous-titre(s), ${analysis.total_paragraphs || 0} paragraphe(s)</div>
-    </div>
-  `;
-  
-  // Supprimer l'ancien info s'il existe
-  const existing = document.querySelector('.structure-info');
-  if (existing) existing.remove();
-  
-  // Insérer avant le preview
-  const preview = document.getElementById('md-preview');
-  preview.parentNode.insertBefore(infoDiv, preview);
-}
-
-function renderMarkdownPreview(data) {
-  const preview = document.getElementById('md-preview');
-  const list = document.getElementById('md-preview-list');
-  
-  preview.style.display = 'block';
-  
-  list.innerHTML = data.slides.map((s, i) => {
-    const typeLabels = {
-      cover: 'Couverture', content: 'Contenu', compare: 'Comparaison',
-      quote: 'Citation', stat: 'Statistiques', cta: 'CTA',
-    };
-    const typeColors = {
-      cover: 'rgba(240,98,146,.15)', content: 'rgba(56,200,168,.15)', compare: 'rgba(124,106,247,.15)',
-      quote: 'rgba(251,191,36,.15)', stat: 'rgba(52,211,238,.15)', cta: 'rgba(248,113,113,.15)',
-    };
-    const typeTextColors = {
-      cover: '#f06292', content: '#38c8a8', compare: '#7c6af7',
-      quote: '#fbbf24', stat: '#22d3ee', cta: '#f87171',
-    };
-    
+function _renderFileQueue() {
+  const list = document.getElementById('md-files-list');
+  if (!list) return;
+  list.innerHTML = mdFileQueue.map(q => {
+    const kb = (q.size / 1024).toFixed(1);
+    let statusHtml = '<span style="color:var(--muted)">Lecture…</span>';
+    if (q.error)  statusHtml = `<span class="md-file-item-status err">✕</span>`;
+    else if (q.parsed) statusHtml = `<span class="md-file-item-status ok">✓ ${q.parsed.slides.length} slides</span>`;
     return `
-      <div class="md-preview-item">
-        <div class="md-preview-item-num">${i + 1}</div>
-        <div class="md-preview-item-title">${esc(s.title || 'Sans titre')}</div>
-        <div class="md-preview-item-type" style="background:${typeColors[s.type]};color:${typeTextColors[s.type]}">
-          ${typeLabels[s.type] || s.type}
-        </div>
-      </div>
-    `;
+      <div class="md-file-item">
+        <span class="md-file-item-icon">📄</span>
+        <span class="md-file-item-name" title="${esc(q.name)}">${esc(q.name)}</span>
+        <span class="md-file-item-size">${kb} KB</span>
+        ${statusHtml}
+        <button class="md-file-remove" onclick="removeFileFromQueue('${esc(q.name)}')" title="Retirer">✕</button>
+      </div>`;
   }).join('');
 }
 
-async function applyMarkdownImport() {
-  if (!parsedMarkdownData) {
-    showStatus('Aucune donnée à importer', 'error');
-    return;
+function _refreshMdButtons() {
+  const activeTab = document.querySelector('.md-tab.active')?.dataset?.tab ||
+    (document.getElementById('tab-paste').classList.contains('active') ? 'paste' : 'upload');
+
+  let hasValid = false;
+  let multipleValid = false;
+
+  if (activeTab !== 'upload') { // paste tab
+    const valid = mdBlocks.filter(b => b.parsed);
+    hasValid      = valid.length > 0;
+    multipleValid = valid.length > 1;
+    // Compat single → "Charger dans l'éditeur"
+    parsedMarkdownData = valid.length === 1 ? valid[0].parsed : null;
+  } else {
+    const valid = mdFileQueue.filter(q => q.parsed);
+    hasValid      = valid.length > 0;
+    multipleValid = valid.length > 1;
   }
 
-  // Remplacer les slides actuelles
-  slides = [];
-  const importedSlides = parsedMarkdownData.slides;
+  const applyBtn = document.getElementById('md-apply-btn');
+  const genBtn   = document.getElementById('md-gen-btn');
+  if (applyBtn) {
+    applyBtn.disabled = !parsedMarkdownData;
+    applyBtn.textContent = parsedMarkdownData ? '← Charger dans l\'éditeur' : '← Charger dans l\'éditeur';
+  }
+  if (genBtn) {
+    genBtn.disabled = !hasValid;
+    const n = multipleValid
+      ? (activeTab !== 'upload' ? mdBlocks.filter(b=>b.parsed).length : mdFileQueue.filter(q=>q.parsed).length)
+      : 1;
+    genBtn.textContent = n > 1 ? `▶ Générer ${n} carousels` : '▶ Générer directement';
+  }
+}
 
-  importedSlides.forEach((s, i) => {
-    slides.push({
-      id: Date.now() + i,
-      ...s
+// ── Drag & Drop ──
+document.addEventListener('DOMContentLoaded', () => {
+  const drop = document.getElementById('md-file-drop');
+  if (!drop) return;
+  drop.addEventListener('dragover',  e => { e.preventDefault(); drop.classList.add('dragover'); });
+  drop.addEventListener('dragleave', () => drop.classList.remove('dragover'));
+  drop.addEventListener('drop', e => {
+    e.preventDefault(); drop.classList.remove('dragover');
+    const files = Array.from(e.dataTransfer.files).filter(f => f.name.match(/\.(md|markdown)$/i));
+    files.forEach(f => {
+      if (!mdFileQueue.find(q => q.name === f.name))
+        mdFileQueue.push({ name: f.name, size: f.size, content: null, parsed: null, error: null });
+      _readFile(f);
     });
+    _renderFileQueue();
   });
+});
 
-  // Mettre à jour le footer si présent
-  if (parsedMarkdownData.footer) {
-    if (parsedMarkdownData.footer.series) {
-      document.getElementById('footer-series').value = parsedMarkdownData.footer.series;
-    }
-    if (parsedMarkdownData.footer.author) {
-      document.getElementById('footer-author').value = parsedMarkdownData.footer.author;
-    }
-  }
+// ── Actions du modal ──
 
+function applyMarkdownImport() {
+  // Charger le 1er bloc parsé dans l'éditeur (mode simple)
+  const data = parsedMarkdownData;
+  if (!data) return showStatus('Aucune donnée valide', 'error');
+  slides = data.slides.map((s, i) => ({ id: Date.now() + i, ...s }));
+  if (data.footer?.series) document.getElementById('footer-series').value = data.footer.series;
+  if (data.footer?.author) document.getElementById('footer-author').value = data.footer.author;
   renderSlides();
   closeMarkdownModal();
-  
-  // Message de succès intelligent
-  const structureInfo = parsedMarkdownData.structure_analysis || {};
-  const reorgMsg = structureInfo.reorganization_applied ? ' (réorganisé automatiquement)' : '';
-  showStatus(`${slides.length} slide(s) importees avec succes${reorgMsg}!`, 'success');
+  const reorg = data.structure_analysis?.reorganization_applied ? ' (réorganisé)' : '';
+  showStatus(`${slides.length} slide(s) importées${reorg}`, 'success');
+}
+
+async function generateFromMarkdown() {
+  // Collecter tous les blocs/fichiers valides et lancer N générations en parallèle
+  const activeTab = document.getElementById('tab-paste').classList.contains('active') ? 'paste' : 'upload';
+  let items = [];
+
+  if (activeTab === 'paste') {
+    items = mdBlocks.filter(b => b.parsed).map(b => ({
+      name: b.parsed.slides[0]?.title || `Carousel ${b.id}`,
+      data: b.parsed,
+    }));
+  } else {
+    items = mdFileQueue.filter(q => q.parsed).map(q => ({
+      name: q.name.replace(/\.(md|markdown)$/i, ''),
+      data: q.parsed,
+    }));
+  }
+
+  if (!items.length) return showStatus('Aucun contenu valide à générer', 'error');
+
+  closeMarkdownModal();
+  showStatus(`Lancement de ${items.length} génération(s)…`, 'success');
+
+  // Lancer toutes les générations simultanément
+  await Promise.all(items.map(async (item, idx) => {
+    const payload = {
+      theme:    selectedTheme,
+      format:   selectedFormat,
+      platform: selectedPlatform,
+      footer:   item.data.footer || { series: item.name, author: document.getElementById('footer-author').value },
+      slides:   item.data.slides,
+    };
+    try {
+      const res  = await fetch('api/generate', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
+      const resp = await res.json();
+      if (resp.error) { showStatus(`Erreur "${item.name}" : ${resp.error}`, 'error'); return; }
+      // 1er job → overlay plein-panneau, les autres → panel seulement
+      const isOverlay = idx === 0;
+      if (isOverlay) showProgress(true, item.data.slides.length);
+      _startJobTracking(resp.job_id, item.name, item.data.slides.length, isOverlay);
+    } catch (e) {
+      showStatus(`Erreur réseau "${item.name}"`, 'error');
+    }
+  }));
+}
+
+// Compat: analyse intelligente (appelée par _parseBlock si besoin direct)
+function showStructureAnalysis() {} // No-op — info désormais dans les status des blocs
+
+function renderMarkdownPreview(data) {
+  const preview = document.getElementById('md-preview');
+  const list    = document.getElementById('md-preview-list');
+  if (!preview || !list) return;
+  preview.style.display = 'block';
+  const TYPE_LABELS = { cover:'Couverture', content:'Contenu', compare:'Comparaison', quote:'Citation', stat:'Stats', cta:'CTA' };
+  const TYPE_COLORS = { cover:'#f06292', content:'#38c8a8', compare:'#7c6af7', quote:'#fbbf24', stat:'#22d3ee', cta:'#f87171' };
+  list.innerHTML = data.slides.map((s, i) => `
+    <div class="md-preview-item">
+      <div class="md-preview-item-num">${i + 1}</div>
+      <div class="md-preview-item-title">${esc(s.title || 'Sans titre')}</div>
+      <div class="md-preview-item-type" style="color:${TYPE_COLORS[s.type]||'#aaa'};background:${TYPE_COLORS[s.type]||'#aaa'}22">
+        ${TYPE_LABELS[s.type] || s.type}
+      </div>
+    </div>`).join('');
 }
 
 // ════════════════════════════════════════
