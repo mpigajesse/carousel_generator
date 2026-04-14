@@ -2,26 +2,98 @@
 app.py - Application web Flask pour le générateur de carousel
 Lancement : python app.py
 Accès      : http://localhost:5000
+
+Authentification : définir APP_PASSWORD dans l'environnement (ou fichier .env).
 """
 
 import os
 import re
+import secrets
 import uuid
 import json
 import shutil
 import zipfile
 import threading
 from pathlib import Path
-from datetime import datetime
-from flask import Flask, render_template, request, jsonify, send_file, abort
+from datetime import datetime, timedelta
+from flask import (Flask, render_template, request, jsonify,
+                   send_file, abort, session, redirect, url_for)
 from generate import generate_carousel
 from themes import THEMES, IG_THEMES, get_theme
 from md_parser import parse_markdown_to_slides, _analyze_structure
 
+# Support optionnel pour .env (pip install python-dotenv)
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
+
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'carousel-generator-key'
+# Clé de session — surcharger via SECRET_KEY en production
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'carousel-secret-2026-change-me')
 app.config['OUTPUT_DIR'] = Path('static/generated')
 app.config['OUTPUT_DIR'].mkdir(parents=True, exist_ok=True)
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=30)
+
+# Mot de passe secret unique — définir APP_PASSWORD dans l'env ou .env
+APP_PASSWORD = os.environ.get('APP_PASSWORD', '')
+
+
+# ─────────────────────────────────────────
+#  AUTHENTIFICATION (before_request)
+# ─────────────────────────────────────────
+
+# Routes publiques (pas besoin d'être connecté)
+_PUBLIC_PREFIXES = ('/login', '/static/')
+
+@app.before_request
+def require_login():
+    """Vérifie l'authentification avant chaque requête."""
+    # Pas de mot de passe configuré → accès libre (mode dev)
+    if not APP_PASSWORD:
+        return
+
+    # Routes publiques toujours accessibles
+    if any(request.path.startswith(p) for p in _PUBLIC_PREFIXES):
+        return
+
+    # Déjà authentifié
+    if session.get('authenticated'):
+        return
+
+    # API → 401 JSON
+    if request.path.startswith('/api/'):
+        return jsonify({'error': 'Non authentifié'}), 401
+
+    # Pages → redirection vers login
+    return redirect(url_for('login', next=request.path))
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    # Déjà connecté
+    if session.get('authenticated'):
+        return redirect(url_for('index'))
+
+    error = None
+    if request.method == 'POST':
+        pwd = request.form.get('password', '')
+        # Comparaison en temps constant pour éviter timing attacks
+        if APP_PASSWORD and secrets.compare_digest(pwd.encode(), APP_PASSWORD.encode()):
+            session.permanent = True
+            session['authenticated'] = True
+            next_url = request.args.get('next') or url_for('index')
+            return redirect(next_url)
+        error = 'Mot de passe incorrect.'
+
+    return render_template('login.html', error=error)
+
+
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect(url_for('login'))
 
 # Stockage en mémoire des jobs en cours
 jobs = {}

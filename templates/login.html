@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Accès — Carousel Generator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#06080d;--surface:#0a0e16;--card:#121826;--card2:#171f2e;
+  --border:rgba(255,255,255,.06);--border2:rgba(255,255,255,.11);--border3:rgba(255,255,255,.22);
+  --text:#e4e8f2;--muted:#4a5268;--muted2:#7b87a0;
+  --accent:#6c5ce7;--accent-hi:#8b7cf8;--accent2:#00cba9;
+  --danger:#f87171;--radius:14px;--radius-sm:9px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+body{
+  background:var(--bg);color:var(--text);
+  font-family:'DM Sans',sans-serif;font-size:14px;line-height:1.6;
+  min-height:100vh;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;overflow:hidden;
+}
+
+/* ── Ambient orbs ── */
+.orb{position:fixed;border-radius:50%;filter:blur(110px);pointer-events:none;z-index:0}
+.orb-1{width:700px;height:700px;top:-250px;left:-200px;background:rgba(108,92,231,.09)}
+.orb-2{width:600px;height:600px;bottom:-200px;right:-150px;background:rgba(0,203,169,.07)}
+.orb-3{width:400px;height:400px;top:40%;left:50%;transform:translate(-50%,-50%);
+        background:rgba(108,92,231,.05)}
+
+/* ── Noise texture ── */
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+  opacity:.022;
+}
+
+/* ── Card ── */
+.login-wrap{
+  position:relative;z-index:1;
+  width:100%;max-width:420px;padding:0 20px;
+  animation:fadeUp .4s ease both;
+}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+.login-card{
+  background:var(--card);border:1px solid var(--border2);
+  border-radius:var(--radius);padding:40px 36px 36px;
+  box-shadow:0 32px 80px rgba(0,0,0,.45),0 0 0 1px rgba(255,255,255,.03);
+}
+
+/* ── Logo / Brand ── */
+.login-brand{
+  display:flex;flex-direction:column;align-items:center;gap:14px;
+  margin-bottom:32px;
+}
+.brand-icon{
+  width:56px;height:56px;border-radius:16px;
+  background:linear-gradient(135deg,var(--accent) 0%,var(--accent2) 100%);
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 8px 28px rgba(108,92,231,.35);
+  flex-shrink:0;
+}
+.brand-icon svg{color:#fff}
+.brand-name{
+  font-family:'Syne',sans-serif;font-size:20px;font-weight:800;
+  letter-spacing:-.03em;text-align:center;
+}
+.brand-sub{
+  font-size:12px;color:var(--muted2);letter-spacing:.04em;
+  text-transform:uppercase;font-weight:600;margin-top:-8px;
+}
+
+/* ── Divider ── */
+.login-divider{
+  display:flex;align-items:center;gap:12px;margin-bottom:28px;
+}
+.login-divider span{flex:1;height:1px;background:var(--border2)}
+.login-divider em{font-style:normal;font-size:11px;color:var(--muted);
+  white-space:nowrap;letter-spacing:.06em;text-transform:uppercase}
+
+/* ── Form ── */
+.field-label{
+  display:block;font-size:11px;font-weight:700;letter-spacing:.06em;
+  text-transform:uppercase;color:var(--muted2);margin-bottom:8px;
+}
+.field-wrap{position:relative}
+.field-wrap svg.field-icon{
+  position:absolute;left:14px;top:50%;transform:translateY(-50%);
+  color:var(--muted);pointer-events:none;
+}
+.password-input{
+  width:100%;padding:13px 48px 13px 42px;
+  background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius-sm);
+  color:var(--text);font-size:15px;font-family:'DM Mono',monospace;
+  letter-spacing:.08em;outline:none;
+  transition:border-color .15s,box-shadow .15s;
+}
+.password-input:focus{
+  border-color:var(--accent);
+  box-shadow:0 0 0 3px rgba(108,92,231,.15);
+}
+.password-input::placeholder{color:var(--muted);letter-spacing:.04em}
+.password-input.error-state{
+  border-color:var(--danger);
+  box-shadow:0 0 0 3px rgba(248,113,113,.12);
+}
+
+/* Toggle show/hide */
+.btn-toggle-pwd{
+  position:absolute;right:12px;top:50%;transform:translateY(-50%);
+  background:none;border:none;color:var(--muted);cursor:pointer;
+  padding:4px;border-radius:4px;display:flex;align-items:center;
+  transition:color .12s;
+}
+.btn-toggle-pwd:hover{color:var(--muted2)}
+
+/* ── Error ── */
+.login-error{
+  display:flex;align-items:center;gap:8px;
+  padding:10px 14px;margin-top:10px;
+  background:rgba(248,113,113,.08);border:1px solid rgba(248,113,113,.2);
+  border-radius:var(--radius-sm);
+  font-size:12px;font-weight:600;color:var(--danger);
+  animation:shake .3s ease;
+}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+
+/* ── Submit button ── */
+.btn-login{
+  width:100%;margin-top:20px;padding:14px;
+  background:linear-gradient(135deg,var(--accent) 0%,#7c3aed 100%);
+  border:none;border-radius:var(--radius-sm);
+  color:#fff;font-size:14px;font-weight:700;font-family:'DM Sans',sans-serif;
+  letter-spacing:.02em;cursor:pointer;
+  transition:opacity .15s,transform .1s,box-shadow .15s;
+  box-shadow:0 4px 20px rgba(108,92,231,.3);
+  display:flex;align-items:center;justify-content:center;gap:8px;
+}
+.btn-login:hover{opacity:.92;transform:translateY(-1px);box-shadow:0 8px 28px rgba(108,92,231,.4)}
+.btn-login:active{transform:translateY(0)}
+.btn-login:disabled{opacity:.5;cursor:not-allowed;transform:none}
+
+/* ── Footer hint ── */
+.login-hint{
+  margin-top:20px;text-align:center;
+  font-size:11px;color:var(--muted);letter-spacing:.02em;
+}
+.login-hint code{
+  font-family:'DM Mono',monospace;
+  background:rgba(255,255,255,.05);border:1px solid var(--border2);
+  border-radius:4px;padding:1px 6px;font-size:10px;color:var(--muted2);
+}
+
+/* ── Responsive ── */
+@media(max-width:479px){
+  .login-card{padding:28px 20px 24px;border-radius:var(--radius)}
+  .brand-icon{width:48px;height:48px;border-radius:12px}
+  .brand-name{font-size:18px}
+  .password-input{font-size:14px;padding:12px 44px 12px 40px}
+}
+</style>
+</head>
+<body>
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+<div class="orb orb-3"></div>
+
+<div class="login-wrap">
+  <div class="login-card">
+
+    <!-- Brand -->
+    <div class="login-brand">
+      <div class="brand-icon">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="3" width="7" height="7" rx="1"/>
+          <rect x="14" y="3" width="7" height="7" rx="1"/>
+          <rect x="3" y="14" width="7" height="7" rx="1"/>
+          <rect x="14" y="14" width="7" height="7" rx="1"/>
+        </svg>
+      </div>
+      <div>
+        <div class="brand-name">Carousel Generator</div>
+        <div class="brand-sub">Accès privé</div>
+      </div>
+    </div>
+
+    <div class="login-divider">
+      <span></span>
+      <em>Entrez le mot secret</em>
+      <span></span>
+    </div>
+
+    <!-- Form -->
+    <form method="POST" action="{{ url_for('login', next=request.args.get('next','')) }}" autocomplete="off">
+      <label class="field-label" for="password">Mot de passe</label>
+      <div class="field-wrap">
+        <svg class="field-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+        </svg>
+        <input
+          class="password-input{% if error %} error-state{% endif %}"
+          type="password"
+          id="password"
+          name="password"
+          placeholder="••••••••••••"
+          autofocus
+          autocomplete="current-password"
+          spellcheck="false"
+        >
+        <button class="btn-toggle-pwd" type="button" id="toggle-pwd" title="Afficher / masquer" tabindex="-1">
+          <svg id="eye-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+            <circle cx="12" cy="12" r="3"/>
+          </svg>
+        </button>
+      </div>
+
+      {% if error %}
+      <div class="login-error">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <circle cx="12" cy="12" r="10"/>
+          <line x1="12" y1="8" x2="12" y2="12"/>
+          <line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+        {{ error }}
+      </div>
+      {% endif %}
+
+      <button class="btn-login" type="submit" id="btn-submit">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
+          <polyline points="10 17 15 12 10 7"/>
+          <line x1="15" y1="12" x2="3" y2="12"/>
+        </svg>
+        Accéder
+      </button>
+    </form>
+
+    <p class="login-hint">
+      Définissez <code>APP_PASSWORD</code> dans l'environnement pour activer la protection.
+    </p>
+
+  </div>
+</div>
+
+<script>
+// Toggle show/hide password
+const input   = document.getElementById('password');
+const toggler = document.getElementById('toggle-pwd');
+const eyeIcon = document.getElementById('eye-icon');
+
+const EYE_OPEN = `<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>`;
+const EYE_OFF  = `<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>`;
+
+toggler.addEventListener('click', () => {
+  const isHidden = input.type === 'password';
+  input.type     = isHidden ? 'text' : 'password';
+  eyeIcon.innerHTML = isHidden ? EYE_OFF : EYE_OPEN;
+});
+
+// Submit feedback
+document.querySelector('form').addEventListener('submit', () => {
+  const btn = document.getElementById('btn-submit');
+  btn.disabled = true;
+  btn.innerHTML = `
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+         style="animation:spin .7s linear infinite">
+      <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
+    </svg>
+    Vérification…`;
+});
+</script>
+<style>
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</body>
+</html>
