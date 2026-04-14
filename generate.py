@@ -158,7 +158,9 @@ def generate_carousel(
 
     # Setup Jinja2 - use the script's directory (not config_path) to find templates
     template_dir = Path(__file__).parent
-    env = Environment(loader=FileSystemLoader(str(template_dir)))
+    # nosec B701 — autoescape intentionally disabled: templates render to PNG/PDF via
+    # Playwright headless (never served to a browser), so XSS via Jinja2 is not applicable.
+    env = Environment(loader=FileSystemLoader(str(template_dir)))  # nosec B701
     env.filters["hex_to_rgb"] = hex_to_rgb
 
     template_name = "slide_instagram.html.j2" if platform == "instagram" else "slide.html.j2"
