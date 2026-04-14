@@ -187,12 +187,6 @@ body::before{
       </div>
     </div>
 
-    <div class="login-divider">
-      <span></span>
-      <em>Entrez le mot secret</em>
-      <span></span>
-    </div>
-
     <!-- Form -->
     <form method="POST" action="{{ url_for('login', next=request.args.get('next','')) }}" autocomplete="off">
       <label class="field-label" for="password">Mot de passe</label>
