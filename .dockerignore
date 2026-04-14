@@ -46,11 +46,23 @@ desktop.ini
 output/
 static/generated/
 
-# ── Documentation et tests ──
+# ── Documentation (pas nécessaire dans l'image) ──
+# NOTE : STRUCTURE_COMPLETE.md est conservé — servi par /api/download-structure
 PLAN.md
+SECURITY.md
+README.md
+CLAUDE.md
+AGENTS.md
+GEMINI.md
+QWEN.md
+_PUSH.md
 test_*.py
 test_*.md
 *.backup
+
+# ── Scripts de déploiement local (pas utiles dans le conteneur) ──
+*.bat
+push-all.sh
 
 # ── Hugging Face (supprimé) ──
 hf-deploy/
@@ -90,9 +102,9 @@ yarn-debug.log*
 yarn-error.log*
 
 # ── Docker ──
-Dockerfile
 .dockerignore
 docker-compose.yml
+docker-compose.*.yml
 
 # ── CI/CD ──
 .github/

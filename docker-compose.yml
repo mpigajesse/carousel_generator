@@ -1,0 +1,67 @@
+# =============================================================================
+# docker-compose.yml — Carousel Generator (Production)
+# Usage : docker compose up -d
+# =============================================================================
+
+services:
+  carousel:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: carousel-generator:latest
+    container_name: carousel-generator
+    restart: unless-stopped
+
+    # ── Ports ──
+    ports:
+      - "5000:5000"
+
+    # ── Variables d'environnement ──
+    # Les valeurs sensibles viennent du fichier .env (jamais commité)
+    env_file:
+      - .env
+    environment:
+      FLASK_ENV: production
+      PORT: "5000"
+      # APP_PASSWORD et SECRET_KEY sont dans .env
+
+    # ── Volumes ──
+    volumes:
+      # Persistance des carousels générés entre les redémarrages
+      - carousel_data:/app/static/generated
+
+    # ── Ressources (ajuster selon votre serveur) ──
+    deploy:
+      resources:
+        limits:
+          memory: 2G       # Chromium peut consommer jusqu'à 1-1.5G
+          cpus: "2.0"
+        reservations:
+          memory: 512M
+          cpus: "0.5"
+
+    # ── Health check ──
+    healthcheck:
+      test: ["CMD", "curl", "-f", "-s", "http://localhost:5000/login"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+    # ── Logs ──
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "5"
+
+    # ── Sécurité ──
+    security_opt:
+      - no-new-privileges:true
+    # Chromium a besoin de /dev/shm suffisant pour éviter les crashs
+    shm_size: "256m"
+
+# ── Volumes nommés ──
+volumes:
+  carousel_data:
+    driver: local
