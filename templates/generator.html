@@ -434,6 +434,7 @@ body::before{
   letter-spacing:.04em;text-transform:uppercase;
 }
 .badge-pdf{background:rgba(240,98,146,.12);color:#f06292;border:1px solid rgba(240,98,146,.2)}
+.stat-pdf-color{color:#f06292}
 .badge-png{background:rgba(0,203,169,.1);color:var(--accent2);border:1px solid rgba(0,203,169,.2)}
 .badge-slides{background:rgba(108,92,231,.12);color:var(--accent-hi);border:1px solid rgba(108,92,231,.2)}
 .card-date{font-size:11px;color:var(--muted);margin-left:auto;white-space:nowrap}
@@ -667,11 +668,12 @@ body::before{
 @media(max-width:1023px){
   .topbar{padding:0 20px;gap:12px}
 
-  /* Stats: 2 cols × 2 rows */
+  /* Stats: 2 cols × 3 rows (5 items — last spans full width) */
   .stats-bar{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--border)}
   .stat-item{min-width:0;flex:none;padding:18px 20px;border-right:none;border-bottom:1px solid var(--border)}
   .stat-item:nth-child(odd){border-right:1px solid var(--border)}
-  .stat-item:nth-child(3),.stat-item:nth-child(4){border-bottom:none}
+  .stat-item:nth-child(4),.stat-item:nth-child(5){border-bottom:none}
+  .stat-item:nth-child(5){border-right:none;grid-column:1/-1}
 
   .controls-row{padding:10px 20px}
   .controls-meta{padding:7px 20px}
@@ -705,11 +707,12 @@ body::before{
   .btn-new{padding:6px 10px;font-size:11px}
   .btn-new-label{display:none}
 
-  /* Stats: 2×2 grid */
+  /* Stats: 2×3 grid (5 items — last spans full width) */
   .stats-bar{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--border)}
   .stat-item{min-width:0;flex:none;padding:14px 16px;border-right:none;border-bottom:1px solid var(--border)}
   .stat-item:nth-child(odd){border-right:1px solid var(--border)}
-  .stat-item:nth-child(3),.stat-item:nth-child(4){border-bottom:none}
+  .stat-item:nth-child(4),.stat-item:nth-child(5){border-bottom:none}
+  .stat-item:nth-child(5){border-right:none;grid-column:1/-1}
   .stat-val{font-size:22px}
   .stat-label{font-size:10px}
 
@@ -883,6 +886,7 @@ body::before{
 <section class="stats-bar" id="stats-bar">
   <div class="stat-item"><div class="stat-val accent1" id="stat-total">—</div><div class="stat-label">Carousels générés</div></div>
   <div class="stat-item"><div class="stat-val accent2" id="stat-slides">—</div><div class="stat-label">Slides au total</div></div>
+  <div class="stat-item"><div class="stat-val stat-pdf-color" id="stat-pdf">—</div><div class="stat-label">PDF générés</div></div>
   <div class="stat-item"><div class="stat-val accent3" id="stat-size">—</div><div class="stat-label">Espace utilisé</div></div>
   <div class="stat-item"><div class="stat-val warn"    id="stat-recent">—</div><div class="stat-label">Dernier ajout</div></div>
 </section>
@@ -1159,6 +1163,7 @@ function updateStats(data) {
   const active = (data.items || []).filter(i => !trashSet.has(i.job_id));
   document.getElementById('stat-total').textContent  = active.length;
   document.getElementById('stat-slides').textContent = active.reduce((s, i) => s + i.slide_count, 0);
+  document.getElementById('stat-pdf').textContent    = active.filter(i => i.has_pdf).length;
   document.getElementById('stat-size').textContent   = formatSize(active.reduce((s, i) => s + i.size_bytes, 0));
   const recent = active[0];
   document.getElementById('stat-recent').textContent = recent ? formatDateShort(recent.created_at) : '—';
