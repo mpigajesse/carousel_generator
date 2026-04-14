@@ -836,105 +836,6 @@ main {
 
 /* ══ Jobs Panel — floating task manager ══ */
 /* ── Done Toast notification ── */
-.done-toast {
-  position: fixed;
-  bottom: 32px;
-  left: 50%;
-  transform: translateX(-50%) translateY(120px);
-  z-index: 500;
-  width: 420px;
-  max-width: calc(100vw - 32px);
-  background: linear-gradient(135deg, #0f1a2e 0%, #111827 100%);
-  border: 1px solid rgba(52,211,153,.35);
-  border-radius: 16px;
-  box-shadow: 0 24px 64px rgba(0,0,0,.7), 0 0 0 1px rgba(52,211,153,.1), 0 0 40px rgba(52,211,153,.08);
-  padding: 18px 20px 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  opacity: 0;
-  pointer-events: none;
-  transition: transform .45s cubic-bezier(.34,1.4,.64,1), opacity .3s ease;
-}
-.done-toast.show {
-  transform: translateX(-50%) translateY(0);
-  opacity: 1;
-  pointer-events: auto;
-}
-.done-toast-top {
-  display: flex;
-  align-items: flex-start;
-  gap: 13px;
-}
-.done-toast-icon {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: rgba(52,211,153,.15);
-  border: 1px solid rgba(52,211,153,.3);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  animation: toast-icon-pulse 2s ease-in-out infinite;
-}
-@keyframes toast-icon-pulse {
-  0%,100% { box-shadow: 0 0 0 0 rgba(52,211,153,.3); }
-  50%      { box-shadow: 0 0 0 8px rgba(52,211,153,.0); }
-}
-.done-toast-body { flex: 1; min-width: 0; }
-.done-toast-title {
-  font-family: 'Syne', sans-serif;
-  font-weight: 700;
-  font-size: 14px;
-  color: var(--success);
-  letter-spacing: -.01em;
-  margin-bottom: 4px;
-}
-.done-toast-msg {
-  font-size: 12.5px;
-  color: var(--muted2);
-  line-height: 1.5;
-}
-.done-toast-close {
-  background: none;
-  border: none;
-  color: var(--muted);
-  cursor: pointer;
-  padding: 2px 4px;
-  font-size: 16px;
-  line-height: 1;
-  border-radius: 4px;
-  flex-shrink: 0;
-  margin-top: -2px;
-}
-.done-toast-close:hover { color: var(--text); background: rgba(255,255,255,.06); }
-.done-toast-actions {
-  display: flex;
-  gap: 8px;
-}
-.done-toast-btn {
-  flex: 1;
-  padding: 9px 14px;
-  border-radius: var(--radius-xs);
-  border: none;
-  font-size: 12px;
-  font-weight: 600;
-  cursor: pointer;
-  text-decoration: none;
-  text-align: center;
-  transition: opacity .15s, transform .12s;
-}
-.done-toast-btn:hover { opacity: .88; transform: translateY(-1px); }
-.done-toast-btn.primary {
-  background: var(--success);
-  color: #000;
-}
-.done-toast-btn.secondary {
-  background: rgba(255,255,255,.07);
-  border: 1px solid var(--border2);
-  color: var(--text);
-}
 
 .jobs-panel {
   position: fixed;
@@ -2283,27 +2184,6 @@ main {
   </div>
 </div>
 
-<!-- ══ DONE TOAST — notification de fin de génération ══ -->
-<div class="done-toast" id="done-toast" role="alert" aria-live="polite">
-  <div class="done-toast-top">
-    <div class="done-toast-icon">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-    </div>
-    <div class="done-toast-body">
-      <div class="done-toast-title" id="done-toast-title">Génération terminée !</div>
-      <div class="done-toast-msg" id="done-toast-msg">Tes slides sont prêtes. Consulte la bibliothèque pour les télécharger.</div>
-    </div>
-    <button class="done-toast-close" onclick="_dismissToast()" aria-label="Fermer">✕</button>
-  </div>
-  <div class="done-toast-actions">
-    <a class="done-toast-btn primary" href="/generator" id="done-toast-lib" style="display:flex;align-items:center;justify-content:center;gap:7px">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
-      Consulter la bibliothèque
-    </a>
-    <button class="done-toast-btn secondary" onclick="_dismissToast()">Fermer</button>
-  </div>
-</div>
-
 <!-- ══ JOBS PANEL — suivi temps réel de toutes les générations ══ -->
 <div class="jobs-panel" id="jobs-panel">
   <div class="jobs-panel-header" onclick="toggleJobsPanel()">
@@ -2795,13 +2675,6 @@ function _onJobDone(jobId, meta) {
     const errorCount = [...activeJobs.values()].filter(m => m.status === 'error').length;
     if (doneCount > 0) {
       _playDoneSound();
-      const totalSlides = [...activeJobs.values()]
-        .filter(m => m.status === 'done')
-        .reduce((acc, m) => acc + (m.files?.length || 0), 0);
-      const msg = doneCount > 1
-        ? `${doneCount} carousels générés (${totalSlides} slides au total).${errorCount ? ` ${errorCount} erreur(s).` : ''} Consulte la bibliothèque pour tout télécharger.`
-        : `${totalSlides} slide(s) générée(s) avec succès. Consulte la bibliothèque pour télécharger ton carousel.`;
-      _showDoneToast(`${doneCount > 1 ? doneCount + ' carousels générés !' : 'Génération terminée !'}`, msg, doneCount);
       _startBadgeCountdown(60);
     }
   }
@@ -2836,28 +2709,6 @@ function _playDoneSound() {
   } catch (_) { /* AudioContext non supporté : ignorer silencieusement */ }
 }
 
-let _toastTimer = null;
-function _showDoneToast(title, msg, jobCount) {
-  const toast  = document.getElementById('done-toast');
-  const tTitle = document.getElementById('done-toast-title');
-  const tMsg   = document.getElementById('done-toast-msg');
-  if (!toast) return;
-  if (tTitle) tTitle.textContent = title;
-  if (tMsg)   tMsg.textContent   = msg;
-  // Forcer un reflow pour que la transition CSS se déclenche si le toast est déjà visible
-  toast.classList.remove('show');
-  void toast.offsetHeight;
-  toast.classList.add('show');
-  // Auto-dismiss après 10 s
-  clearTimeout(_toastTimer);
-  _toastTimer = setTimeout(_dismissToast, 10000);
-}
-
-function _dismissToast() {
-  const toast = document.getElementById('done-toast');
-  if (toast) toast.classList.remove('show');
-  clearTimeout(_toastTimer);
-}
 
 // ── Badge countdown après génération ─────────────────────────────
 let _badgeCountdownTimer = null;
@@ -3566,15 +3417,11 @@ function _refreshMdButtons() {
   const count = validItems.length;
   applyBtn.disabled = count === 0;
 
-  if (count > 1) {
-    // Multi : le bouton lance N générations directement (thème/plateforme de la sidebar)
-    applyBtn.textContent = `▶ Générer ${count} carousels`;
-    applyBtn.onclick = generateFromMarkdown;
-  } else {
-    // Single : charger dans l'éditeur, l'utilisateur génère via la sidebar
-    applyBtn.textContent = '← Importer dans l\'éditeur';
-    applyBtn.onclick = applyMarkdownImport;
-  }
+  // Toujours charger dans l'éditeur — jamais lancer la génération depuis le modal
+  applyBtn.textContent = count > 1
+    ? `← Importer le 1er dans l'éditeur (${count} fichiers)`
+    : '← Importer dans l\'éditeur';
+  applyBtn.onclick = applyMarkdownImport;
 }
 
 // ── Drag & Drop ──
