@@ -399,6 +399,18 @@ aside > * { min-width: var(--sidebar-w); }
   100% { transform: scale(1); background: rgba(255,255,255,.22); }
 }
 .slide-count-badge.pop { animation: badge-pop .38s cubic-bezier(.34,1.56,.64,1) forwards; }
+.slide-count-badge.countdown {
+  background: rgba(251,191,36,.25);
+  color: #fbbf24;
+  font-size: 10px;
+  min-width: 28px;
+}
+@keyframes badge-fade-out {
+  0%   { opacity: 1; transform: scale(1); }
+  80%  { opacity: .4; transform: scale(.85); }
+  100% { opacity: 0; transform: scale(.7); }
+}
+.slide-count-badge.fade-out { animation: badge-fade-out .4s ease forwards; }
 
 /* ── Import MD button ── */
 .btn-import {
@@ -2788,6 +2800,7 @@ function _onJobDone(jobId, meta) {
         ? `${doneCount} carousels générés (${totalSlides} slides au total).${errorCount ? ` ${errorCount} erreur(s).` : ''} Consulte la bibliothèque pour tout télécharger.`
         : `${totalSlides} slide(s) générée(s) avec succès. Consulte la bibliothèque pour télécharger ton carousel.`;
       _showDoneToast(`${doneCount > 1 ? doneCount + ' carousels générés !' : 'Génération terminée !'}`, msg, doneCount);
+      _startBadgeCountdown(60);
     }
   }
 }
@@ -2842,6 +2855,43 @@ function _dismissToast() {
   const toast = document.getElementById('done-toast');
   if (toast) toast.classList.remove('show');
   clearTimeout(_toastTimer);
+}
+
+// ── Badge countdown après génération ─────────────────────────────
+let _badgeCountdownTimer = null;
+let _badgeCountdownSec   = 0;
+
+function _startBadgeCountdown(seconds = 60) {
+  _cancelBadgeCountdown();
+  const badge = document.getElementById('slide-count-badge');
+  if (!badge || badge.classList.contains('hidden')) return;
+
+  _badgeCountdownSec = seconds;
+  badge.classList.remove('pop');
+  badge.classList.add('countdown');
+  badge.textContent = `${_badgeCountdownSec}s`;
+
+  _badgeCountdownTimer = setInterval(() => {
+    _badgeCountdownSec--;
+    if (_badgeCountdownSec <= 0) {
+      _cancelBadgeCountdown();
+      badge.classList.add('fade-out');
+      setTimeout(() => {
+        badge.classList.remove('fade-out', 'countdown');
+        badge.classList.add('hidden');
+        badge.textContent = '';
+      }, 420);
+    } else {
+      badge.textContent = `${_badgeCountdownSec}s`;
+    }
+  }, 1000);
+}
+
+function _cancelBadgeCountdown() {
+  clearInterval(_badgeCountdownTimer);
+  _badgeCountdownTimer = null;
+  const badge = document.getElementById('slide-count-badge');
+  if (badge) badge.classList.remove('countdown', 'fade-out');
 }
 
 // Lance un job et l'ajoute au tracker
@@ -2962,6 +3012,8 @@ function viewJobInLibrary(jobId) {
 
 async function startGenerate() {
   if (slides.length === 0) return showStatus('Ajoute au moins une slide.', 'error');
+
+  _cancelBadgeCountdown(); // annuler le décompte si l'utilisateur relance
 
   const btn  = document.getElementById('btn-generate');
   const name = document.getElementById('footer-series').value || 'Carousel';
@@ -3555,6 +3607,7 @@ function applyMarkdownImport() {
 }
 
 async function generateFromMarkdown() {
+  _cancelBadgeCountdown(); // annuler le décompte si l'utilisateur relance en multi
   // Collecter tous les blocs/fichiers valides et lancer N générations en parallèle
   const activeTab = document.getElementById('tab-paste').classList.contains('active') ? 'paste' : 'upload';
   let items = [];
