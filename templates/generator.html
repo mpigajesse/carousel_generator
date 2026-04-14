@@ -1845,7 +1845,6 @@ function _refreshBulkBar() {
 function bulkSoftDelete() {
   const ids = [...selectedIds];
   if (!ids.length) return;
-  if (!confirm(`Déplacer ${ids.length} carousel(s) dans la corbeille ?`)) return;
   ids.forEach(id => trashSet.add(id));
   saveTrash(trashSet);
   updateTrashBadge();
