@@ -84,7 +84,8 @@ def login():
             session.permanent = True
             session['authenticated'] = True
             next_url = request.args.get('next') or url_for('index')
-            return redirect(next_url)
+            sep = '&' if '?' in next_url else '?'
+            return redirect(next_url + sep + 'toast=connected')
         error = 'Mot de passe incorrect.'
 
     return render_template('login.html', error=error)
@@ -93,7 +94,7 @@ def login():
 @app.route('/logout')
 def logout():
     session.clear()
-    return redirect(url_for('login'))
+    return redirect(url_for('login') + '?toast=disconnected')
 
 # Stockage en mémoire des jobs en cours
 jobs = {}

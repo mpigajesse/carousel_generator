@@ -1004,6 +1004,13 @@ document.addEventListener('DOMContentLoaded', () => {
   updateTrashBadge();
   loadLibrary();
 
+  // Notification de connexion transmise par le paramètre URL
+  const _p = new URLSearchParams(location.search);
+  if (_p.get('toast') === 'connected') {
+    setTimeout(() => toast('Connexion réussie — bienvenue !', 'success'), 400);
+    history.replaceState({}, '', location.pathname);
+  }
+
   // Search — also matches YYYY-MM-DD patterns
   document.getElementById('search-input').addEventListener('input', e => {
     searchQuery = e.target.value.toLowerCase().trim();
