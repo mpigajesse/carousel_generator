@@ -2209,7 +2209,8 @@ let themeColors = {};
 let parsedMarkdownData = null;
 let lastPayload = null;
 let isRethemeRunning = false;
-let _badgeEnabled = false; // badge masqué tant que l'utilisateur n'a pas importé
+let _badgeEnabled = false;   // badge masqué tant que l'utilisateur n'a pas importé
+let _pendingMdItems = [];    // tous les items parsés depuis le modal (multi-fichiers)
 
 // ── Multi-job tracker ──
 const activeJobs = new Map(); // jobId → { name, total, startTime, current, status, phase, files, error }
@@ -2869,11 +2870,42 @@ function viewJobInLibrary(jobId) {
 async function startGenerate() {
   if (slides.length === 0) return showStatus('Ajoute au moins une slide.', 'error');
 
-  _cancelBadgeCountdown(); // annuler le décompte si l'utilisateur relance
+  _cancelBadgeCountdown();
 
-  const btn  = document.getElementById('btn-generate');
-  const name = document.getElementById('footer-series').value || 'Carousel';
+  const btn = document.getElementById('btn-generate');
   btn.disabled = true;
+
+  // CAS MULTI : plusieurs fichiers MD importés → générer tous en parallèle
+  if (_pendingMdItems.length > 1) {
+    showStatus(`Lancement de ${_pendingMdItems.length} générations…`, 'success');
+    const items = [..._pendingMdItems];
+    _pendingMdItems = []; // vider pour éviter double-lancement
+
+    showProgress(true, items[0].data.slides.length);
+
+    await Promise.all(items.map(async (item, idx) => {
+      const payload = {
+        theme:    selectedTheme,
+        format:   selectedFormat,
+        platform: selectedPlatform,
+        footer:   item.data.footer || { series: item.name, author: document.getElementById('footer-author').value },
+        slides:   item.data.slides,
+      };
+      try {
+        const res  = await fetch('api/generate', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
+        const resp = await res.json();
+        if (resp.error) { showStatus(`Erreur "${item.name}" : ${resp.error}`, 'error'); return; }
+        _startJobTracking(resp.job_id, item.name, item.data.slides.length, idx === 0);
+      } catch (e) {
+        showStatus(`Erreur réseau "${item.name}"`, 'error');
+      }
+    }));
+    return;
+  }
+
+  // CAS SIMPLE : générer le contenu actuel de l'éditeur
+  _pendingMdItems = [];
+  const name = document.getElementById('footer-series').value || 'Carousel';
   showProgress(true, slides.length);
 
   const payload = {
@@ -3205,6 +3237,7 @@ function openMarkdownModal() {
   document.getElementById('md-modal').classList.add('visible');
   document.getElementById('md-preview').style.display = 'none';
   parsedMarkdownData = null;
+  _pendingMdItems = [];
   mdBlocks = [];
   mdFileQueue = [];
   _renderMdBlocks();
@@ -3408,29 +3441,28 @@ function _refreshMdButtons() {
       name: b.parsed.slides[0]?.title || `Carousel ${b.id}`,
       data: b.parsed,
     }));
-    parsedMarkdownData = validItems.length > 0 ? validItems[0].data : null;
   } else {
     validItems = mdFileQueue.filter(q => q.parsed).map(q => ({
       name: q.name.replace(/\.(md|markdown)$/i, ''),
       data: q.parsed,
     }));
-    parsedMarkdownData = validItems.length > 0 ? validItems[0].data : null;
   }
+
+  // Stocker TOUS les items parsés — utilisés par startGenerate() pour le multi
+  _pendingMdItems = validItems;
+  parsedMarkdownData = validItems.length > 0 ? validItems[0].data : null;
 
   const applyBtn = document.getElementById('md-apply-btn');
   if (!applyBtn) return;
 
   const count = validItems.length;
   applyBtn.disabled = count === 0;
-
-  // Toujours charger dans l'éditeur — jamais lancer la génération depuis le modal
   applyBtn.onclick = applyMarkdownImport;
 
   // Calcul du total de slides sur tous les éléments valides
   const totalSlides = validItems.reduce((acc, item) => acc + (item.data.slides?.length || 0), 0);
 
   if (count > 1) {
-    // Détail par fichier : ex. "3 fichiers · 19 slides (8 + 6 + 5)"
     const perFile = validItems.map(item => item.data.slides?.length || 0).join(' + ');
     applyBtn.textContent = `← Importer dans l'éditeur`;
     applyBtn.title = `${count} fichiers · ${totalSlides} slides (${perFile})`;
@@ -3472,17 +3504,32 @@ document.addEventListener('DOMContentLoaded', () => {
 // ── Actions du modal ──
 
 function applyMarkdownImport() {
-  const data = parsedMarkdownData;
-  if (!data) return showStatus('Aucune donnée valide', 'error');
-  slides = data.slides.map((s, i) => ({ id: Date.now() + i, ...s }));
-  if (data.footer?.series) document.getElementById('footer-series').value = data.footer.series;
-  if (data.footer?.author) document.getElementById('footer-author').value = data.footer.author;
-  _badgeEnabled = true; // activer le badge uniquement après un import explicite
+  if (!_pendingMdItems.length) return showStatus('Aucune donnée valide', 'error');
+
+  // Charger le 1er item dans l'éditeur pour prévisualisation
+  const first = _pendingMdItems[0].data;
+  slides = first.slides.map((s, i) => ({ id: Date.now() + i, ...s }));
+  if (first.footer?.series) document.getElementById('footer-series').value = first.footer.series;
+  if (first.footer?.author) document.getElementById('footer-author').value = first.footer.author;
+
+  _badgeEnabled = true;
   _cancelBadgeCountdown();
+
+  // Badge = total slides de TOUS les fichiers qui seront générés
+  const totalSlides = _pendingMdItems.reduce((acc, item) => acc + (item.data.slides?.length || 0), 0);
+  _updateSlideBadge(totalSlides);
+
   renderSlides();
   closeMarkdownModal();
-  const reorg = data.structure_analysis?.reorganization_applied ? ' (réorganisé)' : '';
-  showStatus(`${slides.length} slide(s) importées${reorg} — choisis la plateforme et clique "Générer le carousel"`, 'success');
+
+  const n = _pendingMdItems.length;
+  const reorg = first.structure_analysis?.reorganization_applied ? ' (réorganisé)' : '';
+  if (n > 1) {
+    const perFile = _pendingMdItems.map(item => `${item.name} (${item.data.slides?.length || 0} slides)`).join(', ');
+    showStatus(`${n} fichiers prêts · ${totalSlides} slides au total — ${perFile} — clique "Générer le carousel"`, 'success');
+  } else {
+    showStatus(`${slides.length} slide(s) importées${reorg} — choisis la plateforme et clique "Générer le carousel"`, 'success');
+  }
 }
 
 async function generateFromMarkdown() {
