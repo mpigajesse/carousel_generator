@@ -608,7 +608,7 @@
   <div class="content">
     <div class="cover-content">
       <div class="cover-logo">
-        <img src="file:///d:/Generator/carousel_generator/static/logo/logo.png" alt="logo">
+        {% if logo_url %}<img src="{{ logo_url }}" alt="logo">{% endif %}
       </div>
 
       {% if slide.badge %}
@@ -675,7 +675,7 @@
       <div class="footer-series">{{ footer.series }}</div>
       <div class="footer-author">{{ footer.author }}</div>
     </div>
-    <img src="file:///d:/Generator/carousel_generator/static/logo/logo.png" class="footer-logo" alt="logo">
+    {% if logo_url %}<img src="{{ logo_url }}" class="footer-logo" alt="logo">{% endif %}
   </div>
   {% endif %}
 
