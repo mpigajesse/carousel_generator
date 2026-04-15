@@ -6,6 +6,7 @@ Usage: python generate.py --config carousel.yaml --theme dark_purple --output ou
 
 import argparse
 import asyncio
+import base64
 import os
 import platform
 import re
@@ -280,7 +281,8 @@ def generate_carousel(
 
     logo_path = template_dir / "static" / "logo" / "logo.png"
     if logo_path.exists():
-        logo_url = "file:///" + logo_path.resolve().as_posix()
+        logo_b64 = base64.b64encode(logo_path.read_bytes()).decode("ascii")
+        logo_url = f"data:image/png;base64,{logo_b64}"
     else:
         logo_url = None
 
