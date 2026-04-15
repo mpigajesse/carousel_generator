@@ -35,6 +35,9 @@ output/
 *.zip
 !node_modules/**
 
+# Exceptions — assets statiques à versionner
+!static/logo/*.png
+
 # Test files
 test_*.py
 test_*.md
