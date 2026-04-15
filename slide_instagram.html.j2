@@ -730,7 +730,7 @@
   <div class="ig-content">
     <div class="ig-cover-content">
       <div class="ig-cover-logo">
-        <img src="file:///d:/Generator/carousel_generator/static/logo/logo.png" alt="logo">
+        {% if logo_url %}<img src="{{ logo_url }}" alt="logo">{% endif %}
       </div>
 
       {% if slide.badge %}
@@ -854,7 +854,7 @@
       <div class="ig-footer-series">{{ footer.series }}</div>
       <div class="ig-footer-author">{{ footer.author }}</div>
     </div>
-    <img src="file:///d:/Generator/carousel_generator/static/logo/logo.png" class="ig-footer-logo" alt="logo">
+    {% if logo_url %}<img src="{{ logo_url }}" class="ig-footer-logo" alt="logo">{% endif %}
   </div>
   {% endif %}
 

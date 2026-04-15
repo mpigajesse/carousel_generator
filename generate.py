@@ -278,6 +278,12 @@ def generate_carousel(
     else:
         fonts_css_url = None
 
+    logo_path = template_dir / "static" / "logo" / "logo.png"
+    if logo_path.exists():
+        logo_url = "file:///" + logo_path.resolve().as_posix()
+    else:
+        logo_url = None
+
     Path(output_dir).mkdir(parents=True, exist_ok=True)
 
     slides = config.get("slides", [])
@@ -300,6 +306,7 @@ def generate_carousel(
         html = template.render(
             slide=slide, theme=theme, footer=footer,
             fonts_css_url=fonts_css_url,
+            logo_url=logo_url,
             slide_index=i + 1, slide_total=total_slides,
         )
         html_path = os.path.join(output_dir, f"_tmp_slide_{i + 1:02d}.html")
