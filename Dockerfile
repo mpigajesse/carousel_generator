@@ -95,9 +95,8 @@ USER appuser
 EXPOSE 5000
 
 # ── Health check ──
-# On tape /login (toujours accessible sans auth) plutôt que /
-HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
-    CMD curl -f -s -o /dev/null -w "%{http_code}" http://localhost:5000/login | grep -q "200" || exit 1
+# Le healthcheck effectif est défini dans docker-compose.yml (prime sur celui-ci).
+# Gardé volontairement absent ici pour éviter la duplication.
 
 # ── Démarrage production via Gunicorn ──
 CMD ["gunicorn", "--config", "gunicorn.conf.py", "app:app"]

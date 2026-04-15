@@ -1,5 +1,6 @@
 # =============================================================================
 # docker-compose.yml — Carousel Generator (Production)
+# Intégration : Traefik + Cloudflare Tunnel (réseau `proxy` externe)
 # Usage : docker compose up -d
 # =============================================================================
 
@@ -12,9 +13,8 @@ services:
     container_name: carousel-generator
     restart: unless-stopped
 
-    # ── Ports ──
-    ports:
-      - "5000:5000"
+    # Pas de `ports:` — l'accès passe par Traefik sur le réseau `proxy`.
+    # Le port 5000 est exposé uniquement aux conteneurs du réseau `proxy`.
 
     # ── Variables d'environnement ──
     # Les valeurs sensibles viennent du fichier .env (jamais commité)
@@ -30,6 +30,11 @@ services:
       # Persistance des carousels générés entre les redémarrages
       - carousel_data:/app/static/generated
 
+    # ── Réseaux ──
+    networks:
+      - internal   # communication interne à l'app
+      - proxy      # exposition via Traefik
+
     # ── Ressources (ajuster selon votre serveur) ──
     deploy:
       resources:
@@ -41,8 +46,10 @@ services:
           cpus: "0.5"
 
     # ── Health check ──
+    # Route /health dédiée (publique, sans rate limit) — définie dans app.py
+    # Le healthcheck sur /login (rate-limité à 30 req/h) rendait le conteneur unhealthy.
     healthcheck:
-      test: ["CMD", "curl", "-f", "-s", "http://localhost:5000/login"]
+      test: ["CMD", "curl", "-f", "-s", "http://localhost:5000/health"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -61,7 +68,49 @@ services:
     # Chromium a besoin de /dev/shm suffisant pour éviter les crashs
     shm_size: "256m"
 
+    # ── Labels Traefik ──
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=proxy"
+      - "traefik.http.routers.carousel.rule=Host(`carousel.a-ct.ma`)"
+      - "traefik.http.routers.carousel.entrypoints=web"
+      - "traefik.http.services.carousel.loadbalancer.server.port=5000"
+
+  # ───────────────────────────────────────────────────────────
+  # Purge automatique des carousels > 30 jours
+  # Tourne en boucle, dort 24h entre chaque passe.
+  # ───────────────────────────────────────────────────────────
+  cleanup:
+    image: alpine:3.19
+    container_name: carousel-cleanup
+    restart: unless-stopped
+    volumes:
+      - carousel_data:/data
+    command: >
+      sh -c '
+      while true; do
+        echo "[cleanup] $(date -Iseconds) purge des carousels > 30 jours";
+        find /data -maxdepth 1 -mindepth 1 -type d -mtime +30 -exec rm -rf {} + 2>/dev/null || true;
+        echo "[cleanup] $(date -Iseconds) terminé, prochaine passe dans 24h";
+        sleep 86400;
+      done
+      '
+    networks:
+      - internal
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
 # ── Volumes nommés ──
 volumes:
   carousel_data:
     driver: local
+
+# ── Réseaux ──
+networks:
+  internal:
+    driver: bridge
+  proxy:
+    external: true

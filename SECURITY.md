@@ -64,10 +64,15 @@ Every response includes:
 
 ```
 X-Content-Type-Options: nosniff
-X-Frame-Options: DENY
+X-Frame-Options: SAMEORIGIN
 Referrer-Policy: strict-origin-when-cross-origin
 Permissions-Policy: camera=(), microphone=(), geolocation=()
+Content-Security-Policy: default-src 'self'; ...
+Strict-Transport-Security: max-age=31536000; includeSubDomains   (production uniquement)
 ```
+
+> `X-Frame-Options: SAMEORIGIN` (et non `DENY`) : nécessaire pour afficher les PDF générés
+> dans une `<iframe>` côté UI (visionneuse interne). Le même host est seul autorisé.
 
 ### Secret Management
 
