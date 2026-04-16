@@ -525,18 +525,23 @@
     max-width: 80%;
   }
 
-  /* ── COVER : image héro (remplace le logo quand présente) ── */
+  /* ── COVER : logo réduit quand une image est aussi présente ── */
+  .cover-logo-small img {
+    height: 180px !important; /* réduit vs 350px par défaut */
+  }
+
+  /* ── COVER : image héro sous le logo ── */
   .cover-hero-image {
     width: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 20px;
+    margin-bottom: 16px;
     flex-shrink: 0;
   }
   .cover-hero-image img {
     max-width: 88%;
-    max-height: 260px;
+    max-height: 220px;
     object-fit: contain;
     border-radius: 18px;
     box-shadow: 0 10px 40px rgba(0,0,0,0.35);
@@ -764,15 +769,15 @@
   <div class="content">
     <div class="cover-content">
 
+      <!-- Logo toujours présent — plus petit quand une image accompagne la slide -->
+      <div class="cover-logo{% if slide.image_url %} cover-logo-small{% endif %}">
+        {% if logo_url %}<img src="{{ logo_url }}" alt="logo">{% endif %}
+      </div>
+
       {% if slide.image_url %}
-      <!-- Image héro : remplace le logo, occupe la zone visuelle principale -->
       <div class="cover-hero-image">
         <img src="{{ slide.image_url }}" alt="{{ slide.title }}"
              onerror="this.parentElement.style.display='none'">
-      </div>
-      {% else %}
-      <div class="cover-logo">
-        {% if logo_url %}<img src="{{ logo_url }}" alt="logo">{% endif %}
       </div>
       {% endif %}
 
