@@ -283,18 +283,28 @@ async def _convert_to_pdfs_async(png_results, slide_w, slide_h, output_dir):
     async def _one_pdf(browser, idx, temp_path, slide_title):
         pdf_filename = _build_slide_filename(idx + 1, slide_title, "pdf")
         pdf_path = os.path.join(output_dir, pdf_filename)
-        abs_png = os.path.abspath(temp_path).replace("\\", "/")
+
+        # Embarquer le PNG en base64 pour éviter tout problème d'encodage de
+        # chemin Windows avec file:// (caractères accentués, points, espaces…)
+        with open(temp_path, "rb") as _f:
+            png_b64 = base64.b64encode(_f.read()).decode("ascii")
+
         img_html = (
             f"<!DOCTYPE html><html><head><style>"
             f"@page{{size:{slide_w}px {slide_h}px;margin:0}}"
             f"*{{margin:0;padding:0;box-sizing:border-box}}"
-            f"body{{width:{slide_w}px;height:{slide_h}px;overflow:hidden}}"
-            f"img{{width:100%;height:100%;display:block}}"
-            f'</style></head><body><img src="file:///{abs_png}"/></body></html>'
+            f"body{{width:{slide_w}px;height:{slide_h}px;overflow:hidden;background:#000}}"
+            f"img{{width:100%;height:100%;display:block;object-fit:contain}}"
+            f"</style></head><body>"
+            f'<img src="data:image/png;base64,{png_b64}"/>'
+            f"</body></html>"
         )
         page = await browser.new_page(viewport={"width": slide_w, "height": slide_h})
         await page.set_content(img_html)
-        await page.wait_for_timeout(200)
+        # Attendre que l'image base64 soit décodée et peinte
+        await page.wait_for_function(
+            "() => document.querySelector('img').complete", timeout=5000
+        )
         await page.pdf(
             path=pdf_path,
             width=f"{slide_w}px",
