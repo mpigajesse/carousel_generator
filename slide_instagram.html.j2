@@ -489,36 +489,79 @@
     border: 1px solid {{ theme.accent1 }}28;
   }
 
-  /* ── CONTENT : layout côte-à-côte texte + image ── */
-  .content-split {
-    flex-direction: row !important;
+  /* ── CONTENT AVEC IMAGE : image héro grande + contenu en indice dessous ── */
+  .content-hero-header {
+    flex-shrink: 0;
+    display: flex;
     align-items: center;
-    gap: 36px;
+    gap: 18px;
+    margin-bottom: 14px;
   }
-  .content-split-text {
+  .content-hero-header .ig-badge { margin-bottom: 0; flex-shrink: 0; }
+  .content-hero-header .ig-title {
+    margin-bottom: 0;
+    font-size: 34px;
     flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
     min-width: 0;
-    overflow: hidden;
   }
-  .content-split-image {
-    flex: 0 0 310px;
-    align-self: stretch;
+  .content-hero-image-wrap {
+    flex: 1;
+    min-height: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-  }
-  .content-split-image img {
-    max-width: 310px;
-    max-height: 520px;
     width: 100%;
-    object-fit: contain;
-    border-radius: 18px;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.28);
-    border: 1px solid {{ theme.accent1 }}22;
   }
+  .content-hero-image-wrap img {
+    max-width: 100%;
+    max-height: 100%;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border-radius: 20px;
+    box-shadow: 0 14px 56px rgba(0,0,0,0.45);
+    border: 1px solid {{ theme.accent1 }}28;
+  }
+  .content-hero-caption {
+    flex-shrink: 0;
+    margin-top: 14px;
+    max-height: 130px;
+    overflow: hidden;
+    font-family: 'Manrope', sans-serif;
+    font-size: 20px;
+    line-height: 1.45;
+    color: {{ theme.text_muted }};
+  }
+  .content-hero-caption .bullets {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 0; padding: 0;
+    list-style: none;
+  }
+  .content-hero-caption .bullets::before { display: none; }
+  .content-hero-caption .bullets li {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 14px 5px 10px;
+    background: {{ theme.badge_bg | default('rgba(255,255,255,0.07)') }};
+    border: 1px solid {{ theme.accent1 }}25;
+    border-radius: 100px;
+    font-size: 18px;
+    color: {{ theme.text_muted }};
+    line-height: 1.3;
+  }
+  .content-hero-caption .bullets li::before {
+    content: '';
+    width: 8px; height: 8px;
+    background: {{ theme.accent1 }};
+    border-radius: 50%;
+    position: static;
+    flex-shrink: 0;
+  }
+  .content-hero-caption .bullets li strong { color: {{ theme.text }}; }
+  .content-hero-caption p { margin-bottom: 0.4em; }
 
   /* ── COMPARE : bannière compacte ── */
   .compare-image-banner {
@@ -870,19 +913,22 @@
 
   {% elif slide.type == "content" %}
   {% if slide.image_url %}
-  <div class="ig-content content-split" id="ig-main-content">
-    <div class="content-split-text">
+  <!-- Image héro : grande et centrée, contenu en indice compact en dessous -->
+  <div class="ig-content content-hero" id="ig-main-content">
+    <div class="content-hero-header">
       {% if slide.badge %}
       <div class="ig-badge">{{ slide.badge }}</div>
       {% endif %}
       <div class="ig-title" id="ig-title">{{ slide.title }}</div>
-      <div class="ig-rule"></div>
-      <div class="ig-body" id="ig-body">{{ slide.body | safe }}</div>
     </div>
-    <div class="content-split-image">
+    <div class="ig-rule" style="flex-shrink:0;margin-bottom:14px;"></div>
+    <div class="content-hero-image-wrap" id="hero-img-wrap">
       <img src="{{ slide.image_url }}" alt="{{ slide.title }}"
            onerror="this.parentElement.style.display='none'">
     </div>
+    {% if slide.body %}
+    <div class="content-hero-caption" id="ig-body">{{ slide.body | safe }}</div>
+    {% endif %}
   </div>
   {% else %}
   <div class="ig-content" id="ig-main-content">
@@ -1015,13 +1061,7 @@
 
     function contentBottom() {
       const content = document.querySelector('.ig-content');
-      if (!content) return 0;
-      const textCol = content.querySelector('.content-split-text');
-      if (textCol) {
-        if (textCol.scrollHeight > textCol.clientHeight + 4) return footerTop();
-        return textCol.getBoundingClientRect().bottom;
-      }
-      if (!content.lastElementChild) return 0;
+      if (!content || !content.lastElementChild) return 0;
       return content.lastElementChild.getBoundingClientRect().bottom;
     }
 
@@ -1077,11 +1117,12 @@
         const sz = parseFloat(el.style.maxHeight) || 220;
         if (sz > 60) el.style.maxHeight = (sz - 8) + 'px';
       });
-      // Image côte-à-côte
-      document.querySelectorAll('.content-split-image img').forEach(el => {
-        const sz = parseFloat(el.style.maxHeight) || 520;
-        if (sz > 160) el.style.maxHeight = (sz - 16) + 'px';
-      });
+      // Caption héro : réduire fonte si débordement
+      const caption = document.getElementById('ig-body');
+      if (caption && caption.closest('.content-hero')) {
+        const sz = parseFloat(window.getComputedStyle(caption).fontSize);
+        if (sz > 14) caption.style.fontSize = (sz - 1) + 'px';
+      }
       iterations++;
     }
   }
