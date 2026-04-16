@@ -930,7 +930,7 @@
     <div class="ig-rule" style="flex-shrink:0;margin-bottom:14px;"></div>
     <div class="content-hero-image-wrap" id="hero-img-wrap">
       <img src="{{ slide.image_url }}" alt="{{ slide.title }}"
-           onerror="this.parentElement.style.display='none'">
+           onerror="this.style.visibility='hidden'">
     </div>
     {% if slide.body %}
     <div class="content-hero-caption" id="ig-body">{{ slide.body | safe }}</div>
@@ -1152,6 +1152,17 @@
   setTimeout(adjustFontSize, 200);
   setTimeout(adjustFontSize, 500);
   setTimeout(adjustFontSize, 900);
+
+  // Re-déclencher adjustFontSize quand l'image héro finit de charger/décoder
+  const heroImg = document.querySelector('.content-hero-image-wrap img');
+  if (heroImg && !heroImg.complete) {
+    heroImg.addEventListener('load', () => {
+      adjustFontSize();
+      setTimeout(adjustFontSize, 100);
+    });
+  } else if (heroImg && heroImg.complete) {
+    setTimeout(adjustFontSize, 50);
+  }
 </script>
 </body>
 </html>

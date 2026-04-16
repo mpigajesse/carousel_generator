@@ -815,7 +815,7 @@
     <div class="rule" style="flex-shrink:0;margin-bottom:14px;"></div>
     <div class="content-hero-image-wrap" id="hero-img-wrap">
       <img src="{{ slide.image_url }}" alt="{{ slide.title }}"
-           onerror="this.parentElement.style.display='none'">
+           onerror="this.style.visibility='hidden'">
     </div>
     {% if slide.body %}
     <div class="content-hero-caption" id="slide-body">{{ slide.body | safe }}</div>
@@ -979,6 +979,19 @@
   setTimeout(adjustFontSize, 200);
   setTimeout(adjustFontSize, 500);
   setTimeout(adjustFontSize, 900);
+
+  // Re-déclencher adjustFontSize quand l'image héro finit de charger/décoder
+  // (critique pour les slides PDF où le layout flex:1 dépend de la hauteur réelle)
+  const heroImg = document.querySelector('.content-hero-image-wrap img');
+  if (heroImg && !heroImg.complete) {
+    heroImg.addEventListener('load', () => {
+      adjustFontSize();
+      setTimeout(adjustFontSize, 100);
+    });
+  } else if (heroImg && heroImg.complete) {
+    // Image déjà chargée (base64) — forcer un recalcul différé
+    setTimeout(adjustFontSize, 50);
+  }
 </script>
 </body>
 </html>

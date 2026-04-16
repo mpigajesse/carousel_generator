@@ -218,7 +218,38 @@ async def _capture_slides_async(
         await page.emulate_media(media="screen")
         abs_path = os.path.abspath(html_files[idx]).replace("\\", "/")
         await page.goto(f"file:///{abs_path}")
+
+        # Attente de base (fonts)
         await page.wait_for_timeout(wait_ms)
+
+        # Attendre que toutes les images soient décodées et peintes
+        # (surtout les images héro base64 de grande taille)
+        try:
+            await page.wait_for_function(
+                "() => [...document.images].every(img => img.complete)",
+                timeout=6000,
+            )
+        except Exception:
+            pass  # timeout — continuer quand même
+
+        # Re-déclencher adjustFontSize APRÈS le chargement des images
+        # pour que le layout héro ait les bonnes hauteurs
+        try:
+            await page.evaluate("""
+                () => {
+                    if (typeof adjustFontSize === 'function') {
+                        adjustFontSize();
+                    }
+                    if (typeof sizeCoverTitle === 'function') {
+                        sizeCoverTitle();
+                        adjustFontSize();
+                    }
+                }
+            """)
+            await page.wait_for_timeout(120)  # laisser le rendu se stabiliser
+        except Exception:
+            pass
+
         slide_title = slides[idx].get("title", "").strip() if idx < len(slides) else ""
         filename = _build_slide_filename(idx + 1, slide_title, "png")
         path = os.path.join(output_dir, filename)
