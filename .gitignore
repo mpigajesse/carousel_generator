@@ -38,9 +38,10 @@ output/
 # Exceptions — assets statiques à versionner
 !static/logo/*.png
 
-# Test files
-test_*.py
-test_*.md
+# Test files (root-level uniquement — le dossier tests/ est versionné)
+/test_*.py
+/test_*.md
+!tests/
 *.backup
 
 # Debug

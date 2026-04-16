@@ -489,6 +489,110 @@
     border-radius: 2px;
   }
 
+  /* ── IMAGES (bloc Markdown dans le body) ── */
+  .slide-figure {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 16px 0;
+    flex-shrink: 1;
+  }
+  .slide-image {
+    max-width: 100%;
+    max-height: 220px;
+    width: auto;
+    height: auto;
+    border-radius: 12px;
+    object-fit: contain;
+    border: 1px solid {{ theme.accent1 }}22;
+    box-shadow: 0 6px 24px rgba(0,0,0,0.22);
+    display: block;
+  }
+  .slide-image-inline {
+    max-height: 140px;
+    display: inline-block;
+    vertical-align: middle;
+    margin: 0 6px;
+  }
+  .slide-image-credit {
+    font-family: 'Manrope', sans-serif;
+    font-size: 14px;
+    font-style: italic;
+    color: {{ theme.text_muted }};
+    opacity: 0.65;
+    margin-top: 6px;
+    text-align: center;
+    max-width: 80%;
+  }
+
+  /* ── COVER : image héro (remplace le logo quand présente) ── */
+  .cover-hero-image {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+    flex-shrink: 0;
+  }
+  .cover-hero-image img {
+    max-width: 88%;
+    max-height: 260px;
+    object-fit: contain;
+    border-radius: 18px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.35);
+    border: 1px solid {{ theme.accent1 }}28;
+  }
+
+  /* ── CONTENT : layout côte-à-côte texte + image ── */
+  .content-split {
+    flex-direction: row !important;
+    align-items: center;
+    gap: 40px;
+  }
+  .content-split-text {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-width: 0;
+    overflow: hidden;
+  }
+  .content-split-image {
+    flex: 0 0 330px;
+    align-self: stretch;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .content-split-image img {
+    max-width: 330px;
+    max-height: 560px;
+    width: 100%;
+    object-fit: contain;
+    border-radius: 18px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.28);
+    border: 1px solid {{ theme.accent1 }}22;
+  }
+
+  /* ── COMPARE : bannière image compacte au-dessus de la grille ── */
+  .compare-image-banner {
+    width: 100%;
+    height: 90px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+  }
+  .compare-image-banner img {
+    max-height: 82px;
+    max-width: 60%;
+    object-fit: contain;
+    border-radius: 12px;
+    opacity: 0.92;
+    border: 1px solid {{ theme.accent1 }}20;
+  }
+
   /* ════════════════════════════════════════════
      COMPARE SLIDE
   ════════════════════════════════════════════ */
@@ -607,9 +711,18 @@
 
   <div class="content">
     <div class="cover-content">
+
+      {% if slide.image_url %}
+      <!-- Image héro : remplace le logo, occupe la zone visuelle principale -->
+      <div class="cover-hero-image">
+        <img src="{{ slide.image_url }}" alt="{{ slide.title }}"
+             onerror="this.parentElement.style.display='none'">
+      </div>
+      {% else %}
       <div class="cover-logo">
         {% if logo_url %}<img src="{{ logo_url }}" alt="logo">{% endif %}
       </div>
+      {% endif %}
 
       {% if slide.badge %}
       <div class="module-badge">{{ slide.badge }}</div>
@@ -633,16 +746,32 @@
   </div>
 
   {% elif slide.type == "content" %}
+  {% if slide.image_url %}
+  <!-- Layout côte-à-côte : texte à gauche, image à droite — aucun chevauchement possible -->
+  <div class="content content-split" id="main-content">
+    <div class="content-split-text">
+      {% if slide.badge %}
+      <div class="module-badge">{{ slide.badge }}</div>
+      {% endif %}
+      <div class="module-title" id="slide-title">{{ slide.title }}</div>
+      <div class="rule"></div>
+      <div class="body" id="slide-body">{{ slide.body | safe }}</div>
+    </div>
+    <div class="content-split-image">
+      <img src="{{ slide.image_url }}" alt="{{ slide.title }}"
+           onerror="this.parentElement.style.display='none'">
+    </div>
+  </div>
+  {% else %}
   <div class="content" id="main-content">
     {% if slide.badge %}
     <div class="module-badge">{{ slide.badge }}</div>
     {% endif %}
     <div class="module-title" id="slide-title">{{ slide.title }}</div>
     <div class="rule"></div>
-    <div class="body" id="slide-body">
-      {{ slide.body | safe }}
-    </div>
+    <div class="body" id="slide-body">{{ slide.body | safe }}</div>
   </div>
+  {% endif %}
 
   {% elif slide.type == "compare" %}
   <div class="content">
@@ -651,6 +780,13 @@
     {% endif %}
     <div class="module-title" id="slide-title">{{ slide.title }}</div>
     <div class="rule"></div>
+    {% if slide.image_url %}
+    <!-- Bannière compacte au-dessus de la grille, hauteur fixe — pas de débordement -->
+    <div class="compare-image-banner">
+      <img src="{{ slide.image_url }}" alt="{{ slide.title }}"
+           onerror="this.parentElement.style.display='none'">
+    </div>
+    {% endif %}
     <div class="compare-grid" id="slide-body">
       {% for col in slide.columns %}
       <div class="compare-col">
@@ -702,7 +838,14 @@
 
     function contentBottom() {
       const content = document.querySelector('.content');
-      if (!content || !content.lastElementChild) return 0;
+      if (!content) return 0;
+      // Layout côte-à-côte : détecter l'overflow interne de la colonne texte
+      const textCol = content.querySelector('.content-split-text');
+      if (textCol) {
+        if (textCol.scrollHeight > textCol.clientHeight + 4) return footerTop();
+        return textCol.getBoundingClientRect().bottom;
+      }
+      if (!content.lastElementChild) return 0;
       return content.lastElementChild.getBoundingClientRect().bottom;
     }
 
@@ -747,6 +890,16 @@
       document.querySelectorAll('.compare-head, .compare-body').forEach(el => {
         const sz = parseFloat(window.getComputedStyle(el).fontSize);
         if (sz > 14) el.style.fontSize = (sz - 1) + 'px';
+      });
+      // Images Markdown en bloc
+      document.querySelectorAll('.slide-figure').forEach(el => {
+        const sz = parseFloat(el.style.maxHeight) || 220;
+        if (sz > 60) el.style.maxHeight = (sz - 8) + 'px';
+      });
+      // Image côte-à-côte : réduire si colonne trop serrée
+      document.querySelectorAll('.content-split-image img').forEach(el => {
+        const sz = parseFloat(el.style.maxHeight) || 560;
+        if (sz > 160) el.style.maxHeight = (sz - 16) + 'px';
       });
       iterations++;
     }

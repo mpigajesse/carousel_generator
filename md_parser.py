@@ -512,10 +512,12 @@ def _markdown_to_html(md: str) -> str:
             in_paragraph = False
 
     def close_all():
+        nonlocal in_blockquote
         close_list()
         close_paragraph()
         if in_blockquote:
             html_lines.append('</blockquote>')
+            in_blockquote = False
 
     for line in lines:
         stripped = line.strip()
@@ -576,6 +578,27 @@ def _markdown_to_html(md: str) -> str:
         if h4_match:
             close_all()
             html_lines.append(f'<h4 class="slide-h4">{_inline_formatting(h4_match.group(1))}</h4>')
+            continue
+
+        # Images en bloc (ligne seule ![alt](url))
+        img_block_match = re.match(r'^!\[([^\]]*)\]\(([^)]+)\)$', stripped)
+        if img_block_match:
+            close_all()
+            alt = img_block_match.group(1).replace('"', '&quot;')
+            src = _safe_image_src(img_block_match.group(2))
+            if src:
+                caption = (
+                    f'<figcaption class="slide-image-credit">{alt}</figcaption>'
+                    if alt else ''
+                )
+                html_lines.append(
+                    f'<figure class="slide-figure">'
+                    f'<img src="{src}" alt="{alt}" class="slide-image" '
+                    f'onerror="this.style.display=\'none\';'
+                    f'this.parentElement.style.display=\'none\'">'
+                    f'{caption}'
+                    f'</figure>'
+                )
             continue
 
         # Lignes vides
@@ -773,6 +796,19 @@ def _safe_href(url: str) -> str:
     return url
 
 
+def _safe_image_src(url: str) -> str:
+    """Retourne l'URL si le scheme est http ou https, sinon retourne ''.
+    Bloque file://, les chemins relatifs, javascript:, data:, vbscript:
+    et tout autre scheme non explicitement autorisé.
+    Les espaces dans l'URL sont encodés en %20.
+    """
+    url = url.strip().replace(' ', '%20')
+    scheme = urlparse(url).scheme.lower()
+    if scheme not in ("http", "https"):
+        return ""
+    return url
+
+
 def _inline_formatting(text: str) -> str:
     """Applique le formatage inline: **gras**, *italique*, `code`."""
     # Extraire d'abord les segments code inline pour les protéger de l'échappement HTML
@@ -799,6 +835,20 @@ def _inline_formatting(text: str) -> str:
 
     # Italic
     text = re.sub(r'\*(.+?)\*', r'<em>\1</em>', text)
+
+    # Images inline — AVANT les liens pour éviter collision regex ![…](…) vs […](…)
+    def _make_inline_image(m: re.Match) -> str:
+        alt = m.group(1).replace('"', '&quot;')
+        src = _safe_image_src(m.group(2))
+        if not src:
+            return f'[image: {alt}]'   # fallback texte si scheme invalide
+        return (
+            f'<img src="{src}" alt="{alt}" '
+            f'class="slide-image slide-image-inline" '
+            f'onerror="this.style.display=\'none\'">'
+        )
+
+    text = re.sub(r'!\[([^\]]*)\]\(([^)]+)\)', _make_inline_image, text)
 
     # Links — sanitize href to block javascript: / data: URIs
     def _make_link(m: re.Match) -> str:

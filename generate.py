@@ -82,6 +82,74 @@ def _calculate_text_size(slide: dict) -> dict:
     return slide
 
 
+def _prefetch_images_as_base64(html: str) -> str:
+    """Télécharge les images externes (<img src="https?://...">) et les remplace
+    par des data URLs base64 pour garantir le rendu offline dans Playwright.
+    En cas d'échec réseau, conserve l'URL originale (fallback silencieux).
+    Ne touche pas aux src qui sont déjà des data: URLs (ex: logo).
+    Limite : 5 Mo par image.
+    Formats acceptés : tous les types image/* + fallback sur l'extension de l'URL
+    pour les CDNs qui servent avec application/octet-stream.
+    """
+    import urllib.request
+    from urllib.parse import urlparse
+    from pathlib import PurePosixPath
+
+    MAX_IMAGE_BYTES = 5 * 1024 * 1024  # 5 Mo
+
+    # Extension → MIME type pour les CDNs à content-type générique
+    _EXT_MIME: dict[str, str] = {
+        ".jpg":  "image/jpeg",
+        ".jpeg": "image/jpeg",
+        ".png":  "image/png",
+        ".gif":  "image/gif",
+        ".webp": "image/webp",
+        ".avif": "image/avif",
+        ".svg":  "image/svg+xml",
+        ".bmp":  "image/bmp",
+        ".ico":  "image/x-icon",
+        ".tiff": "image/tiff",
+        ".tif":  "image/tiff",
+    }
+
+    def _resolve_mime(content_type: str, url: str) -> str | None:
+        """Retourne le MIME type si la réponse est une image, None sinon."""
+        if content_type.startswith("image/"):
+            return content_type
+        # CDNs qui envoient application/octet-stream ou binary/octet-stream :
+        # détection par l'extension de l'URL (avant ?query)
+        path = PurePosixPath(urlparse(url).path)
+        return _EXT_MIME.get(path.suffix.lower())
+
+    def _replace(m: re.Match) -> str:
+        full_tag_prefix = m.group(1)   # tout ce qui précède src= dans la balise <img>
+        url = m.group(2)
+        try:
+            req = urllib.request.Request(
+                url, headers={"User-Agent": "Mozilla/5.0 carousel-generator/1.0"}
+            )
+            with urllib.request.urlopen(req, timeout=8) as resp:
+                raw_ct = resp.headers.get_content_type() or ""
+                mime = _resolve_mime(raw_ct, url)
+                if mime is None:
+                    return m.group(0)   # Pas une image — garder l'URL
+                # Rejeter les images trop volumineuses
+                content_length = int(resp.headers.get("Content-Length") or 0)
+                if content_length > MAX_IMAGE_BYTES:
+                    return m.group(0)
+                raw = resp.read(MAX_IMAGE_BYTES + 1)
+                if len(raw) > MAX_IMAGE_BYTES:
+                    return m.group(0)
+            b64 = base64.b64encode(raw).decode("ascii")
+            return f'{full_tag_prefix}src="data:{mime};base64,{b64}"'
+        except Exception:
+            return m.group(0)   # Fallback : garder l'URL originale
+
+    # Regex scopée aux balises <img> uniquement — évite de capturer
+    # les src de <script>, <link>, <audio>, <video>, etc.
+    return re.sub(r'(<img\b[^>]*?\s)src="(https?://[^"]+)"', _replace, html)
+
+
 def _extract_module_title(slides: list, footer: dict) -> str:
     """
     Extrait un titre significatif pour le fichier PDF final.
@@ -304,6 +372,19 @@ def generate_carousel(
     # Génération HTML (rapide — Jinja2 pur Python)
     html_files = []
     for i, slide in enumerate(slides):
+        # Valider image_url : accepter uniquement http/https pour éviter
+        # l'injection de schemes dangereux dans le DOM Playwright
+        if slide.get('image_url'):
+            from urllib.parse import urlparse as _urlparse
+            _url = slide['image_url'].strip()
+            _scheme = _urlparse(_url).scheme.lower()
+            # Accepter http/https (URLs externes) et data:image/ (images locales base64)
+            _allowed = (
+                _scheme in ('http', 'https')
+                or (_scheme == 'data' and _url.startswith('data:image/'))
+            )
+            if not _allowed:
+                slide = {**slide, 'image_url': ''}
         slide = _calculate_text_size(slide)
         html = template.render(
             slide=slide, theme=theme, footer=footer,
@@ -311,6 +392,7 @@ def generate_carousel(
             logo_url=logo_url,
             slide_index=i + 1, slide_total=total_slides,
         )
+        html = _prefetch_images_as_base64(html)   # ← AJOUT : embed images avant capture
         html_path = os.path.join(output_dir, f"_tmp_slide_{i + 1:02d}.html")
         with open(html_path, "w", encoding="utf-8") as f:
             f.write(html)

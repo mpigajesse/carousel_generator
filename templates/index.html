@@ -643,6 +643,89 @@ main {
 }
 .slide-body.open { display: block; padding-top: 16px; }
 
+/* Champ image avec bouton de sélection fichier */
+.field-img-wrap {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.field-img-wrap input[type="text"] {
+  flex: 1;
+  min-width: 0;
+}
+.btn-img-pick {
+  flex-shrink: 0;
+  padding: 7px 12px;
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius-sm);
+  color: var(--muted2);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: border-color .15s, color .15s;
+}
+.btn-img-pick:hover { border-color: var(--accent); color: var(--accent); }
+.field-img-preview-wrap {
+  margin-top: 8px;
+  display: none;
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--border2);
+  background: var(--surface2);
+  min-height: 48px;
+}
+.field-img-preview-wrap.visible { display: block; }
+.field-img-preview {
+  display: block;
+  max-height: 120px;
+  max-width: 100%;
+  width: 100%;
+  object-fit: contain;
+  border-radius: 7px;
+  opacity: 0;
+  transition: opacity .2s ease;
+}
+.field-img-preview.loaded { opacity: 1; }
+/* Loading skeleton */
+.field-img-preview-wrap.loading::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg,
+    var(--surface2) 25%,
+    rgba(255,255,255,.06) 50%,
+    var(--surface2) 75%);
+  background-size: 200% 100%;
+  animation: imgSkeleton .9s linear infinite;
+  border-radius: 7px;
+}
+@keyframes imgSkeleton {
+  from { background-position: 200% 0; }
+  to   { background-position: -200% 0; }
+}
+/* Warning state — image URL valide mais bloquée par le navigateur (hotlink/CORS).
+   La génération Playwright pourra quand même la télécharger. */
+.field-img-preview-wrap.img-warn::after {
+  content: '⚠ Aperçu indisponible — l\'image sera intégrée à la génération';
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  inset: 0;
+  padding: 8px;
+  text-align: center;
+  font-size: 10px;
+  line-height: 1.4;
+  color: var(--muted2);
+  background: rgba(123,135,160,.07);
+  border-radius: 7px;
+  animation: none;
+}
+.field-img-preview-wrap.img-warn .field-img-preview { opacity: 0; }
+
 .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .field textarea { min-height: 90px; resize: vertical; font-family: 'DM Mono', monospace; font-size: 12px; }
 
@@ -2435,6 +2518,92 @@ function toggleSlide(id) {
   body.classList.toggle('open');
 }
 
+// ── Image picker : fichier local → base64 ──
+function pickImageFile(slideId) {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = 'image/*';
+  input.onchange = e => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = ev => {
+      const dataUrl = ev.target.result;
+      updateSlide(slideId, 'image_url', dataUrl);
+      // Mettre à jour le champ texte (vide, l'aperçu suffit)
+      const urlInput = document.getElementById('img-url-' + slideId);
+      if (urlInput) urlInput.value = '';
+      updateImgPreview(slideId, dataUrl);
+    };
+    reader.readAsDataURL(file);
+  };
+  input.click();
+}
+
+/* ── Image preview helpers ── */
+const _imgDebounce = {};   // slideId → timer handle
+
+function scheduleImgPreview(slideId, src) {
+  clearTimeout(_imgDebounce[slideId]);
+  const trimmed = (src || '').trim();
+  if (!trimmed) {
+    // Clear immediately on empty input
+    _applyImgPreview(slideId, '');
+    return;
+  }
+  // Debounce remote URL fetches; data: URLs are instant
+  const delay = trimmed.startsWith('data:') ? 0 : 600;
+  _imgDebounce[slideId] = setTimeout(() => _applyImgPreview(slideId, trimmed), delay);
+}
+
+function _applyImgPreview(slideId, src) {
+  const wrap    = document.getElementById('img-wrap-' + slideId);
+  const preview = document.getElementById('img-preview-' + slideId);
+  if (!wrap || !preview) return;
+
+  // Always trim — guards against copy-pasted URLs with trailing spaces
+  const cleanSrc = (src || '').trim();
+
+  if (!cleanSrc) {
+    wrap.classList.remove('visible', 'loading', 'img-error');
+    preview.src = '';
+    preview.classList.remove('loaded');
+    return;
+  }
+
+  // Reset states and show loading skeleton
+  wrap.classList.remove('img-error');
+  wrap.classList.add('visible', 'loading');
+  preview.classList.remove('loaded');
+  preview.src = cleanSrc;
+}
+
+function onImgPreviewLoad(slideId) {
+  const wrap    = document.getElementById('img-wrap-' + slideId);
+  const preview = document.getElementById('img-preview-' + slideId);
+  if (!wrap || !preview) return;
+  wrap.classList.remove('loading', 'img-error');
+  preview.classList.add('loaded');
+}
+
+function onImgPreviewError(slideId) {
+  const wrap    = document.getElementById('img-wrap-' + slideId);
+  const preview = document.getElementById('img-preview-' + slideId);
+  if (!wrap || !preview) return;
+  // Only show error if we actually tried to load something
+  if (!preview.src || preview.src === window.location.href) return;
+  // Some servers block browser preview (hotlink protection / CORS) but Playwright
+  // can still download the image for generation. Show a softer warning, not a hard error.
+  wrap.classList.remove('loading');
+  wrap.classList.add('img-warn');
+  preview.classList.remove('loaded');
+}
+
+// Legacy alias — still called from pickImageFile
+function updateImgPreview(slideId, src) {
+  scheduleImgPreview(slideId, src);
+}
+
 function updateSlide(id, key, value) {
   const s = slides.find(s => s.id === id);
   if (!s) return;
@@ -2518,6 +2687,24 @@ function renderSlideCard(s, i) {
       </div>
       <div class="field-row">
         <div class="field"><label>Code terminal (LinkedIn)</label><input type="text" value="${esc(s.code||'')}" oninput="updateSlide(${s.id},'code',this.value)"></div>
+      </div>
+      <div class="field">
+        <label>Image (URL ou fichier local, optionnel)</label>
+        <div class="field-img-wrap">
+          <input type="text" id="img-url-${s.id}"
+            value="${esc(s.image_url && !s.image_url.startsWith('data:') ? s.image_url : '')}"
+            placeholder="https://images.unsplash.com/…"
+            oninput="updateSlide(${s.id},'image_url',this.value.trim());scheduleImgPreview(${s.id},this.value)">
+          <button class="btn-img-pick" onclick="pickImageFile(${s.id})" type="button">📁 Fichier</button>
+        </div>
+        <div id="img-wrap-${s.id}" class="field-img-preview-wrap${s.image_url ? ' visible loading' : ''}">
+          <img id="img-preview-${s.id}"
+            class="field-img-preview${s.image_url ? '' : ''}"
+            src="${s.image_url ? esc(s.image_url) : ''}"
+            alt="aperçu"
+            onload="onImgPreviewLoad(${s.id})"
+            onerror="onImgPreviewError(${s.id})">
+        </div>
       </div>`;
   } else if (s.type === 'content') {
     fields = `
@@ -2527,6 +2714,24 @@ function renderSlideCard(s, i) {
       </div>
       <div class="field"><label>Contenu (HTML autorisé)</label>
         <textarea oninput="updateSlide(${s.id},'body',this.value)">${esc(s.body||'')}</textarea>
+      </div>
+      <div class="field">
+        <label>Image (URL ou fichier local, optionnel)</label>
+        <div class="field-img-wrap">
+          <input type="text" id="img-url-${s.id}"
+            value="${esc(s.image_url && !s.image_url.startsWith('data:') ? s.image_url : '')}"
+            placeholder="https://images.unsplash.com/…"
+            oninput="updateSlide(${s.id},'image_url',this.value.trim());scheduleImgPreview(${s.id},this.value)">
+          <button class="btn-img-pick" onclick="pickImageFile(${s.id})" type="button">📁 Fichier</button>
+        </div>
+        <div id="img-wrap-${s.id}" class="field-img-preview-wrap${s.image_url ? ' visible loading' : ''}">
+          <img id="img-preview-${s.id}"
+            class="field-img-preview"
+            src="${s.image_url ? esc(s.image_url) : ''}"
+            alt="aperçu"
+            onload="onImgPreviewLoad(${s.id})"
+            onerror="onImgPreviewError(${s.id})">
+        </div>
       </div>`;
   } else if (s.type === 'compare') {
     const c = s.columns || [{},{}];
@@ -2543,6 +2748,24 @@ function renderSlideCard(s, i) {
             <div class="field"><label>Corps</label><textarea oninput="updateSlide(${s.id},'col.${ci}.body',this.value)">${esc(c[ci]?.body||'')}</textarea></div>
             <div class="field"><label>Tag</label><input type="text" value="${esc(c[ci]?.tag||'')}" oninput="updateSlide(${s.id},'col.${ci}.tag',this.value)"></div>
           </div>`).join('')}
+      </div>
+      <div class="field">
+        <label>Image (URL ou fichier local, optionnel)</label>
+        <div class="field-img-wrap">
+          <input type="text" id="img-url-${s.id}"
+            value="${esc(s.image_url && !s.image_url.startsWith('data:') ? s.image_url : '')}"
+            placeholder="https://images.unsplash.com/…"
+            oninput="updateSlide(${s.id},'image_url',this.value.trim());scheduleImgPreview(${s.id},this.value)">
+          <button class="btn-img-pick" onclick="pickImageFile(${s.id})" type="button">📁 Fichier</button>
+        </div>
+        <div id="img-wrap-${s.id}" class="field-img-preview-wrap${s.image_url ? ' visible loading' : ''}">
+          <img id="img-preview-${s.id}"
+            class="field-img-preview"
+            src="${s.image_url ? esc(s.image_url) : ''}"
+            alt="aperçu"
+            onload="onImgPreviewLoad(${s.id})"
+            onerror="onImgPreviewError(${s.id})">
+        </div>
       </div>`;
   } else if (s.type === 'quote') {
     fields = `
