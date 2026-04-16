@@ -10,7 +10,9 @@ import base64
 import os
 import platform
 import re
-from pathlib import Path
+import urllib.request
+from pathlib import Path, PurePosixPath
+from urllib.parse import urlparse
 
 import yaml
 from jinja2 import Environment, FileSystemLoader
@@ -91,10 +93,6 @@ def _prefetch_images_as_base64(html: str) -> str:
     Formats acceptés : tous les types image/* + fallback sur l'extension de l'URL
     pour les CDNs qui servent avec application/octet-stream.
     """
-    import urllib.request
-    from urllib.parse import urlparse
-    from pathlib import PurePosixPath
-
     MAX_IMAGE_BYTES = 5 * 1024 * 1024  # 5 Mo
 
     # Extension → MIME type pour les CDNs à content-type générique
@@ -128,7 +126,7 @@ def _prefetch_images_as_base64(html: str) -> str:
             req = urllib.request.Request(
                 url, headers={"User-Agent": "Mozilla/5.0 carousel-generator/1.0"}
             )
-            with urllib.request.urlopen(req, timeout=8) as resp:
+            with urllib.request.urlopen(req, timeout=8) as resp:  # nosec B310 — URL validée https?:// par regex avant cet appel
                 raw_ct = resp.headers.get_content_type() or ""
                 mime = _resolve_mime(raw_ct, url)
                 if mime is None:
@@ -416,9 +414,8 @@ def generate_carousel(
         # Valider image_url : accepter uniquement http/https pour éviter
         # l'injection de schemes dangereux dans le DOM Playwright
         if slide.get('image_url'):
-            from urllib.parse import urlparse as _urlparse
             _url = slide['image_url'].strip()
-            _scheme = _urlparse(_url).scheme.lower()
+            _scheme = urlparse(_url).scheme.lower()
             # Accepter http/https (URLs externes) et data:image/ (images locales base64)
             _allowed = (
                 _scheme in ('http', 'https')

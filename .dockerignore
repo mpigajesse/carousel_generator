@@ -49,6 +49,7 @@ static/generated/
 # ── Documentation (pas nécessaire dans l'image) ──
 # NOTE : STRUCTURE_COMPLETE.md est conservé — servi par /api/download-structure
 PLAN.md
+PLAN_IMAGE_SUPPORT.md
 SECURITY.md
 README.md
 CLAUDE.md
