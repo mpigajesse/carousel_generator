@@ -1,0 +1,327 @@
+/*
+ * ds-editor.css — Premium Dark Editor Panel
+ * Carousel Generator · Design System Layer
+ *
+ * Maps --ds-* tokens to the existing --* tokens defined in app.css :root.
+ * This lets us reference either convention — the ds- aliases are
+ * declared here so no change to app.css or the Jinja2 templates is needed.
+ */
+
+/* ── Design-system token aliases ───────────────────────────────────────── */
+:root {
+  --ds-bg-2:          var(--surface);
+  --ds-bg-3:          var(--surface2, #0f1520);
+  --ds-surface:       var(--card);
+  --ds-border:        var(--border);
+  --ds-border-strong: var(--border2);
+  --ds-border-accent: rgba(108, 92, 231, .35);
+  --ds-accent:        var(--accent);
+  --ds-accent-light:  var(--accent-hi, #8b7cf8);
+  --ds-text:          var(--text);
+  --ds-text-2:        var(--muted2);
+  --ds-text-3:        var(--muted);
+  --ds-r-sm:          var(--radius-sm, 8px);
+  --ds-r-md:          var(--radius, 12px);
+  --ds-r-lg:          16px;
+  --ds-shadow-sm:     0 2px 8px rgba(0, 0, 0, .35);
+  --ds-t-base:        .16s;
+  --ds-ease:          cubic-bezier(.4, 0, .2, 1);
+  --ds-font-ui:       'DM Sans', sans-serif;
+  --ds-font-mono:     'DM Mono', monospace;
+}
+
+/* ════════════════════════════════════════════════════════════════════════
+   @layer ds-editor
+════════════════════════════════════════════════════════════════════════ */
+@layer ds-editor {
+
+  /* ── Slide card body: the editor panel proper ───────────────────────── */
+  .slide-body {
+    background: var(--ds-bg-2);
+    font-family: var(--ds-font-ui);
+  }
+
+  /* ── Editor section divider ─────────────────────────────────────────── */
+  .editor-section {
+    position: relative;
+    padding-top: 14px;
+    margin-top: 14px;
+  }
+  .editor-section + .editor-section {
+    border-top: 1px solid var(--ds-border);
+  }
+  .editor-section:first-child {
+    padding-top: 0;
+    margin-top: 0;
+  }
+
+  /* ── Section header label (Figma-style group title) ─────────────────── */
+  .editor-section-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 10px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--ds-text-3);
+    user-select: none;
+  }
+  .editor-section-label svg {
+    flex-shrink: 0;
+    opacity: .6;
+  }
+  /* Optional collapse chevron */
+  .editor-section-label .collapse-btn {
+    margin-left: auto;
+    width: 18px; height: 18px;
+    display: flex; align-items: center; justify-content: center;
+    border: none;
+    background: none;
+    color: var(--ds-text-3);
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background var(--ds-t-base) var(--ds-ease),
+                color var(--ds-t-base) var(--ds-ease),
+                transform var(--ds-t-base) var(--ds-ease);
+  }
+  .editor-section-label .collapse-btn:hover {
+    background: var(--ds-border-strong);
+    color: var(--ds-text);
+  }
+  .editor-section-label .collapse-btn.collapsed {
+    transform: rotate(-90deg);
+  }
+
+  /* ── Slide-type selector grid ───────────────────────────────────────── */
+  .type-selector {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+    margin-bottom: 2px;
+  }
+  .type-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    padding: 9px 6px 8px;
+    border: 1px solid var(--ds-border);
+    border-radius: var(--ds-r-sm);
+    background: var(--ds-bg-3);
+    color: var(--ds-text-3);
+    font-family: var(--ds-font-ui);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: border-color var(--ds-t-base) var(--ds-ease),
+                background  var(--ds-t-base) var(--ds-ease),
+                color       var(--ds-t-base) var(--ds-ease),
+                box-shadow  var(--ds-t-base) var(--ds-ease);
+  }
+  .type-btn:hover {
+    border-color: var(--ds-border-strong);
+    background: var(--ds-surface);
+    color: var(--ds-text);
+  }
+  .type-btn svg {
+    opacity: .55;
+    transition: opacity var(--ds-t-base) var(--ds-ease);
+  }
+  .type-btn:hover svg { opacity: .85; }
+
+  /* Active / selected state — gradient bg + glow */
+  .type-btn.active {
+    border-color: var(--ds-border-accent);
+    background: linear-gradient(
+      145deg,
+      rgba(108, 92, 231, .2) 0%,
+      rgba(108, 92, 231, .08) 100%
+    );
+    color: var(--ds-accent-light);
+    box-shadow: 0 0 0 1px var(--ds-border-accent),
+                0 4px 14px rgba(108, 92, 231, .18);
+  }
+  .type-btn.active svg { opacity: 1; }
+
+  /* ── Field group: label + control ───────────────────────────────────── */
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin-bottom: 10px;
+  }
+  .field:last-child { margin-bottom: 0; }
+
+  .field > label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .07em;
+    text-transform: uppercase;
+    color: var(--ds-text-3);
+    user-select: none;
+    line-height: 1;
+  }
+
+  .field > input[type="text"],
+  .field > input[type="url"],
+  .field > input[type="number"],
+  .field > textarea {
+    width: 100%;
+    padding: 7px 10px;
+    background: var(--ds-bg-3);
+    border: 1px solid var(--ds-border);
+    border-radius: var(--ds-r-sm);
+    color: var(--ds-text);
+    font-family: var(--ds-font-ui);
+    font-size: 13px;
+    line-height: 1.5;
+    outline: none;
+    transition: border-color var(--ds-t-base) var(--ds-ease),
+                box-shadow   var(--ds-t-base) var(--ds-ease);
+  }
+  .field > input:focus,
+  .field > textarea:focus {
+    border-color: var(--ds-border-accent);
+    box-shadow: 0 0 0 3px rgba(108, 92, 231, .12);
+  }
+  .field > textarea {
+    min-height: 80px;
+    resize: vertical;
+    font-family: var(--ds-font-mono);
+    font-size: 12px;
+    line-height: 1.6;
+  }
+  .field > input::placeholder,
+  .field > textarea::placeholder {
+    color: var(--ds-text-3);
+    opacity: .6;
+  }
+
+  /* ── Character counter ───────────────────────────────────────────────── */
+  .char-counter {
+    display: flex;
+    justify-content: flex-end;
+    font-size: 10px;
+    font-variant-numeric: tabular-nums;
+    color: var(--ds-text-3);
+    margin-top: -3px;
+    margin-bottom: 4px;
+    opacity: .75;
+    transition: color var(--ds-t-base) var(--ds-ease),
+                opacity var(--ds-t-base) var(--ds-ease);
+  }
+  .char-counter.warn {
+    color: #fbbf24;
+    opacity: 1;
+  }
+  .char-counter.over {
+    color: var(--danger, #f87171);
+    opacity: 1;
+    font-weight: 600;
+  }
+
+  /* ── Image preview zone ──────────────────────────────────────────────── */
+  .field-img-preview-wrap {
+    margin-top: 6px;
+    display: none;
+    position: relative;
+    border-radius: var(--ds-r-sm);
+    overflow: hidden;
+    border: 1px solid var(--ds-border-strong);
+    background: var(--ds-bg-3);
+    min-height: 52px;
+    box-shadow: var(--ds-shadow-sm);
+  }
+  .field-img-preview-wrap.visible { display: block; }
+
+  /* Placeholder shimmer for unloaded state */
+  .field-img-preview-wrap::before {
+    content: '';
+    display: block;
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      135deg,
+      rgba(255,255,255,.025) 0%,
+      rgba(255,255,255,.055) 50%,
+      rgba(255,255,255,.025) 100%
+    );
+    border-radius: inherit;
+    pointer-events: none;
+  }
+  .field-img-preview {
+    display: block;
+    max-height: 116px;
+    width: 100%;
+    object-fit: contain;
+    border-radius: 7px;
+    opacity: 0;
+    transition: opacity .22s var(--ds-ease);
+  }
+  .field-img-preview.loaded {
+    opacity: 1;
+  }
+  .field-img-preview.loaded ~ .img-placeholder { display: none; }
+
+  /* Overlay label when no image loaded */
+  .img-placeholder {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-size: 11px;
+    color: var(--ds-text-3);
+    pointer-events: none;
+  }
+  .img-placeholder svg { opacity: .45; }
+
+  /* ── Editor toolbar: duplicate / delete ─────────────────────────────── */
+  .editor-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 0 2px;
+    margin-top: 10px;
+    border-top: 1px solid var(--ds-border);
+  }
+  .editor-toolbar-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 10px;
+    border: 1px solid var(--ds-border);
+    border-radius: var(--ds-r-sm);
+    background: none;
+    color: var(--ds-text-2);
+    font-family: var(--ds-font-ui);
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background  var(--ds-t-base) var(--ds-ease),
+                border-color var(--ds-t-base) var(--ds-ease),
+                color        var(--ds-t-base) var(--ds-ease);
+  }
+  .editor-toolbar-btn svg { opacity: .65; }
+  .editor-toolbar-btn:hover {
+    background: var(--ds-surface);
+    border-color: var(--ds-border-strong);
+    color: var(--ds-text);
+  }
+  .editor-toolbar-btn:hover svg { opacity: 1; }
+  .editor-toolbar-btn.danger:hover {
+    border-color: rgba(248, 113, 113, .45);
+    color: var(--danger, #f87171);
+    background: rgba(248, 113, 113, .07);
+  }
+
+  /* Spacer to push danger actions to the right */
+  .editor-toolbar-spacer { margin-left: auto; }
+
+} /* end @layer ds-editor */

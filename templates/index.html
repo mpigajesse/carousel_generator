@@ -7,8 +7,24 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
+<!-- Design System v2 -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/ds-tokens.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/ds-typography.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/ds-animations.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/ds-glass.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/ds-layout.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/ds-nav.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/ds-slides.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/ds-editor.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/ds-forms.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/ds-controls.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/ds-themes-ui.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/ds-modals.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/ds-status.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/ds-overrides.css') }}">
+<meta name="color-scheme" content="dark">
 </head>
-<body>
+<body class="ds-app">
 
 <div class="orb orb-1"></div>
 <div class="orb orb-2"></div>
@@ -16,7 +32,7 @@
 <div class="shell">
 
   <!-- ══ SIDEBAR ══ -->
-  <aside>
+  <aside class="ds-glass">
 
     <!-- Brand -->
     <div class="brand">
@@ -122,7 +138,7 @@
   <div class="sidebar-backdrop" id="sidebar-backdrop" onclick="closeSidebar()"></div>
 
   <!-- ══ MAIN ══ -->
-  <main>
+  <main class="ds-animate-fade-in">
     <!-- Floating reopen button (desktop, shown only when sidebar is collapsed) -->
     <button class="btn-sidebar-reopen" id="btn-sidebar-reopen" onclick="toggleSidebar()" title="Ouvrir le panneau" aria-label="Open sidebar">
       <span></span><span></span><span></span>
@@ -275,10 +291,10 @@
 </div>
 
 <!-- ══ MARKDOWN IMPORT MODAL (multi-bloc / multi-fichiers) ══ -->
-<div class="md-modal-overlay" id="md-modal">
-  <div class="md-modal">
+<div class="md-modal-overlay" id="md-modal" role="dialog" aria-modal="true" aria-labelledby="md-modal-title">
+  <div class="md-modal ds-glass">
     <div class="md-modal-header">
-      <h2>Import Markdown</h2>
+      <h2 id="md-modal-title">Import Markdown</h2>
       <button class="md-modal-close" onclick="closeMarkdownModal()">✕</button>
     </div>
 

@@ -1,0 +1,350 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   ds-typography.css — Design System Typography v1
+   Carousel Generator — Premium Dark UI
+   ═══════════════════════════════════════════════════════════════════════════
+
+   SCOPE
+   ──────────────────────────────────────────────────────────────────────────
+   Defines all text rendering rules: base copy, heading hierarchy, gradient
+   headings, section labels, form labels, monospace / code blocks, truncation
+   utilities, and link states. Relies exclusively on tokens from ds-tokens.css
+   — no hardcoded values are introduced here.
+
+   LAYER ORDER (declared in ds-tokens.css)
+     ds-tokens → ds-typography → component layers
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+@layer ds-typography {
+
+  /* ──────────────────────────────────────────────────────────────────────────
+     1. BASE RESET — body & paragraph
+     ────────────────────────────────────────────────────────────────────────── */
+
+  body {
+    font-family:   var(--ds-font-ui);
+    font-size:     var(--ds-text-base);      /* 14px */
+    font-weight:   var(--ds-weight-regular);
+    line-height:   var(--ds-leading-normal); /* 1.5 */
+    color:         var(--ds-text-2);
+    letter-spacing:var(--ds-tracking-normal);
+    -webkit-font-smoothing:  antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  p {
+    font-family:  var(--ds-font-ui);
+    font-size:    var(--ds-text-base);
+    font-weight:  var(--ds-weight-regular);
+    line-height:  var(--ds-leading-relaxed); /* 1.65 — slightly looser for readability */
+    color:        var(--ds-text-2);
+    margin:       0 0 var(--ds-space-4);     /* 16px bottom spacing */
+  }
+
+  p:last-child {
+    margin-bottom: 0;
+  }
+
+
+  /* ──────────────────────────────────────────────────────────────────────────
+     2. HEADINGS — h1–h4
+     Font: display stack; weight & size graduated downward
+     ────────────────────────────────────────────────────────────────────────── */
+
+  h1, h2, h3, h4 {
+    font-family:    var(--ds-font-display);
+    color:          var(--ds-text);
+    letter-spacing: var(--ds-tracking-snug);
+    line-height:    var(--ds-leading-tight);
+    margin:         0 0 var(--ds-space-3);
+  }
+
+  /* Page-level title — used in .main-header h1 */
+  h1 {
+    font-size:   var(--ds-text-2xl);         /* 24px */
+    font-weight: var(--ds-weight-bold);
+    letter-spacing: var(--ds-tracking-tight);
+  }
+
+  /* Section headings — modal headers, panel titles */
+  h2 {
+    font-size:   var(--ds-text-xl);          /* 20px */
+    font-weight: var(--ds-weight-semi);
+  }
+
+  /* Card / drawer sub-headers */
+  h3 {
+    font-size:   var(--ds-text-lg);          /* 18px */
+    font-weight: var(--ds-weight-semi);
+  }
+
+  /* Tight sub-labels, compact card titles */
+  h4 {
+    font-size:   var(--ds-text-md);          /* 16px */
+    font-weight: var(--ds-weight-medium);
+    letter-spacing: var(--ds-tracking-normal);
+  }
+
+  h1:last-child,
+  h2:last-child,
+  h3:last-child,
+  h4:last-child {
+    margin-bottom: 0;
+  }
+
+
+  /* ──────────────────────────────────────────────────────────────────────────
+     3. GRADIENT HEADING — .ds-heading-gradient
+     Accent gradient clipped to text fill; composable on any heading level
+     ────────────────────────────────────────────────────────────────────────── */
+
+  .ds-heading-gradient {
+    background:              var(--ds-gradient-text);   /* #A78BFA → #818CF8 */
+    -webkit-background-clip: text;
+    background-clip:         text;
+    -webkit-text-fill-color: transparent;
+    color:                   transparent;               /* fallback for non-webkit */
+    display:                 inline-block;              /* required for clip to render */
+  }
+
+
+  /* ──────────────────────────────────────────────────────────────────────────
+     4. SECTION TITLE — .ds-section-title
+     Used by .section-label in sidebar sections; all-caps meta labels
+     ────────────────────────────────────────────────────────────────────────── */
+
+  .ds-section-title,
+  .section-label {
+    font-family:    var(--ds-font-ui);
+    font-size:      var(--ds-text-xs);       /* 11px */
+    font-weight:    var(--ds-weight-semi);
+    color:          var(--ds-text-3);
+    text-transform: uppercase;
+    letter-spacing: var(--ds-tracking-caps); /* 0.12em */
+    line-height:    var(--ds-leading-none);
+  }
+
+
+  /* ──────────────────────────────────────────────────────────────────────────
+     5. FORM LABEL — .ds-label
+     Matches <label> elements inside .field wrappers; also standalone utility
+     ────────────────────────────────────────────────────────────────────────── */
+
+  .ds-label,
+  .field > label {
+    display:        block;
+    font-family:    var(--ds-font-ui);
+    font-size:      var(--ds-text-sm);       /* 13px — one step below base */
+    font-weight:    var(--ds-weight-semi);
+    color:          var(--ds-text-2);
+    letter-spacing: var(--ds-tracking-wide);
+    line-height:    var(--ds-leading-tight);
+    margin-bottom:  var(--ds-space-2);       /* 8px gap before input */
+  }
+
+
+  /* ──────────────────────────────────────────────────────────────────────────
+     6. BRAND TYPOGRAPHY — .brand-name, .brand-sub, .mobile-topbar-title
+     Identity text in the sidebar brand block
+     ────────────────────────────────────────────────────────────────────────── */
+
+  .brand-name {
+    font-family:    var(--ds-font-display);
+    font-size:      var(--ds-text-md);       /* 16px */
+    font-weight:    var(--ds-weight-bold);
+    color:          var(--ds-text);
+    letter-spacing: var(--ds-tracking-tight);
+    line-height:    var(--ds-leading-none);
+  }
+
+  .brand-sub {
+    font-family:    var(--ds-font-ui);
+    font-size:      var(--ds-text-2xs);      /* 10px */
+    font-weight:    var(--ds-weight-semi);
+    color:          var(--ds-text-3);
+    text-transform: uppercase;
+    letter-spacing: var(--ds-tracking-wider);
+    line-height:    var(--ds-leading-none);
+  }
+
+  .mobile-topbar-title {
+    font-family:    var(--ds-font-display);
+    font-size:      var(--ds-text-md);
+    font-weight:    var(--ds-weight-bold);
+    color:          var(--ds-text);
+    letter-spacing: var(--ds-tracking-snug);
+  }
+
+
+  /* ──────────────────────────────────────────────────────────────────────────
+     7. MONOSPACE — .ds-mono, code, pre, kbd
+     Inline code snippets and fenced code blocks
+     ────────────────────────────────────────────────────────────────────────── */
+
+  .ds-mono,
+  code,
+  kbd {
+    font-family:     var(--ds-font-mono);
+    font-size:       0.875em;                /* 87.5% of parent — scales contextually */
+    font-weight:     400;
+    color:           var(--ds-code-text);    /* #C4B5FD */
+    background:      var(--ds-code-bg);      /* rgba(0,0,0,0.45) */
+    border:          1px solid var(--ds-code-border);
+    border-radius:   var(--ds-code-r);       /* 8px */
+    padding:         2px var(--ds-code-px);  /* 2px 12px */
+    white-space:     nowrap;
+    vertical-align:  baseline;
+  }
+
+  /* Block code — pre resets inline constraints */
+  pre {
+    font-family:     var(--ds-font-mono);
+    font-size:       var(--ds-text-sm);      /* 13px */
+    font-weight:     400;
+    color:           var(--ds-code-text);
+    background:      var(--ds-bg-3);
+    border:          1px solid var(--ds-code-border);
+    border-radius:   var(--ds-r-md);
+    padding:         var(--ds-code-py) var(--ds-code-px);
+    overflow-x:      auto;
+    white-space:     pre;
+    line-height:     var(--ds-leading-relaxed);
+    margin:          0 0 var(--ds-space-4);
+    tab-size:        2;
+  }
+
+  pre code {
+    font-size:   inherit;
+    background:  none;
+    border:      none;
+    padding:     0;
+    border-radius: 0;
+    color:       inherit;
+    white-space: inherit;
+  }
+
+
+  /* ──────────────────────────────────────────────────────────────────────────
+     8. LINKS — <a>
+     Accent-coloured, underline on hover, subtle brightness lift
+     ────────────────────────────────────────────────────────────────────────── */
+
+  a {
+    color:           var(--ds-accent);
+    text-decoration: none;
+    transition:      color var(--ds-t-fast) var(--ds-ease),
+                     filter var(--ds-t-fast) var(--ds-ease);
+  }
+
+  a:hover {
+    color:           var(--ds-accent-hover);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    filter:          brightness(1.15);
+  }
+
+  a:focus-visible {
+    outline:       2px solid var(--ds-border-focus);
+    outline-offset:3px;
+    border-radius: var(--ds-r-xs);
+  }
+
+  /* Navigation tabs and buttons that are <a> should not inherit link underline */
+  a.btn-generate,
+  a.btn-import,
+  a.btn-dl-all,
+  a.btn-header-structure,
+  a.btn-structure {
+    text-decoration: none;
+  }
+
+  a.btn-generate:hover,
+  a.btn-import:hover,
+  a.btn-dl-all:hover,
+  a.btn-header-structure:hover,
+  a.btn-structure:hover {
+    text-decoration: none;
+    filter:          none;
+  }
+
+
+  /* ──────────────────────────────────────────────────────────────────────────
+     9. SLIDE COUNT BADGE — .slide-count-badge
+     Small pill injected inside the generate button
+     ────────────────────────────────────────────────────────────────────────── */
+
+  .slide-count-badge {
+    font-family:    var(--ds-font-ui);
+    font-size:      var(--ds-badge-font-size); /* 10px */
+    font-weight:    var(--ds-badge-font-weight);
+    letter-spacing: var(--ds-badge-tracking);
+    color:          var(--ds-badge-accent-text);
+    background:     var(--ds-badge-accent-bg);
+    border-radius:  var(--ds-badge-r);
+    padding:        var(--ds-badge-py) var(--ds-badge-px);
+    line-height:    1;
+  }
+
+  .slide-count-badge.hidden {
+    display: none;
+  }
+
+
+  /* ──────────────────────────────────────────────────────────────────────────
+     10. MUTED / SECONDARY TEXT UTILITY — .ds-muted
+     Convenience class for inline secondary copy
+     ────────────────────────────────────────────────────────────────────────── */
+
+  .ds-muted {
+    color:       var(--ds-text-3);
+    font-size:   var(--ds-text-sm);
+    font-weight: var(--ds-weight-regular);
+  }
+
+  .ds-muted-2 {
+    color:       var(--ds-text-4);
+    font-size:   var(--ds-text-xs);
+  }
+
+
+  /* ──────────────────────────────────────────────────────────────────────────
+     11. TRUNCATION UTILITIES
+     ────────────────────────────────────────────────────────────────────────── */
+
+  .ds-truncate {
+    overflow:      hidden;
+    text-overflow: ellipsis;
+    white-space:   nowrap;
+  }
+
+  .ds-line-clamp-2 {
+    display:            -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow:           hidden;
+    text-overflow:      ellipsis;
+  }
+
+  .ds-line-clamp-3 {
+    display:            -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow:           hidden;
+    text-overflow:      ellipsis;
+  }
+
+
+  /* ──────────────────────────────────────────────────────────────────────────
+     12. FOOTER TEXT
+     Minimal footer — inherits from body but overrides size and opacity
+     ────────────────────────────────────────────────────────────────────────── */
+
+  footer {
+    font-family:    var(--ds-font-ui);
+    font-size:      var(--ds-text-xs);      /* 11px */
+    color:          rgba(255,255,255,0.18);
+    letter-spacing: var(--ds-tracking-wide);
+    line-height:    var(--ds-leading-normal);
+  }
+
+} /* end @layer ds-typography */

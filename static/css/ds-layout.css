@@ -1,0 +1,281 @@
+/* ds-layout.css — Premium dark app layout · CarouselGen */
+
+/* ── Token bridge: --ds-* → existing app palette ── */
+:root {
+  --ds-bg:         var(--bg,       #06080d);
+  --ds-bg-2:       var(--surface,  #0a0e16);
+  --ds-bg-3:       var(--surface2, #0f1520);
+  --ds-surface:    var(--card,     #121826);
+  --ds-border:     var(--border,   rgba(255,255,255,.06));
+  --ds-accent:     var(--accent,   #6c5ce7);
+  --ds-text:       var(--text,     #e4e8f2);
+  --ds-sidebar-w:  var(--sidebar-w, 320px);
+  --ds-panel-w:    360px;
+  --ds-topbar-h:   56px;
+  --ds-shadow-md:  0 4px 24px rgba(0,0,0,.45);
+  --ds-glass-blur: 12px;
+  --ds-glass-bg:   rgba(10,14,22,.72);
+  --ds-r-lg:       14px;
+  --ds-t-base:     .25s;
+  --ds-ease:       cubic-bezier(.4,0,.2,1);
+}
+
+@layer ds-layout {
+
+  /* ── Viewport lock — scroll lives inside panels, not on body ── */
+  html, body {
+    height: 100%;
+    overflow: hidden;
+  }
+
+  body {
+    background: var(--ds-bg);
+    color: var(--ds-text);
+  }
+
+  /* ── Shell — sidebar | main grid ── */
+  .shell {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: var(--ds-sidebar-w) 1fr;
+    grid-template-rows: 1fr;
+    height: 100vh;
+    overflow: hidden;
+    transition: grid-template-columns var(--ds-t-base) var(--ds-ease);
+  }
+
+  .shell.sidebar-collapsed {
+    grid-template-columns: 0px 1fr;
+  }
+
+  /* ── Sidebar ── */
+  .shell > aside {
+    grid-column: 1;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    background: var(--ds-bg-2);
+    border-right: 1px solid var(--ds-border);
+    overflow: hidden;
+    position: sticky;
+    top: 0;
+    min-width: 0;
+    will-change: opacity, transform;
+    transition:
+      opacity   var(--ds-t-base) var(--ds-ease),
+      transform var(--ds-t-base) var(--ds-ease);
+  }
+
+  .shell > aside > * { min-width: var(--ds-sidebar-w); }
+
+  .shell.sidebar-collapsed > aside {
+    opacity: 0;
+    pointer-events: none;
+    transform: translateX(-8px);
+  }
+
+  /* Scrollable inner zone */
+  .sidebar-scroll {
+    flex: 1 1 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255,255,255,.08) transparent;
+  }
+
+  .sidebar-scroll::-webkit-scrollbar        { width: 4px; }
+  .sidebar-scroll::-webkit-scrollbar-track  { background: transparent; }
+  .sidebar-scroll::-webkit-scrollbar-thumb  {
+    background: rgba(255,255,255,.08);
+    border-radius: 2px;
+  }
+  .sidebar-scroll::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,.15); }
+
+  .sidebar-bottom { margin-top: auto; }
+
+  /* ── Main column ── */
+  .shell > main {
+    grid-column: 2;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
+    background: var(--ds-bg);
+    position: relative;
+    min-width: 0;
+  }
+
+  /* ── Topbar — glass effect, 56px ── */
+  .main-header {
+    flex-shrink: 0;
+    height: var(--ds-topbar-h);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    gap: 12px;
+    background: var(--ds-glass-bg);
+    backdrop-filter: blur(var(--ds-glass-blur));
+    -webkit-backdrop-filter: blur(var(--ds-glass-blur));
+    border-bottom: 1px solid var(--ds-border);
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    box-shadow: 0 1px 0 var(--ds-border), var(--ds-shadow-md);
+    transition: background var(--ds-t-base) var(--ds-ease);
+  }
+
+  .main-header h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: -.02em;
+    color: var(--ds-text);
+    white-space: nowrap;
+  }
+
+  /* Mobile topbar (hidden on desktop) */
+  .mobile-topbar {
+    flex-shrink: 0;
+    height: var(--ds-topbar-h);
+    display: none;
+    align-items: center;
+    padding: 0 16px;
+    gap: 12px;
+    background: var(--ds-glass-bg);
+    backdrop-filter: blur(var(--ds-glass-blur));
+    -webkit-backdrop-filter: blur(var(--ds-glass-blur));
+    border-bottom: 1px solid var(--ds-border);
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+
+  /* ── Content areas — fill remaining height, independently scrollable ── */
+  .slides-area,
+  .preview-area {
+    flex: 1 1 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    position: relative;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255,255,255,.07) transparent;
+  }
+
+  .slides-area::-webkit-scrollbar,
+  .preview-area::-webkit-scrollbar        { width: 5px; }
+  .slides-area::-webkit-scrollbar-track,
+  .preview-area::-webkit-scrollbar-track  { background: transparent; }
+  .slides-area::-webkit-scrollbar-thumb,
+  .preview-area::-webkit-scrollbar-thumb  {
+    background: rgba(255,255,255,.08);
+    border-radius: 3px;
+  }
+
+  /* Sticky add-slide action strip, fades into background */
+  .add-slide-bar {
+    flex-shrink: 0;
+    position: sticky;
+    bottom: 0;
+    z-index: 10;
+    padding: 12px 20px 16px;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    background: linear-gradient(to top, var(--ds-bg) 60%, transparent);
+  }
+
+  /* ── Jobs panel — floating bottom-right widget ── */
+  .jobs-panel {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 200;
+    min-width: 280px;
+    max-width: 340px;
+    background: var(--ds-surface);
+    border: 1px solid var(--ds-border);
+    border-radius: var(--ds-r-lg);
+    box-shadow: var(--ds-shadow-md);
+    overflow: hidden;
+    transition:
+      box-shadow    var(--ds-t-base) var(--ds-ease),
+      border-color  var(--ds-t-base) var(--ds-ease);
+  }
+
+  .jobs-panel:hover {
+    border-color: rgba(255,255,255,.12);
+    box-shadow: 0 8px 40px rgba(0,0,0,.55);
+  }
+
+  .jobs-panel-list {
+    max-height: 260px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255,255,255,.07) transparent;
+  }
+
+  /* ── Sidebar backdrop — mobile drawer overlay ── */
+  .sidebar-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.55);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+    z-index: 99;
+    opacity: 0;
+    transition: opacity var(--ds-t-base) var(--ds-ease);
+  }
+
+  .sidebar-backdrop.visible { opacity: 1; }
+
+  /* ── Mobile: drawer sidebar + single-column layout ── */
+  @media (max-width: 768px) {
+
+    html, body { overflow: hidden; }
+
+    .shell {
+      grid-template-columns: 1fr;
+      height: 100dvh;
+    }
+
+    .shell > aside {
+      position: fixed;
+      inset-block: 0;
+      left: 0;
+      width: var(--ds-sidebar-w);
+      max-width: 88vw;
+      z-index: 100;
+      transform: translateX(-100%);
+      box-shadow: var(--ds-shadow-md);
+    }
+
+    .shell > aside > * { min-width: 0; width: 100%; }
+
+    .shell.sidebar-open > aside {
+      transform: translateX(0);
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .shell.sidebar-open .sidebar-backdrop {
+      display: block;
+      opacity: 1;
+    }
+
+    .shell > main {
+      grid-column: 1;
+      height: 100dvh;
+    }
+
+    .main-header  { display: none; }
+    .mobile-topbar { display: flex; }
+
+    .add-slide-bar { padding: 8px 12px 14px; gap: 6px; }
+  }
+
+} /* end @layer ds-layout */

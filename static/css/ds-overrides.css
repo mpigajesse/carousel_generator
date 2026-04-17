@@ -1,0 +1,558 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   ds-overrides.css — Design System Bridge Layer
+   Carousel Generator · v2 DS → existing app.css selectors
+
+   SCOPE: Patches legacy app.css selectors to consume DS tokens.
+          Does NOT restructure layout — only colour, radius, shadow,
+          transition, and surface values are changed.
+
+   LOAD ORDER: Must be loaded AFTER app.css and AFTER ds-tokens.css.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+@layer ds-overrides {
+
+  /* ──────────────────────────────────────────────────────────────────────────
+     ROOT — Remap legacy custom props to DS tokens.
+     Keeps all old var(--xxx) references in app.css working while pointing
+     them at the correct DS values.
+  ────────────────────────────────────────────────────────────────────────── */
+  :root {
+    --bg:       var(--ds-bg);
+    --surface:  var(--ds-bg-2);
+    --surface2: var(--ds-bg-3);
+    --card:     var(--ds-bg-4);
+    --card2:    var(--ds-bg-5);
+
+    --border:   var(--ds-border);
+    --border2:  var(--ds-border-strong);
+    --border3:  rgba(255,255,255,0.22);   /* kept for specificity parity */
+
+    --text:     var(--ds-text);
+    --muted:    var(--ds-text-3);
+    --muted2:   var(--ds-text-2);
+
+    --accent:    var(--ds-accent);
+    --accent-hi: var(--ds-accent-hover);
+
+    --danger:   var(--ds-error-light);
+    --success:  var(--ds-success-light);
+
+    /* Radius — align legacy vars with DS scale */
+    --radius:    var(--ds-r-md);
+    --radius-sm: var(--ds-r-sm);
+    --radius-xs: var(--ds-r-xs);
+  }
+
+
+  /* ──────────────────────────────────────────────────────────────────────────
+     BODY
+  ────────────────────────────────────────────────────────────────────────── */
+  body {
+    background: var(--ds-bg);
+    color: var(--ds-text);
+    font-family: var(--ds-font-ui);
+  }
+
+
+  /* ──────────────────────────────────────────────────────────────────────────
+     SIDEBAR
+  ────────────────────────────────────────────────────────────────────────── */
+  aside {
+    background: var(--ds-bg-2);
+    border-right: 1px solid var(--ds-border);
+    backdrop-filter: var(--ds-glass-blur-sm);
+  }
+
+  .brand {
+    border-bottom: 1px solid var(--ds-border);
+  }
+
+  .brand-logo-img {
+    border-radius: var(--ds-r-md);
+  }
+
+  .sidebar-nav {
+    border-bottom: 1px solid var(--ds-border);
+  }
+
+  .sidebar-section {
+    border-bottom: 1px solid var(--ds-border);
+  }
+
+  .sidebar-bottom {
+    border-top: 1px solid var(--ds-border);
+  }
+
+
+  /* ──────────────────────────────────────────────────────────────────────────
+     HAMBURGER & REOPEN BUTTON
+  ────────────────────────────────────────────────────────────────────────── */
+  .btn-hamburger {
+    border: 1px solid var(--ds-border);
+    border-radius: var(--ds-r-sm);
+    color: var(--ds-text-2);
+    transition: var(--ds-transition-fast);
+  }
+  .btn-hamburger:hover {
+    background: var(--ds-surface-hover);
+    border-color: var(--ds-border-strong);
+    color: var(--ds-text);
+  }
+
+  .btn-sidebar-reopen {
+    border: 1px solid var(--ds-border-strong);
+    border-radius: var(--ds-r-sm);
+    background: var(--ds-glass-bg);
+    backdrop-filter: var(--ds-glass-blur-sm);
+    color: var(--ds-text-2);
+    box-shadow: var(--ds-shadow-md);
+    transition: var(--ds-transition-fast);
+  }
+  .btn-sidebar-reopen:hover {
+    background: var(--ds-bg-4);
+    border-color: var(--ds-accent);
+    color: var(--ds-accent);
+  }
+
+
+  /* ──────────────────────────────────────────────────────────────────────────
+     NAV TABS (platform switcher)
+  ────────────────────────────────────────────────────────────────────────── */
+  .nav-tab {
+    color: var(--ds-text-2);
+    border-radius: var(--ds-r-xs);
+    transition: var(--ds-transition-fast);
+  }
+  .nav-tab:not(.active):hover {
+    background: var(--ds-surface-hover);
+    color: var(--ds-text);
+  }
+
+
+  /* ──────────────────────────────────────────────────────────────────────────
+     FORM FIELDS — inputs, selects, textareas
+  ────────────────────────────────────────────────────────────────────────── */
+  .field label {
+    color: var(--ds-text-2);
+  }
+
+  .field input,
+  .field select,
+  .field textarea {
+    background: var(--ds-input-bg);
+    border: 1px solid var(--ds-input-border);
+    border-radius: var(--ds-input-r);
+    color: var(--ds-input-text);
+    transition: var(--ds-transition-fast);
+    box-shadow: var(--ds-shadow-inset);
+  }
+  .field input::placeholder,
+  .field textarea::placeholder {
+    color: var(--ds-input-placeholder);
+  }
+  .field input:focus,
+  .field select:focus,
+  .field textarea:focus {
+    border-color: var(--ds-input-border-focus);
+    background: var(--ds-input-bg-focus);
+    box-shadow: var(--ds-input-shadow-focus), var(--ds-shadow-inset);
+    outline: none;
+  }
+  .field select option {
+    background: var(--ds-bg-4);
+  }
+
+
+  /* ──────────────────────────────────────────────────────────────────────────
+     THEME PICKER
+  ────────────────────────────────────────────────────────────────────────── */
+  .theme-pill {
+    background: var(--ds-bg-4);
+    border: 1px solid var(--ds-border);
+    border-radius: var(--ds-r-xs);
+    color: var(--ds-text-2);
+    transition: var(--ds-transition-fast);
+  }
+  .theme-pill:hover {
+    border-color: var(--ds-border-strong);
+    background: var(--ds-bg-5);
+  }
+  .theme-pill.active {
+    border-color: var(--ds-border-accent);
+    background: var(--ds-accent-lighter);
+    color: var(--ds-text);
+    box-shadow: var(--ds-glow-sm);
+  }
+
+
+  /* ──────────────────────────────────────────────────────────────────────────
+     FORMAT ROW (PNG / PDF toggle)
+  ────────────────────────────────────────────────────────────────────────── */
+  .format-row {
+    background: var(--ds-bg-3);
+    border: 1px solid var(--ds-border);
+    border-radius: var(--ds-r-sm);
+  }
+  .fmt-btn {
+    color: var(--ds-text-2);
+    border-radius: var(--ds-r-xs);
+    transition: var(--ds-transition-fast);
+  }
+  .fmt-btn.active {
+    background: var(--ds-surface-active);
+    color: var(--ds-text);
+    box-shadow: var(--ds-shadow-xs);
+  }
+
+
+  /* ──────────────────────────────────────────────────────────────────────────
+     PRIMARY GENERATE BUTTON
+  ────────────────────────────────────────────────────────────────────────── */
+  .btn-generate {
+    background: var(--ds-gradient);
+    border-radius: var(--ds-r-sm);
+    font-family: var(--ds-font-ui);
+    box-shadow: var(--ds-glow-sm);
+    transition: opacity var(--ds-t-fast) var(--ds-ease),
+                transform var(--ds-t-fast) var(--ds-ease-spring),
+                box-shadow var(--ds-t-base) var(--ds-ease);
+  }
+  .btn-generate:hover {
+    box-shadow: var(--ds-glow);
+    opacity: 0.93;
+  }
+  .btn-generate:disabled {
+    opacity: 0.32;
+    box-shadow: none;
+  }
+
+
+  /* ──────────────────────────────────────────────────────────────────────────
+     SECONDARY BUTTONS (import, structure, header actions)
+  ────────────────────────────────────────────────────────────────────────── */
+  .btn-import {
+    border: 1px solid var(--ds-border-strong);
+    border-radius: var(--ds-r-sm);
+    color: var(--ds-text-2);
+    transition: var(--ds-transition-fast);
+  }
+  .btn-import:hover {
+    background: var(--ds-surface-hover);
+    border-color: var(--ds-accent);
+    color: var(--ds-text-accent);
+  }
+
+  .btn-structure {
+    border-radius: var(--ds-r-sm);
+    transition: var(--ds-transition-fast);
+  }
+
+  .btn-header-structure {
+    border-radius: var(--ds-r-sm);
+    transition: var(--ds-transition-fast);
+  }
+
+
+  /* ──────────────────────────────────────────────────────────────────────────
+     MAIN HEADER
+  ────────────────────────────────────────────────────────────────────────── */
+  .main-header {
+    border-bottom: 1px solid var(--ds-border);
+  }
+  .main-header h1 {
+    font-family: var(--ds-font-ui);
+    font-weight: var(--ds-weight-bold);
+  }
+
+
+  /* ──────────────────────────────────────────────────────────────────────────
+     TAB ROW (Editor / Aperçu)
+  ────────────────────────────────────────────────────────────────────────── */
+  .tab-row {
+    background: var(--ds-bg-3);
+    border-radius: var(--ds-r-sm);
+  }
+  .tab {
+    color: var(--ds-text-2);
+    border-radius: var(--ds-r-sm);
+    transition: var(--ds-transition-fast);
+    font-family: var(--ds-font-ui);
+  }
+  .tab.active {
+    background: var(--ds-surface-active);
+    color: var(--ds-text);
+    box-shadow: var(--ds-shadow-xs);
+  }
+
+
+  /* ──────────────────────────────────────────────────────────────────────────
+     SLIDE CARDS (editor)
+  ────────────────────────────────────────────────────────────────────────── */
+  .slide-card {
+    background: var(--ds-bg-4);
+    border: 1px solid var(--ds-border);
+    border-radius: var(--ds-r-md);
+    box-shadow: var(--ds-shadow-sm);
+    transition: border-color var(--ds-t-base) var(--ds-ease),
+                box-shadow var(--ds-t-base) var(--ds-ease);
+  }
+  .slide-card:hover {
+    border-color: var(--ds-border-strong);
+    box-shadow: var(--ds-shadow-md);
+  }
+
+  .slide-body {
+    border-top: 1px solid var(--ds-border);
+  }
+
+  .slide-num {
+    background: var(--ds-accent-lighter);
+    color: var(--ds-text-accent);
+    border-radius: var(--ds-r-xs);
+  }
+
+  .icon-btn {
+    border: 1px solid var(--ds-border);
+    border-radius: var(--ds-r-xs);
+    color: var(--ds-text-3);
+    transition: var(--ds-transition-fast);
+  }
+  .icon-btn:hover {
+    background: var(--ds-surface-hover);
+    border-color: var(--ds-border-strong);
+    color: var(--ds-text);
+  }
+  .icon-btn.danger:hover {
+    color: var(--ds-error-light);
+    border-color: var(--ds-error-light);
+    background: var(--ds-error-bg);
+  }
+
+  /* Column blocks inside compare cards */
+  .col-block {
+    background: var(--ds-bg-3);
+    border: 1px solid var(--ds-border);
+    border-radius: var(--ds-r-sm);
+  }
+
+
+  /* ──────────────────────────────────────────────────────────────────────────
+     ADD SLIDE BAR
+  ────────────────────────────────────────────────────────────────────────── */
+  .add-slide-bar {
+    background: var(--ds-bg-4);
+    border: 1px dashed var(--ds-border-strong);
+    border-radius: var(--ds-r-md);
+  }
+  .add-btn {
+    background: var(--ds-bg-3);
+    border: 1px solid var(--ds-border);
+    border-radius: var(--ds-r-sm);
+    color: var(--ds-text-2);
+    transition: var(--ds-transition-fast);
+  }
+  .add-btn:hover {
+    border-color: var(--ds-accent);
+    color: var(--ds-text-accent);
+    background: var(--ds-accent-lighter);
+  }
+
+
+  /* ──────────────────────────────────────────────────────────────────────────
+     IMAGE FIELD PICKER
+  ────────────────────────────────────────────────────────────────────────── */
+  .btn-img-pick {
+    background: var(--ds-bg-3);
+    border: 1px solid var(--ds-border-strong);
+    border-radius: var(--ds-r-sm);
+    color: var(--ds-text-2);
+    transition: var(--ds-transition-fast);
+  }
+  .btn-img-pick:hover {
+    border-color: var(--ds-accent);
+    color: var(--ds-text-accent);
+  }
+
+  .field-img-preview-wrap {
+    border: 1px solid var(--ds-border-strong);
+    background: var(--ds-bg-3);
+    border-radius: var(--ds-r-sm);
+  }
+
+
+  /* ──────────────────────────────────────────────────────────────────────────
+     GENERATION OVERLAY
+  ────────────────────────────────────────────────────────────────────────── */
+  .gen-overlay {
+    background: var(--ds-bg);
+    border-radius: var(--ds-r-md);
+  }
+
+  .gen-dot {
+    background: var(--ds-bg-3);
+    border: 1px solid var(--ds-border);
+    border-radius: var(--ds-r-xs);
+  }
+  .gen-dot.done {
+    background: var(--ds-gradient);
+    border-color: transparent;
+    box-shadow: var(--ds-glow-sm);
+  }
+  .gen-dot.active {
+    border-color: var(--ds-accent);
+    background: var(--ds-accent-lighter);
+  }
+
+  .gen-bar-track {
+    background: var(--ds-bg-3);
+  }
+  .gen-bar-fill {
+    background: var(--ds-gradient);
+    background-size: 200% 100%;
+  }
+
+
+  /* ──────────────────────────────────────────────────────────────────────────
+     JOBS PANEL (floating task tracker)
+  ────────────────────────────────────────────────────────────────────────── */
+  .jobs-panel {
+    background: var(--ds-glass-bg);
+    backdrop-filter: var(--ds-glass-blur);
+    border: 1px solid var(--ds-border-strong);
+    border-radius: var(--ds-r-md);
+    box-shadow: var(--ds-shadow-xl), 0 0 0 1px rgba(255,255,255,0.04);
+  }
+
+  .jobs-panel-header {
+    background: var(--ds-bg-4);
+    border-bottom: 1px solid var(--ds-border);
+  }
+
+  .jobs-panel-chevron {
+    background: var(--ds-bg-3);
+    border-radius: var(--ds-r-xs);
+    color: var(--ds-text-2);
+  }
+
+  .jcard {
+    background: var(--ds-bg-3);
+    border: 1px solid var(--ds-border);
+    border-radius: var(--ds-r-sm);
+  }
+  .jcard.jrunning { border-color: var(--ds-border-accent); }
+  .jcard.jdone    { border-color: var(--ds-border-success); }
+  .jcard.jerror   { border-color: var(--ds-border-error); }
+
+  .jcard-bar-track {
+    background: var(--ds-bg-2);
+  }
+  .jcard-btn {
+    border: 1px solid var(--ds-border-strong);
+    background: var(--ds-bg-4);
+    border-radius: var(--ds-r-xs);
+    color: var(--ds-text-2);
+    transition: var(--ds-transition-fast);
+  }
+  .jcard-btn:hover {
+    border-color: var(--ds-accent);
+    color: var(--ds-text-accent);
+  }
+  .jcard-btn.primary {
+    background: var(--ds-accent);
+    border-color: var(--ds-accent);
+  }
+  .jcard-btn.primary:hover {
+    background: var(--ds-accent-hover);
+  }
+
+
+  /* ──────────────────────────────────────────────────────────────────────────
+     MARKDOWN IMPORT MODAL
+  ────────────────────────────────────────────────────────────────────────── */
+  .md-block-item {
+    background: var(--ds-bg-3);
+    border: 1px solid var(--ds-border);
+    border-radius: var(--ds-r-sm);
+  }
+
+  .md-block-textarea {
+    background: var(--ds-input-bg);
+    border: 1px solid var(--ds-input-border);
+    border-radius: var(--ds-r-sm);
+    color: var(--ds-input-text);
+    transition: var(--ds-transition-fast);
+  }
+  .md-block-textarea:focus {
+    border-color: var(--ds-input-border-focus);
+    box-shadow: var(--ds-input-shadow-focus);
+    outline: none;
+  }
+
+  .md-add-block-btn {
+    border: 1px dashed var(--ds-border-strong);
+    border-radius: var(--ds-r-sm);
+    color: var(--ds-text-2);
+    transition: var(--ds-transition-fast);
+  }
+  .md-add-block-btn:hover {
+    border-color: var(--ds-accent);
+    color: var(--ds-text-accent);
+    background: var(--ds-accent-lighter);
+  }
+
+  .md-file-item {
+    background: var(--ds-bg-3);
+    border: 1px solid var(--ds-border);
+    border-radius: var(--ds-r-sm);
+  }
+
+  .md-modal-footer-multi {
+    background: var(--ds-bg-4);
+    border-top: 1px solid var(--ds-border);
+  }
+
+
+  /* ──────────────────────────────────────────────────────────────────────────
+     RE-THEME BAR (preview panel)
+  ────────────────────────────────────────────────────────────────────────── */
+  .retheme-bar {
+    background: var(--ds-bg-4);
+    border: 1px solid var(--ds-border);
+    border-radius: var(--ds-r-md);
+  }
+
+  .retheme-pill {
+    background: var(--ds-bg-3);
+    border: 1.5px solid var(--ds-border);
+    border-radius: var(--ds-r-sm);
+    transition: var(--ds-transition-fast);
+  }
+  .retheme-pill:hover {
+    border-color: var(--ds-border-strong);
+  }
+  .retheme-pill.active {
+    border-color: var(--ds-border-accent);
+    background: var(--ds-accent-lighter);
+    box-shadow: var(--ds-glow-sm);
+  }
+
+
+  /* ──────────────────────────────────────────────────────────────────────────
+     PREVIEW GRID
+  ────────────────────────────────────────────────────────────────────────── */
+  .preview-item {
+    background: var(--ds-bg-4);
+    border: 1px solid var(--ds-border);
+    border-radius: var(--ds-r-md);
+    box-shadow: var(--ds-shadow-sm);
+    transition: border-color var(--ds-t-base) var(--ds-ease),
+                box-shadow var(--ds-t-base) var(--ds-ease),
+                transform var(--ds-t-base) var(--ds-ease-spring);
+  }
+  .preview-item:hover {
+    border-color: var(--ds-border-strong);
+    box-shadow: var(--ds-shadow-md);
+  }
+
+}
+/* end @layer ds-overrides */

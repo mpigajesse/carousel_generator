@@ -1,0 +1,605 @@
+/*
+ * ds-controls.css — Premium dark button & control system
+ * CarouselGen · Design System · Layer: ds-controls
+ *
+ * Tokens expected from ds-tokens.css / ds-layout.css:
+ *   --ds-accent, --ds-accent-2, --ds-accent-light, --ds-accent-glow
+ *   --ds-gradient, --ds-surface, --ds-surface-hover
+ *   --ds-border, --ds-border-strong
+ *   --ds-text, --ds-text-2
+ *   --ds-r-sm, --ds-r-md, --ds-r-lg, --ds-r-full
+ *   --ds-shadow-sm, --ds-shadow-md
+ *   --ds-glow, --ds-glow-sm
+ *   --ds-t-fast, --ds-t-base, --ds-ease, --ds-ease-spring
+ */
+
+/* ── Token fallbacks (safe when ds-tokens.css is absent) ──────────── */
+:root {
+  --ds-accent:        var(--accent,       #6c5ce7);
+  --ds-accent-2:      var(--accent2,      #00cba9);
+  --ds-accent-light:  color-mix(in srgb, var(--ds-accent) 14%, transparent);
+  --ds-accent-glow:   color-mix(in srgb, var(--ds-accent) 32%, transparent);
+  --ds-gradient:      var(--gradient,     linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%));
+  --ds-surface:       var(--card,         #121826);
+  --ds-surface-hover: var(--card2,        #1a2235);
+  --ds-border:        rgba(255,255,255,.06);
+  --ds-border-strong: rgba(255,255,255,.13);
+  --ds-text:          #e4e8f2;
+  --ds-text-2:        rgba(228,232,242,.52);
+  --ds-r-sm:          6px;
+  --ds-r-md:          10px;
+  --ds-r-lg:          14px;
+  --ds-r-full:        9999px;
+  --ds-shadow-sm:     0 2px 8px rgba(0,0,0,.28);
+  --ds-shadow-md:     0 4px 24px rgba(0,0,0,.45);
+  --ds-glow:          0 0 0 1px var(--ds-accent-glow), 0 4px 20px var(--ds-accent-glow);
+  --ds-glow-sm:       0 0 0 1px var(--ds-accent-glow), 0 2px 10px var(--ds-accent-glow);
+  --ds-t-fast:        .15s;
+  --ds-t-base:        .25s;
+  --ds-ease:          cubic-bezier(.4, 0, .2, 1);
+  --ds-ease-spring:   cubic-bezier(.34, 1.56, .64, 1);
+}
+
+/* ── CSS layer ─────────────────────────────────────────────────────── */
+@layer ds-controls {
+
+  /* ══════════════════════════════════════════════════════════════════
+     SHARED BASE — all interactive controls inherit these resets
+  ══════════════════════════════════════════════════════════════════ */
+  .btn-generate,
+  .btn-import,
+  .btn-structure,
+  .btn-header-structure,
+  .btn-edit-back,
+  .btn-presentation,
+  .btn-dl-all,
+  .btn-mobile-generate,
+  .add-btn,
+  .fmt-btn,
+  .nav-tab,
+  .tab,
+  .md-btn,
+  .md-add-block-btn {
+    all: unset;
+    box-sizing: border-box;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1;
+    white-space: nowrap;
+    text-decoration: none;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+    transition:
+      background var(--ds-t-fast) var(--ds-ease),
+      border-color var(--ds-t-fast) var(--ds-ease),
+      box-shadow var(--ds-t-fast) var(--ds-ease),
+      color var(--ds-t-fast) var(--ds-ease),
+      transform var(--ds-t-fast) var(--ds-ease-spring),
+      opacity var(--ds-t-fast) var(--ds-ease);
+  }
+
+  .btn-generate:focus-visible,
+  .btn-import:focus-visible,
+  .btn-dl-all:focus-visible,
+  .btn-presentation:focus-visible,
+  .add-btn:focus-visible,
+  .fmt-btn:focus-visible {
+    outline: 2px solid var(--ds-accent);
+    outline-offset: 2px;
+  }
+
+
+  /* ══════════════════════════════════════════════════════════════════
+     1. PRIMARY BUTTON — Generate CTA
+  ══════════════════════════════════════════════════════════════════ */
+  .btn-generate {
+    position: relative;
+    width: 100%;
+    height: 44px;
+    padding: 0 24px;
+    border-radius: var(--ds-r-md);
+    background: var(--ds-gradient);
+    color: #fff;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: .02em;
+    overflow: hidden;
+    isolation: isolate;
+  }
+
+  /* Shimmer layer — animates during loading state */
+  .btn-generate::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      105deg,
+      transparent 30%,
+      rgba(255,255,255,.18) 50%,
+      transparent 70%
+    );
+    background-size: 200% 100%;
+    transform: translateX(-100%);
+    pointer-events: none;
+  }
+
+  .btn-generate:hover {
+    box-shadow: var(--ds-glow);
+    transform: scale(1.02);
+  }
+
+  .btn-generate:active {
+    transform: scale(0.98);
+    box-shadow: none;
+  }
+
+  /* Loading state — triggered by JS adding .is-loading class */
+  .btn-generate.is-loading {
+    pointer-events: none;
+    cursor: wait;
+    opacity: .85;
+  }
+
+  .btn-generate.is-loading::before {
+    animation: btn-shimmer .9s linear infinite;
+  }
+
+  @keyframes btn-shimmer {
+    from { transform: translateX(-100%); }
+    to   { transform: translateX(100%); }
+  }
+
+  .btn-generate .slide-count-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    border-radius: var(--ds-r-full);
+    background: rgba(255,255,255,.22);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0;
+  }
+
+  .btn-generate .slide-count-badge.hidden {
+    display: none;
+  }
+
+
+  /* ══════════════════════════════════════════════════════════════════
+     2. SECONDARY BUTTON — Import, Edit-back, Structure
+  ══════════════════════════════════════════════════════════════════ */
+  .btn-import,
+  .btn-structure,
+  .btn-edit-back,
+  .md-btn {
+    height: 38px;
+    padding: 0 16px;
+    border-radius: var(--ds-r-md);
+    background: var(--ds-surface);
+    border: 1px solid var(--ds-border-strong);
+    color: var(--ds-text-2);
+    font-size: 12px;
+    font-weight: 600;
+    width: 100%;
+  }
+
+  .btn-import:hover,
+  .btn-structure:hover,
+  .btn-edit-back:hover,
+  .md-btn:hover {
+    background: var(--ds-surface-hover);
+    border-color: var(--ds-accent);
+    color: var(--ds-text);
+  }
+
+  .btn-import:active,
+  .btn-structure:active,
+  .btn-edit-back:active,
+  .md-btn:active {
+    transform: scale(0.98);
+  }
+
+  /* Primary variant of modal button */
+  .md-btn.primary {
+    background: var(--ds-gradient);
+    border-color: transparent;
+    color: #fff;
+    font-weight: 700;
+    width: auto;
+    padding: 0 20px;
+  }
+
+  .md-btn.primary:hover {
+    box-shadow: var(--ds-glow-sm);
+    transform: scale(1.01);
+    border-color: transparent;
+    color: #fff;
+  }
+
+  .md-btn.primary:disabled,
+  .md-btn.primary[disabled] {
+    opacity: .38;
+    pointer-events: none;
+  }
+
+
+  /* ══════════════════════════════════════════════════════════════════
+     3. GHOST / TEXT BUTTONS — header utility links
+  ══════════════════════════════════════════════════════════════════ */
+  .btn-header-structure {
+    height: 32px;
+    padding: 0 12px;
+    border-radius: var(--ds-r-sm);
+    background: transparent;
+    border: 1px solid var(--ds-border-strong);
+    color: var(--ds-text-2);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .04em;
+  }
+
+  .btn-header-structure:hover {
+    background: var(--ds-surface);
+    color: var(--ds-text);
+    border-color: var(--ds-border-strong);
+  }
+
+  .btn-header-structure:active {
+    transform: scale(0.97);
+  }
+
+
+  /* ══════════════════════════════════════════════════════════════════
+     4. ICON BUTTONS — hamburger, sidebar-reopen, mobile
+  ══════════════════════════════════════════════════════════════════ */
+  .btn-hamburger,
+  .btn-sidebar-reopen,
+  .btn-mobile-hamburger {
+    all: unset;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    width: 36px;
+    height: 36px;
+    border-radius: var(--ds-r-sm);
+    background: transparent;
+    cursor: pointer;
+    transition:
+      background var(--ds-t-fast) var(--ds-ease),
+      box-shadow var(--ds-t-fast) var(--ds-ease);
+    flex-shrink: 0;
+  }
+
+  .btn-hamburger:hover,
+  .btn-sidebar-reopen:hover,
+  .btn-mobile-hamburger:hover {
+    background: var(--ds-surface-hover);
+    box-shadow: var(--ds-shadow-sm);
+  }
+
+  .btn-hamburger:active,
+  .btn-sidebar-reopen:active,
+  .btn-mobile-hamburger:active {
+    transform: scale(0.93);
+  }
+
+  .btn-hamburger span,
+  .btn-sidebar-reopen span,
+  .btn-mobile-hamburger span {
+    display: block;
+    width: 16px;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--ds-text-2);
+    transition: background var(--ds-t-fast) var(--ds-ease);
+  }
+
+  .btn-hamburger:hover span,
+  .btn-sidebar-reopen:hover span,
+  .btn-mobile-hamburger:hover span {
+    background: var(--ds-text);
+  }
+
+
+  /* ══════════════════════════════════════════════════════════════════
+     5. PLATFORM TOGGLE — nav-tab (LinkedIn / Instagram)
+  ══════════════════════════════════════════════════════════════════ */
+  .sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 0 12px;
+  }
+
+  .nav-tab {
+    position: relative;
+    width: 100%;
+    height: 40px;
+    padding: 0 14px;
+    border-radius: var(--ds-r-md);
+    background: transparent;
+    color: var(--ds-text-2);
+    font-size: 13px;
+    font-weight: 600;
+    justify-content: flex-start;
+    gap: 10px;
+    border: 1px solid transparent;
+    transition:
+      background var(--ds-t-fast) var(--ds-ease),
+      color var(--ds-t-fast) var(--ds-ease),
+      border-color var(--ds-t-fast) var(--ds-ease),
+      box-shadow var(--ds-t-fast) var(--ds-ease);
+  }
+
+  .nav-tab:hover {
+    background: var(--ds-surface-hover);
+    color: var(--ds-text);
+    border-color: var(--ds-border-strong);
+  }
+
+  .nav-tab.active {
+    background: var(--ds-accent-light);
+    border-color: var(--ds-accent);
+    color: var(--ds-text);
+    box-shadow: var(--ds-glow-sm);
+  }
+
+  .nav-tab-dim {
+    margin-left: auto;
+    font-size: 10px;
+    font-weight: 400;
+    color: var(--ds-text-2);
+    opacity: .6;
+  }
+
+  .nav-tab.active .nav-tab-dim {
+    opacity: .8;
+    color: var(--ds-accent);
+  }
+
+
+  /* ══════════════════════════════════════════════════════════════════
+     6. FORMAT PILL SELECTOR — PNG / PDF
+  ══════════════════════════════════════════════════════════════════ */
+  .format-row {
+    display: flex;
+    gap: 0;
+    background: var(--ds-surface);
+    border: 1px solid var(--ds-border-strong);
+    border-radius: var(--ds-r-md);
+    padding: 3px;
+    width: 100%;
+  }
+
+  .fmt-btn {
+    flex: 1;
+    height: 30px;
+    border-radius: calc(var(--ds-r-md) - 3px);
+    background: transparent;
+    color: var(--ds-text-2);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .06em;
+    transition:
+      background var(--ds-t-fast) var(--ds-ease-spring),
+      color var(--ds-t-fast) var(--ds-ease),
+      box-shadow var(--ds-t-fast) var(--ds-ease);
+  }
+
+  .fmt-btn:hover:not(.active) {
+    background: var(--ds-surface-hover);
+    color: var(--ds-text);
+  }
+
+  .fmt-btn.active {
+    background: var(--ds-gradient);
+    color: #fff;
+    box-shadow: 0 2px 8px var(--ds-accent-glow);
+  }
+
+
+  /* ══════════════════════════════════════════════════════════════════
+     7. EDITOR TAB ROW — Éditeur / Aperçu
+  ══════════════════════════════════════════════════════════════════ */
+  .tab-row {
+    display: flex;
+    gap: 2px;
+    background: var(--ds-surface);
+    border: 1px solid var(--ds-border);
+    border-radius: var(--ds-r-lg);
+    padding: 3px;
+  }
+
+  .tab {
+    height: 30px;
+    padding: 0 16px;
+    border-radius: calc(var(--ds-r-lg) - 3px);
+    background: transparent;
+    color: var(--ds-text-2);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: .03em;
+  }
+
+  .tab:hover:not(.active) {
+    background: var(--ds-surface-hover);
+    color: var(--ds-text);
+  }
+
+  .tab.active {
+    background: var(--ds-surface-hover);
+    color: var(--ds-text);
+    box-shadow: var(--ds-shadow-sm);
+  }
+
+
+  /* ══════════════════════════════════════════════════════════════════
+     8. ADD SLIDE BUTTONS — dashed accent border
+  ══════════════════════════════════════════════════════════════════ */
+  .add-slide-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 16px;
+  }
+
+  .add-btn {
+    height: 36px;
+    padding: 0 14px;
+    border-radius: var(--ds-r-md);
+    background: transparent;
+    border: 1.5px dashed var(--ds-border-strong);
+    color: var(--ds-text-2);
+    font-size: 12px;
+    font-weight: 600;
+    transition:
+      background var(--ds-t-fast) var(--ds-ease),
+      border-color var(--ds-t-fast) var(--ds-ease),
+      color var(--ds-t-fast) var(--ds-ease),
+      box-shadow var(--ds-t-fast) var(--ds-ease),
+      transform var(--ds-t-fast) var(--ds-ease-spring);
+  }
+
+  .add-btn:hover {
+    background: var(--ds-accent-light);
+    border-style: solid;
+    border-color: var(--ds-accent);
+    color: var(--ds-text);
+    box-shadow: var(--ds-glow-sm);
+    transform: translateY(-1px);
+  }
+
+  .add-btn:active {
+    transform: scale(0.97) translateY(0);
+    box-shadow: none;
+  }
+
+
+  /* ══════════════════════════════════════════════════════════════════
+     9. DOWNLOAD / PRESENTATION BUTTONS
+  ══════════════════════════════════════════════════════════════════ */
+  .btn-dl-all {
+    height: 38px;
+    padding: 0 18px;
+    border-radius: var(--ds-r-md);
+    background: var(--ds-surface);
+    border: 1px solid var(--ds-border-strong);
+    color: var(--ds-text);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .03em;
+  }
+
+  .btn-dl-all:hover {
+    background: var(--ds-surface-hover);
+    border-color: var(--ds-accent-2);
+    color: var(--ds-accent-2);
+    box-shadow: 0 0 0 1px color-mix(in srgb, var(--ds-accent-2) 28%, transparent),
+                0 4px 14px color-mix(in srgb, var(--ds-accent-2) 20%, transparent);
+  }
+
+  .btn-dl-all:active {
+    transform: scale(0.97);
+  }
+
+  .btn-presentation {
+    height: 38px;
+    padding: 0 18px;
+    border-radius: var(--ds-r-md);
+    background: var(--ds-gradient);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .03em;
+  }
+
+  .btn-presentation:hover {
+    box-shadow: var(--ds-glow-sm);
+    transform: scale(1.02);
+  }
+
+  .btn-presentation:active {
+    transform: scale(0.97);
+  }
+
+
+  /* ══════════════════════════════════════════════════════════════════
+     10. MOBILE GENERATE BUTTON
+  ══════════════════════════════════════════════════════════════════ */
+  .btn-mobile-generate {
+    height: 34px;
+    padding: 0 14px;
+    border-radius: var(--ds-r-md);
+    background: var(--ds-gradient);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 700;
+    gap: 6px;
+  }
+
+  .btn-mobile-generate:hover {
+    box-shadow: var(--ds-glow-sm);
+    transform: scale(1.02);
+  }
+
+  .btn-mobile-generate:active {
+    transform: scale(0.96);
+  }
+
+
+  /* ══════════════════════════════════════════════════════════════════
+     11. MARKDOWN MODAL — add-block button
+  ══════════════════════════════════════════════════════════════════ */
+  .md-add-block-btn {
+    width: 100%;
+    height: 40px;
+    border-radius: var(--ds-r-md);
+    background: transparent;
+    border: 1.5px dashed var(--ds-border-strong);
+    color: var(--ds-text-2);
+    font-size: 12px;
+    font-weight: 600;
+    gap: 8px;
+    margin-top: 8px;
+  }
+
+  .md-add-block-btn:hover {
+    background: var(--ds-accent-light);
+    border-style: solid;
+    border-color: var(--ds-accent);
+    color: var(--ds-text);
+    box-shadow: var(--ds-glow-sm);
+  }
+
+  .md-add-block-btn:active {
+    transform: scale(0.98);
+  }
+
+
+  /* ══════════════════════════════════════════════════════════════════
+     12. DISABLED STATE — universal
+  ══════════════════════════════════════════════════════════════════ */
+  .btn-generate:disabled,
+  .btn-import:disabled,
+  .btn-dl-all:disabled,
+  .btn-presentation:disabled,
+  .add-btn:disabled,
+  .fmt-btn:disabled {
+    opacity: .32;
+    pointer-events: none;
+    cursor: not-allowed;
+  }
+
+} /* end @layer ds-controls */

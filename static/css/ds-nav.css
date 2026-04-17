@@ -1,0 +1,321 @@
+/*
+ * ds-nav.css — Premium dark navigation layer
+ * Carousel Generator · Design System · Nav
+ *
+ * Targets the real sidebar HTML produced by index.html.
+ * Defines --ds-* token aliases that map to the app's existing
+ * color palette so this layer is self-contained and portable.
+ */
+
+@layer ds-nav {
+
+  /* ── Token bridge: ds-* aliases → app vars ───────────────────── */
+  :root {
+    --ds-bg:            #06080d;
+    --ds-bg-2:          #0a0e16;
+    --ds-surface:       #0f1520;
+    --ds-border:        rgba(255, 255, 255, .06);
+    --ds-border-strong: rgba(255, 255, 255, .13);
+    --ds-accent:        #6c5ce7;
+    --ds-accent-hi:     #8b7cf8;
+    --ds-gradient:      linear-gradient(135deg, #6c5ce7 0%, #00cba9 100%);
+    --ds-gradient-text: linear-gradient(105deg, #a78bfa 0%, #34d399 100%);
+    --ds-text:          #e4e8f2;
+    --ds-text-2:        #9aa3b8;
+    --ds-text-3:        #4a5268;
+    --ds-r-sm:          8px;
+    --ds-r-md:          12px;
+    --ds-shadow-sm:     0 2px 8px rgba(0, 0, 0, .35);
+    --ds-t-base:        180ms;
+    --ds-ease:          cubic-bezier(.4, 0, .2, 1);
+    --ds-font-ui:       'DM Sans', system-ui, sans-serif;
+    --ds-font-display:  'Syne', system-ui, sans-serif;
+    --ds-font-mono:     'DM Mono', ui-monospace, monospace;
+    --ds-glass-bg:      rgba(10, 14, 22, .72);
+    --ds-glass-blur:    blur(24px);
+    --ds-topbar-h:      56px;
+    --ds-li:            #0a84d0;
+    --ds-ig:            #e1306c;
+  }
+
+  /* ══════════════════════════════════════════════════════════════
+     TOPBAR / BRAND — Glass morphism header strip
+  ══════════════════════════════════════════════════════════════ */
+
+  .brand {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    min-height: var(--ds-topbar-h);
+    padding: 0 18px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--ds-glass-bg);
+    -webkit-backdrop-filter: var(--ds-glass-blur);
+    backdrop-filter: var(--ds-glass-blur);
+    border-bottom: 1px solid var(--ds-border-strong);
+    box-shadow: 0 1px 0 rgba(255, 255, 255, .04), var(--ds-shadow-sm);
+  }
+
+  /* Logo image — subtle glow ring on hover */
+  .brand-logo-img {
+    width: 36px;
+    height: 36px;
+    border-radius: var(--ds-r-sm);
+    object-fit: contain;
+    flex-shrink: 0;
+    box-shadow: 0 0 0 1px var(--ds-border-strong);
+    transition: box-shadow var(--ds-t-base) var(--ds-ease),
+                transform var(--ds-t-base) var(--ds-ease);
+  }
+
+  .brand:hover .brand-logo-img {
+    box-shadow: 0 0 0 2px var(--ds-accent),
+                0 0 12px rgba(108, 92, 231, .30);
+    transform: scale(1.04);
+  }
+
+  /* Brand wordmark — gradient text */
+  .brand-text {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    min-width: 0;
+  }
+
+  .brand-name {
+    font-family: var(--ds-font-display);
+    font-size: 14px;
+    font-weight: 800;
+    letter-spacing: -.025em;
+    line-height: 1;
+    background: var(--ds-gradient-text);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .brand-sub {
+    font-family: var(--ds-font-mono);
+    font-size: 9px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--ds-text-3);
+    white-space: nowrap;
+  }
+
+  /* ══════════════════════════════════════════════════════════════
+     HAMBURGER / CLOSE TOGGLE
+  ══════════════════════════════════════════════════════════════ */
+
+  .btn-hamburger {
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    border: 1px solid var(--ds-border-strong);
+    border-radius: var(--ds-r-sm);
+    background: transparent;
+    color: var(--ds-text-3);
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    transition: background var(--ds-t-base) var(--ds-ease),
+                border-color var(--ds-t-base) var(--ds-ease),
+                color var(--ds-t-base) var(--ds-ease);
+  }
+
+  .btn-hamburger:hover {
+    background: rgba(108, 92, 231, .10);
+    border-color: rgba(108, 92, 231, .35);
+    color: var(--ds-accent-hi);
+  }
+
+  /* ══════════════════════════════════════════════════════════════
+     PLATFORM TOGGLE — Pill switcher (LinkedIn / Instagram)
+  ══════════════════════════════════════════════════════════════ */
+
+  .sidebar-nav {
+    position: relative;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--ds-border);
+    display: flex;
+    gap: 6px;
+    background: rgba(6, 8, 13, .45);
+  }
+
+  /* Shared tab base */
+  .nav-tab {
+    flex: 1;
+    position: relative;
+    padding: 8px 10px;
+    border: 1px solid transparent;
+    border-radius: var(--ds-r-sm);
+    background: transparent;
+    font-family: var(--ds-font-ui);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .025em;
+    color: var(--ds-text-3);
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    transition: background var(--ds-t-base) var(--ds-ease),
+                border-color var(--ds-t-base) var(--ds-ease),
+                color var(--ds-t-base) var(--ds-ease),
+                box-shadow var(--ds-t-base) var(--ds-ease);
+    overflow: hidden;
+  }
+
+  /* Shimmer pseudo on hover */
+  .nav-tab::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(120deg,
+      transparent 30%, rgba(255, 255, 255, .04) 50%, transparent 70%);
+    opacity: 0;
+    transition: opacity var(--ds-t-base) var(--ds-ease);
+  }
+
+  .nav-tab:not(.active):hover::before { opacity: 1; }
+
+  .nav-tab svg {
+    opacity: .4;
+    transition: opacity var(--ds-t-base) var(--ds-ease),
+                transform var(--ds-t-base) var(--ds-ease);
+  }
+
+  .nav-tab:hover svg { opacity: .7; transform: scale(1.08); }
+
+  /* Dimension badge */
+  .nav-tab-dim {
+    font-family: var(--ds-font-mono);
+    font-size: 8.5px;
+    letter-spacing: .05em;
+    opacity: .5;
+  }
+
+  /* ── LinkedIn active state ── */
+  .nav-tab.active.linkedin {
+    background: rgba(10, 132, 208, .10);
+    border-color: rgba(10, 132, 208, .25);
+    color: var(--ds-li);
+    box-shadow: 0 0 0 0 rgba(10, 132, 208, .0),
+                inset 0 1px 0 rgba(10, 132, 208, .15);
+  }
+
+  .nav-tab.active.linkedin svg { opacity: 1; color: var(--ds-li); }
+  .nav-tab.active.linkedin .nav-tab-dim { opacity: .65; }
+
+  /* ── Instagram active state ── */
+  .nav-tab.active.instagram {
+    background: rgba(225, 48, 108, .09);
+    border-color: rgba(225, 48, 108, .22);
+    color: var(--ds-ig);
+    box-shadow: 0 0 0 0 rgba(225, 48, 108, .0),
+                inset 0 1px 0 rgba(225, 48, 108, .15);
+  }
+
+  .nav-tab.active.instagram svg { opacity: 1; color: var(--ds-ig); }
+  .nav-tab.active.instagram .nav-tab-dim { opacity: .65; }
+
+  /* Inactive hover */
+  .nav-tab:not(.active):hover {
+    background: rgba(255, 255, 255, .04);
+    border-color: var(--ds-border-strong);
+    color: var(--ds-text-2);
+  }
+
+  /* ══════════════════════════════════════════════════════════════
+     SECTION LABELS — Sub-navigation breadcrumbs / headings
+  ══════════════════════════════════════════════════════════════ */
+
+  .section-label {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-family: var(--ds-font-ui);
+    font-size: 9.5px;
+    font-weight: 700;
+    letter-spacing: .11em;
+    text-transform: uppercase;
+    color: var(--ds-text-3);
+    margin-bottom: 12px;
+  }
+
+  .section-label svg {
+    opacity: .45;
+    flex-shrink: 0;
+    color: var(--ds-accent);
+  }
+
+  /* ══════════════════════════════════════════════════════════════
+     SERIES BREADCRUMB — Subtle carousel name display
+     (targets #footer-series input as read context)
+  ══════════════════════════════════════════════════════════════ */
+
+  #footer-series {
+    font-family: var(--ds-font-ui);
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--ds-text);
+    letter-spacing: -.01em;
+  }
+
+  #footer-series::placeholder {
+    color: var(--ds-text-3);
+    font-style: italic;
+  }
+
+  /* Author field — avatar-adjacent, muted treatment */
+  #footer-author {
+    font-family: var(--ds-font-mono);
+    font-size: 11px;
+    color: var(--ds-text-2);
+    letter-spacing: .01em;
+  }
+
+  #footer-author::placeholder {
+    color: var(--ds-text-3);
+  }
+
+  /* ══════════════════════════════════════════════════════════════
+     SIDEBAR REOPEN BUTTON — Floating glass pill when collapsed
+  ══════════════════════════════════════════════════════════════ */
+
+  .btn-sidebar-reopen {
+    background: var(--ds-glass-bg);
+    -webkit-backdrop-filter: var(--ds-glass-blur);
+    backdrop-filter: var(--ds-glass-blur);
+    border: 1px solid var(--ds-border-strong);
+    border-radius: var(--ds-r-md);
+    box-shadow: var(--ds-shadow-sm),
+                0 0 0 1px rgba(108, 92, 231, .06);
+    color: var(--ds-text-3);
+    transition: background var(--ds-t-base) var(--ds-ease),
+                border-color var(--ds-t-base) var(--ds-ease),
+                color var(--ds-t-base) var(--ds-ease),
+                transform var(--ds-t-base) var(--ds-ease),
+                box-shadow var(--ds-t-base) var(--ds-ease);
+  }
+
+  .btn-sidebar-reopen:hover {
+    background: rgba(108, 92, 231, .12);
+    border-color: rgba(108, 92, 231, .40);
+    color: var(--ds-accent-hi);
+    transform: scale(1.07);
+    box-shadow: var(--ds-shadow-sm),
+                0 0 16px rgba(108, 92, 231, .20);
+  }
+
+} /* end @layer ds-nav */

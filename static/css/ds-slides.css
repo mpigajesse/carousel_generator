@@ -1,0 +1,419 @@
+/* ═══════════════════════════════════════════════════════════════
+   ds-slides.css — Premium slide list & card design system
+   Targets: .slides-area, .slides-list, .slide-card, .add-slide-bar
+   Requires: ds-tokens.css (--ds-* custom properties)
+   ═══════════════════════════════════════════════════════════════ */
+
+@layer ds-slides {
+
+  /* ── Slide list container ─────────────────────────────────── */
+
+  .slides-area {
+    background: var(--ds-bg-2, #0e0e12);
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    min-height: 0;
+  }
+
+  .slides-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 6px 2px 4px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+
+    /* Thin, dark scrollbar */
+    scrollbar-width: thin;
+    scrollbar-color: var(--ds-border, rgba(255,255,255,.1)) transparent;
+  }
+
+  .slides-list::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  .slides-list::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .slides-list::-webkit-scrollbar-thumb {
+    background: var(--ds-border, rgba(255,255,255,.1));
+    border-radius: 100px;
+    transition: background var(--ds-t-base, 200ms) var(--ds-ease, ease);
+  }
+
+  .slides-list::-webkit-scrollbar-thumb:hover {
+    background: var(--ds-border-accent, rgba(124,106,247,.5));
+  }
+
+  /* ── Add slide bar ────────────────────────────────────────── */
+
+  .add-slide-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 14px 2px 4px;
+    border-top: 1px solid var(--ds-border, rgba(255,255,255,.08));
+    margin-top: 6px;
+  }
+
+  .add-btn {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border-radius: var(--ds-r-md, 8px);
+    border: 1px solid var(--ds-border, rgba(255,255,255,.1));
+    background: var(--ds-surface, rgba(255,255,255,.04));
+    color: var(--ds-text-3, rgba(255,255,255,.45));
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .04em;
+    cursor: pointer;
+    overflow: hidden;
+    transition:
+      background  var(--ds-t-base, 200ms) var(--ds-ease, ease),
+      border-color var(--ds-t-base, 200ms) var(--ds-ease, ease),
+      color        var(--ds-t-base, 200ms) var(--ds-ease, ease),
+      box-shadow   var(--ds-t-base, 200ms) var(--ds-ease, ease),
+      transform    180ms var(--ds-ease-spring, cubic-bezier(.34,1.56,.64,1));
+  }
+
+  .add-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--ds-gradient, linear-gradient(135deg,#7c6af7,#38c8a8));
+    opacity: 0;
+    transition: opacity var(--ds-t-base, 200ms) var(--ds-ease, ease);
+    border-radius: inherit;
+  }
+
+  .add-btn:hover {
+    border-color: var(--ds-border-accent, rgba(124,106,247,.6));
+    color: var(--ds-text, #fff);
+    box-shadow: var(--ds-glow-sm, 0 0 12px rgba(124,106,247,.25));
+    transform: translateY(-1px);
+  }
+
+  .add-btn:hover::before {
+    opacity: .08;
+  }
+
+  .add-btn:active {
+    transform: translateY(0);
+  }
+
+  /* ── Slide card — base state ──────────────────────────────── */
+
+  .slide-card {
+    position: relative;
+    background: var(--ds-surface, rgba(255,255,255,.04));
+    border: 1px solid var(--ds-border, rgba(255,255,255,.08));
+    border-radius: var(--ds-r-lg, 12px);
+    overflow: hidden;
+    box-shadow: var(--ds-shadow-sm, 0 1px 4px rgba(0,0,0,.3));
+    transition:
+      border-color var(--ds-t-base, 200ms) var(--ds-ease, ease),
+      box-shadow   var(--ds-t-base, 200ms) var(--ds-ease, ease),
+      transform    220ms var(--ds-ease-spring, cubic-bezier(.34,1.56,.64,1)),
+      background   var(--ds-t-base, 200ms) var(--ds-ease, ease);
+
+    /* Left accent bar — hidden by default */
+    --_bar-opacity: 0;
+  }
+
+  /* Accent bar pseudo-element */
+  .slide-card::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: var(--ds-gradient, linear-gradient(180deg,#7c6af7,#38c8a8));
+    border-radius: 0 2px 2px 0;
+    opacity: var(--_bar-opacity);
+    transition: opacity var(--ds-t-base, 200ms) var(--ds-ease, ease);
+    pointer-events: none;
+  }
+
+  /* ── Slide card — hover state ─────────────────────────────── */
+
+  .slide-card:hover {
+    border-color: var(--ds-border-accent, rgba(124,106,247,.35));
+    background: var(--ds-surface-hover, rgba(255,255,255,.065));
+    box-shadow: var(--ds-shadow-md, 0 4px 16px rgba(0,0,0,.4));
+    transform: translateY(-2px);
+  }
+
+  .slide-card:hover .slide-card-delete {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateX(0);
+  }
+
+  .slide-card:hover .slide-card-drag {
+    opacity: .5;
+  }
+
+  /* ── Slide card — active / open state ────────────────────── */
+
+  .slide-card.is-open,
+  .slide-card:has(.slide-body.open) {
+    --_bar-opacity: 1;
+    border-color: var(--ds-border-accent, rgba(124,106,247,.55));
+    background: var(--ds-surface-active, rgba(124,106,247,.07));
+    box-shadow:
+      var(--ds-shadow-sm, 0 1px 4px rgba(0,0,0,.3)),
+      var(--ds-glow-sm, 0 0 18px rgba(124,106,247,.18));
+  }
+
+  /* ── Slide card head ──────────────────────────────────────── */
+
+  .slide-card-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 13px 16px 13px 20px;
+    cursor: pointer;
+    user-select: none;
+    position: relative;
+  }
+
+  /* ── Slide number badge ───────────────────────────────────── */
+
+  .slide-num {
+    width: 26px;
+    height: 26px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--ds-accent-light, rgba(124,106,247,.15));
+    color: var(--ds-accent, #7c6af7);
+    border: 1px solid rgba(124,106,247,.22);
+    border-radius: var(--ds-r-md, 8px);
+    font-family: 'DM Mono', 'Fira Mono', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: -.01em;
+    transition:
+      background var(--ds-t-base, 200ms) var(--ds-ease, ease),
+      box-shadow  var(--ds-t-base, 200ms) var(--ds-ease, ease);
+  }
+
+  .slide-card.is-open .slide-num,
+  .slide-card:has(.slide-body.open) .slide-num {
+    background: var(--ds-accent, #7c6af7);
+    color: #fff;
+    box-shadow: 0 0 8px rgba(124,106,247,.45);
+    border-color: transparent;
+  }
+
+  /* ── Title preview ────────────────────────────────────────── */
+
+  .slide-title-preview {
+    flex: 1;
+    min-width: 0;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ds-text-2, rgba(255,255,255,.72));
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    letter-spacing: .01em;
+    transition: color var(--ds-t-base, 200ms) var(--ds-ease, ease);
+  }
+
+  .slide-card:hover .slide-title-preview,
+  .slide-card.is-open .slide-title-preview {
+    color: var(--ds-text, #fff);
+  }
+
+  /* ── Slide type badge ─────────────────────────────────────── */
+
+  .slide-type-badge {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    font-size: 9.5px;
+    font-weight: 700;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    padding: 3px 9px;
+    border-radius: 100px;
+    border: 1px solid transparent;
+    transition:
+      background    var(--ds-t-base, 200ms) var(--ds-ease, ease),
+      border-color  var(--ds-t-base, 200ms) var(--ds-ease, ease),
+      box-shadow    var(--ds-t-base, 200ms) var(--ds-ease, ease);
+  }
+
+  /* Refine existing badge colour pairs with pill treatment */
+  .badge-cover {
+    background: rgba(240,98,146,.1);
+    color: #f06292;
+    border-color: rgba(240,98,146,.2);
+  }
+
+  .badge-content {
+    background: rgba(56,200,168,.08);
+    color: #38c8a8;
+    border-color: rgba(56,200,168,.2);
+  }
+
+  .badge-compare {
+    background: rgba(124,106,247,.1);
+    color: var(--ds-accent, #7c6af7);
+    border-color: rgba(124,106,247,.22);
+  }
+
+  .badge-quote {
+    background: rgba(251,191,36,.08);
+    color: #fbbf24;
+    border-color: rgba(251,191,36,.2);
+  }
+
+  .badge-stat {
+    background: rgba(52,211,238,.08);
+    color: #22d3ee;
+    border-color: rgba(52,211,238,.2);
+  }
+
+  .badge-cta {
+    background: rgba(248,113,113,.08);
+    color: #f87171;
+    border-color: rgba(248,113,113,.2);
+  }
+
+  /* ── Slide actions row ────────────────────────────────────── */
+
+  .slide-actions {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
+  }
+
+  /* ── Icon buttons (move up / down) ───────────────────────── */
+
+  .icon-btn {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: 1px solid var(--ds-border, rgba(255,255,255,.08));
+    border-radius: var(--ds-r-md, 8px);
+    color: var(--ds-text-3, rgba(255,255,255,.35));
+    font-size: 13px;
+    cursor: pointer;
+    transition:
+      background    var(--ds-t-base, 200ms) var(--ds-ease, ease),
+      border-color  var(--ds-t-base, 200ms) var(--ds-ease, ease),
+      color         var(--ds-t-base, 200ms) var(--ds-ease, ease),
+      box-shadow    var(--ds-t-base, 200ms) var(--ds-ease, ease);
+  }
+
+  .icon-btn:hover {
+    background: var(--ds-surface-hover, rgba(255,255,255,.07));
+    border-color: var(--ds-border-accent, rgba(124,106,247,.4));
+    color: var(--ds-text, #fff);
+  }
+
+  /* ── Delete button ────────────────────────────────────────── */
+
+  .icon-btn.danger {
+    opacity: 0;
+    pointer-events: none;
+    transform: translateX(4px);
+    transition:
+      opacity      var(--ds-t-base, 200ms) var(--ds-ease, ease),
+      transform    200ms var(--ds-ease-spring, cubic-bezier(.34,1.56,.64,1)),
+      background   var(--ds-t-base, 200ms) var(--ds-ease, ease),
+      border-color var(--ds-t-base, 200ms) var(--ds-ease, ease),
+      color        var(--ds-t-base, 200ms) var(--ds-ease, ease);
+  }
+
+  .slide-card:hover .icon-btn.danger {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateX(0);
+  }
+
+  .icon-btn.danger:hover {
+    background: rgba(248,113,113,.12);
+    border-color: rgba(248,113,113,.4);
+    color: #f87171;
+    box-shadow: 0 0 8px rgba(248,113,113,.2);
+  }
+
+  /* ── Drag handle ──────────────────────────────────────────── */
+
+  .slide-card-drag {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    padding: 6px 4px;
+    cursor: grab;
+    opacity: 0;
+    flex-shrink: 0;
+    transition: opacity var(--ds-t-base, 200ms) var(--ds-ease, ease);
+  }
+
+  .slide-card-drag:active {
+    cursor: grabbing;
+  }
+
+  .slide-card-drag span {
+    display: block;
+    width: 12px;
+    height: 2px;
+    background: var(--ds-text-3, rgba(255,255,255,.35));
+    border-radius: 2px;
+  }
+
+  /* ── Slide body (expanded form area) ─────────────────────── */
+
+  .slide-body {
+    display: none;
+    padding: 0 20px 16px;
+    border-top: 1px solid var(--ds-border, rgba(255,255,255,.06));
+    animation: ds-body-in 180ms var(--ds-ease, ease) both;
+  }
+
+  .slide-body.open {
+    display: block;
+  }
+
+  @keyframes ds-body-in {
+    from { opacity: 0; transform: translateY(-4px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── Empty state inside slides list ──────────────────────── */
+
+  .slides-list .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 48px 24px;
+    color: var(--ds-text-3, rgba(255,255,255,.3));
+    font-size: 13px;
+    text-align: center;
+  }
+
+  .slides-list .empty-state-icon {
+    font-size: 32px;
+    opacity: .4;
+  }
+
+} /* end @layer ds-slides */

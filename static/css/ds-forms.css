@@ -1,0 +1,405 @@
+/*
+ * ds-forms.css — Premium dark form controls
+ * Carousel Generator · Design System
+ * Uses tokens from ds-tokens.css (mapped to app.css vars below)
+ */
+
+/* ── Token aliases (bridge to app.css :root vars) ──────────────────────────
+   ds-tokens.css var             →  app.css var
+   --ds-bg-3                     →  --card   (#121826)
+   --ds-bg-4                     →  --card2  (#171f2e)
+   --ds-surface                  →  --surface
+   --ds-border                   →  --border
+   --ds-border-strong            →  --border2
+   --ds-border-accent            →  accent at 40% opacity
+   --ds-accent                   →  --accent  (#6c5ce7)
+   --ds-accent-light             →  accent at 12% opacity (glow ring)
+   --ds-accent-glow              →  accent at 20% blur glow
+   --ds-text                     →  --text
+   --ds-text-2                   →  --muted2
+   --ds-text-3                   →  --muted
+   --ds-r-sm                     →  --radius-sm  (8px)
+   --ds-r-md                     →  --radius     (12px)
+   --ds-shadow-xs                →  0 1px 3px rgba(0,0,0,.4)
+   --ds-t-fast                   →  150ms
+   --ds-ease                     →  cubic-bezier(.4,0,.2,1)
+   --ds-font-ui                  →  'DM Sans', sans-serif
+   --ds-font-mono                →  'DM Mono', monospace
+   --ds-text-sm                  →  11px
+   --ds-text-base                →  13px
+   --ds-space-2                  →  8px
+-------------------------------------------------------------------------- */
+
+:root {
+  --ds-bg-3:           var(--card,        #121826);
+  --ds-bg-4:           var(--card2,       #171f2e);
+  --ds-surface:        var(--surface,     #0a0e16);
+  --ds-border:         var(--border,      rgba(255,255,255,.06));
+  --ds-border-strong:  var(--border2,     rgba(255,255,255,.11));
+  --ds-border-accent:  rgba(108, 92, 231, .4);
+  --ds-accent:         var(--accent,      #6c5ce7);
+  --ds-accent-hi:      var(--accent-hi,   #8b7cf8);
+  --ds-accent-light:   rgba(108, 92, 231, .13);
+  --ds-accent-glow:    rgba(108, 92, 231, .20);
+  --ds-text:           var(--text,        #e4e8f2);
+  --ds-text-2:         var(--muted2,      #7b87a0);
+  --ds-text-3:         var(--muted,       #4a5268);
+  --ds-r-sm:           var(--radius-sm,   8px);
+  --ds-r-md:           var(--radius,      12px);
+  --ds-shadow-xs:      0 1px 3px rgba(0, 0, 0, .40);
+  --ds-t-fast:         150ms;
+  --ds-ease:           cubic-bezier(.4, 0, .2, 1);
+  --ds-font-ui:        'DM Sans', sans-serif;
+  --ds-font-mono:      'DM Mono', monospace;
+  --ds-text-sm:        11px;
+  --ds-text-base:      13px;
+  --ds-space-2:        8px;
+  --ds-ctrl-h:         40px;
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   @layer ds-forms
+════════════════════════════════════════════════════════════════════════════ */
+@layer ds-forms {
+
+  /* ── 1. Labels ───────────────────────────────────────────────────────── */
+  .ds-label,
+  .ds-form-group > label,
+  .field > label {
+    display: block;
+    font-family:      var(--ds-font-ui);
+    font-size:        var(--ds-text-sm);
+    font-weight:      600;
+    text-transform:   uppercase;
+    letter-spacing:   0.08em;
+    color:            var(--ds-text-2);
+    margin-bottom:    6px;
+    line-height:      1.3;
+    user-select:      none;
+  }
+
+  /* ── 2. Base input reset ─────────────────────────────────────────────── */
+  .form-control,
+  input[type="text"].ds,
+  input[type="url"].ds,
+  textarea.ds,
+  select.ds {
+    display:          block;
+    width:            100%;
+    font-family:      var(--ds-font-ui);
+    font-size:        var(--ds-text-base);
+    font-weight:      400;
+    color:            var(--ds-text);
+    background:       var(--ds-bg-3);
+    border:           1px solid var(--ds-border);
+    border-radius:    var(--ds-r-sm);
+    outline:          none;
+    box-shadow:       var(--ds-shadow-xs);
+    transition:
+      border-color    var(--ds-t-fast) var(--ds-ease),
+      background      var(--ds-t-fast) var(--ds-ease),
+      box-shadow      var(--ds-t-fast) var(--ds-ease);
+    -webkit-appearance: none;
+    appearance:       none;
+  }
+
+  /* ── 3. Text inputs & URL inputs ──────────────────────────────────────── */
+  .form-control,
+  input[type="text"].ds,
+  input[type="url"].ds {
+    height:           var(--ds-ctrl-h);
+    padding:          0 12px;
+    line-height:      var(--ds-ctrl-h);
+  }
+
+  .form-control::placeholder,
+  input[type="text"].ds::placeholder,
+  input[type="url"].ds::placeholder {
+    color:    var(--ds-text-3);
+    opacity:  1;
+  }
+
+  .form-control:hover,
+  input[type="text"].ds:hover,
+  input[type="url"].ds:hover {
+    border-color: var(--ds-border-strong);
+    background:   var(--ds-bg-4);
+  }
+
+  .form-control:focus,
+  input[type="text"].ds:focus,
+  input[type="url"].ds:focus {
+    border-color: var(--ds-accent);
+    background:   var(--ds-bg-4);
+    box-shadow:
+      var(--ds-shadow-xs),
+      0 0 0 3px var(--ds-accent-light);
+  }
+
+  /* ── 4. Textarea ──────────────────────────────────────────────────────── */
+  textarea.ds {
+    min-height:   80px;
+    padding:      10px 12px;
+    line-height:  1.6;
+    resize:       vertical;
+    font-family:  var(--ds-font-mono);
+    font-size:    12px;
+  }
+
+  textarea.ds.ds-text {
+    font-family: var(--ds-font-ui);
+    font-size:   var(--ds-text-base);
+  }
+
+  textarea.ds::placeholder {
+    color:    var(--ds-text-3);
+    opacity:  1;
+  }
+
+  textarea.ds:hover {
+    border-color: var(--ds-border-strong);
+    background:   var(--ds-bg-4);
+  }
+
+  textarea.ds:focus {
+    border-color: var(--ds-accent);
+    background:   var(--ds-bg-4);
+    box-shadow:
+      var(--ds-shadow-xs),
+      0 0 0 3px var(--ds-accent-light);
+  }
+
+  /* ── 5. Select dropdown ──────────────────────────────────────────────── */
+  select.ds {
+    height:       var(--ds-ctrl-h);
+    padding:      0 36px 0 12px;
+    cursor:       pointer;
+    /* Custom SVG arrow — accent colored chevron */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236c5ce7' stroke-width='1.8' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat:   no-repeat;
+    background-position: right 12px center;
+    background-size:     12px 8px;
+    line-height:  var(--ds-ctrl-h);
+  }
+
+  select.ds option {
+    background: var(--ds-bg-3);
+    color:      var(--ds-text);
+  }
+
+  select.ds:hover {
+    border-color: var(--ds-border-strong);
+    background-color: var(--ds-bg-4);
+  }
+
+  select.ds:focus {
+    border-color: var(--ds-accent);
+    background-color: var(--ds-bg-4);
+    box-shadow:
+      var(--ds-shadow-xs),
+      0 0 0 3px var(--ds-accent-light);
+  }
+
+  /* ── 6. Range input ───────────────────────────────────────────────────── */
+  input[type="range"].ds {
+    -webkit-appearance: none;
+    appearance:         none;
+    width:              100%;
+    height:             4px;
+    background:         var(--ds-border-strong);
+    border-radius:      2px;
+    outline:            none;
+    cursor:             pointer;
+    border:             none;
+    box-shadow:         none;
+    padding:            0;
+    accent-color:       var(--ds-accent);
+    transition:         background var(--ds-t-fast) var(--ds-ease);
+  }
+
+  input[type="range"].ds::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width:              16px;
+    height:             16px;
+    border-radius:      50%;
+    background:         var(--ds-accent);
+    border:             2px solid var(--ds-bg-4);
+    box-shadow:         0 0 0 0 var(--ds-accent-light);
+    cursor:             pointer;
+    transition:
+      transform       var(--ds-t-fast) var(--ds-ease),
+      box-shadow      var(--ds-t-fast) var(--ds-ease);
+  }
+
+  input[type="range"].ds::-moz-range-thumb {
+    width:              16px;
+    height:             16px;
+    border-radius:      50%;
+    background:         var(--ds-accent);
+    border:             2px solid var(--ds-bg-4);
+    cursor:             pointer;
+  }
+
+  input[type="range"].ds:focus::-webkit-slider-thumb {
+    box-shadow: 0 0 0 4px var(--ds-accent-light);
+  }
+
+  input[type="range"].ds:active::-webkit-slider-thumb {
+    transform: scale(1.2);
+    box-shadow: 0 0 0 6px var(--ds-accent-glow);
+  }
+
+  /* ── 7. Checkbox ──────────────────────────────────────────────────────── */
+  .ds-checkbox {
+    display:      flex;
+    align-items:  center;
+    gap:          10px;
+    cursor:       pointer;
+    user-select:  none;
+  }
+
+  .ds-checkbox input[type="checkbox"] {
+    -webkit-appearance: none;
+    appearance:         none;
+    width:              18px;
+    height:             18px;
+    min-width:          18px;
+    border:             1px solid var(--ds-border-strong);
+    border-radius:      5px;
+    background:         var(--ds-bg-3);
+    cursor:             pointer;
+    position:           relative;
+    transition:
+      background     var(--ds-t-fast) var(--ds-ease),
+      border-color   var(--ds-t-fast) var(--ds-ease),
+      box-shadow     var(--ds-t-fast) var(--ds-ease);
+  }
+
+  .ds-checkbox input[type="checkbox"]:hover {
+    border-color: var(--ds-accent);
+  }
+
+  .ds-checkbox input[type="checkbox"]:checked {
+    background:   var(--ds-accent);
+    border-color: var(--ds-accent);
+  }
+
+  .ds-checkbox input[type="checkbox"]:focus {
+    box-shadow: 0 0 0 3px var(--ds-accent-light);
+    border-color: var(--ds-accent);
+  }
+
+  /* Checkmark via pseudo ── */
+  .ds-checkbox input[type="checkbox"]::after {
+    content:    '';
+    position:   absolute;
+    inset:      0;
+    display:    flex;
+    align-items: center;
+    justify-content: center;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='8' viewBox='0 0 10 8'%3E%3Cpath d='M1 4l3 3 5-6' stroke='%23fff' stroke-width='1.8' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat:   no-repeat;
+    background-position: center;
+    background-size:     10px 8px;
+    opacity: 0;
+    transition: opacity var(--ds-t-fast) var(--ds-ease);
+  }
+
+  .ds-checkbox input[type="checkbox"]:checked::after {
+    opacity: 1;
+  }
+
+  .ds-checkbox-label {
+    font-family: var(--ds-font-ui);
+    font-size:   var(--ds-text-base);
+    color:       var(--ds-text);
+    line-height: 1.4;
+  }
+
+  /* ── 8. Hint / helper text ────────────────────────────────────────────── */
+  .ds-hint,
+  .field-hint {
+    display:       block;
+    font-family:   var(--ds-font-ui);
+    font-size:     var(--ds-text-sm);
+    color:         var(--ds-text-3);
+    font-style:    italic;
+    line-height:   1.5;
+    margin-top:    5px;
+  }
+
+  /* ── 9. Input with icon (prefix) ─────────────────────────────────────── */
+  .ds-input-wrap {
+    position: relative;
+    display:  block;
+  }
+
+  .ds-input-wrap .ds-input-icon {
+    position:       absolute;
+    left:           11px;
+    top:            50%;
+    transform:      translateY(-50%);
+    color:          var(--ds-text-3);
+    pointer-events: none;
+    display:        flex;
+    align-items:    center;
+    transition:     color var(--ds-t-fast) var(--ds-ease);
+  }
+
+  .ds-input-wrap .form-control,
+  .ds-input-wrap input[type="text"].ds,
+  .ds-input-wrap input[type="url"].ds {
+    padding-left: 36px;
+  }
+
+  .ds-input-wrap:focus-within .ds-input-icon {
+    color: var(--ds-accent);
+  }
+
+  /* ── 10. Form group (label + control + hint) ──────────────────────────── */
+  .ds-form-group {
+    display:        flex;
+    flex-direction: column;
+    gap:            var(--ds-space-2);
+  }
+
+  .ds-form-group + .ds-form-group {
+    margin-top: 14px;
+  }
+
+  /* ── 11. Disabled state ─────────────────────────────────────────────── */
+  .form-control:disabled,
+  input[type="text"].ds:disabled,
+  input[type="url"].ds:disabled,
+  textarea.ds:disabled,
+  select.ds:disabled {
+    opacity:  0.45;
+    cursor:   not-allowed;
+    pointer-events: none;
+  }
+
+  /* ── 12. Error state ─────────────────────────────────────────────────── */
+  .ds-error .form-control,
+  .ds-error input[type="text"].ds,
+  .ds-error input[type="url"].ds,
+  .ds-error textarea.ds,
+  .ds-error select.ds {
+    border-color: var(--danger, #f87171);
+  }
+
+  .ds-error .form-control:focus,
+  .ds-error input[type="text"].ds:focus,
+  .ds-error textarea.ds:focus,
+  .ds-error select.ds:focus {
+    box-shadow:
+      var(--ds-shadow-xs),
+      0 0 0 3px rgba(248, 113, 113, .18);
+  }
+
+  .ds-error .ds-hint {
+    color:       var(--danger, #f87171);
+    font-style:  normal;
+    font-weight: 500;
+  }
+
+} /* end @layer ds-forms */
