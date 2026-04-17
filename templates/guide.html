@@ -6,8 +6,8 @@
   <title>Guide d'utilisation — CarouselGen</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-  <!-- Design system CSS (same as dashboard) -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700;800&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+  <!-- Design system (same tokens as dashboard) -->
   <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/ds-tokens.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/ds-typography.css') }}">
@@ -15,39 +15,551 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='css/ds-glass.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/ds-layout.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/ds-components.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/ds-overrides.css') }}">
   <!-- Guide-specific CSS -->
   <link rel="stylesheet" href="{{ url_for('static', filename='css/ds-guide.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/ds-guide-layout.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/ds-guide-sections.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/ds-guide-code.css') }}">
   <meta name="color-scheme" content="dark">
+
+  <style>
+    /* ── Guide page root ───────────────────────────────────── */
+    html, body {
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+      background: var(--ds-bg, #06060C);
+      color: var(--ds-text, #E2E2E8);
+      font-family: var(--ds-font-sans, 'Inter', sans-serif);
+    }
+
+    /* ── Top navbar ────────────────────────────────────────── */
+    .guide-topbar {
+      height: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      background: var(--ds-bg-2, #0A0A12);
+      border-bottom: 1px solid var(--ds-border, rgba(255,255,255,0.08));
+      flex-shrink: 0;
+      z-index: 50;
+      position: relative;
+    }
+
+    .guide-topbar-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+
+    .guide-topbar-logo {
+      width: 28px;
+      height: 28px;
+      border-radius: 7px;
+      background: linear-gradient(135deg, var(--ds-accent, #6C63FF), #9b5de5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      color: #fff;
+      flex-shrink: 0;
+    }
+
+    .guide-topbar-name {
+      font-family: var(--ds-font-heading, 'Poppins', sans-serif);
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--ds-text, #E2E2E8);
+      line-height: 1;
+    }
+
+    .guide-topbar-sep {
+      width: 1px;
+      height: 18px;
+      background: var(--ds-border, rgba(255,255,255,0.08));
+      margin: 0 4px;
+    }
+
+    .guide-topbar-page {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--ds-text-2, rgba(226,226,232,0.65));
+    }
+
+    .guide-topbar-nav {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .guide-topbar-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border: 1px solid var(--ds-border, rgba(255,255,255,0.08));
+      border-radius: var(--ds-r-md, 8px);
+      background: transparent;
+      color: var(--ds-text-2, rgba(226,226,232,0.65));
+      font-size: 12px;
+      font-weight: 500;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 220ms cubic-bezier(0.16,1,0.3,1);
+      white-space: nowrap;
+      font-family: inherit;
+    }
+
+    .guide-topbar-btn:hover {
+      background: var(--ds-surface-hover, rgba(255,255,255,0.07));
+      color: var(--ds-text, #E2E2E8);
+    }
+
+    .guide-topbar-btn.accent {
+      color: var(--ds-accent, #6C63FF);
+      border-color: rgba(108,99,255,0.3);
+    }
+
+    .guide-topbar-btn.accent:hover {
+      background: var(--ds-accent-muted, rgba(108,99,255,0.12));
+    }
+
+    .guide-topbar-btn.danger {
+      color: #f87171;
+      border-color: rgba(248,113,113,0.25);
+    }
+
+    .guide-topbar-btn.danger:hover {
+      background: rgba(248,113,113,0.08);
+    }
+
+    /* ── Body beneath topbar ───────────────────────────────── */
+    .guide-body {
+      height: calc(100vh - 52px);
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* ── Sidebar ────────────────────────────────────────────── */
+    .guide-sidebar {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      border-right: 1px solid var(--ds-border, rgba(255,255,255,0.08));
+      background: var(--ds-glass-bg, rgba(12,12,20,0.85));
+      backdrop-filter: blur(20px) saturate(1.6);
+      -webkit-backdrop-filter: blur(20px) saturate(1.6);
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    /* Sidebar header */
+    .guide-sidebar-header {
+      padding: 16px;
+      border-bottom: 1px solid var(--ds-border, rgba(255,255,255,0.08));
+      flex-shrink: 0;
+    }
+
+    .guide-sidebar-title-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .guide-sidebar-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: var(--ds-accent-muted, rgba(108,99,255,0.12));
+      border: 1px solid rgba(108,99,255,0.25);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--ds-accent, #6C63FF);
+      flex-shrink: 0;
+    }
+
+    .guide-sidebar-heading {
+      font-family: var(--ds-font-heading, 'Poppins', sans-serif);
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--ds-text, #E2E2E8);
+      line-height: 1.2;
+    }
+
+    .guide-sidebar-sub {
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--ds-text-3, rgba(226,226,232,0.35));
+      margin-top: 2px;
+    }
+
+    /* Nav list */
+    .guide-nav {
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px 8px;
+      scrollbar-width: thin;
+      scrollbar-color: var(--ds-border, rgba(255,255,255,0.08)) transparent;
+    }
+
+    .guide-nav::-webkit-scrollbar { width: 3px; }
+    .guide-nav::-webkit-scrollbar-track { background: transparent; }
+    .guide-nav::-webkit-scrollbar-thumb {
+      background: var(--ds-border, rgba(255,255,255,0.08));
+      border-radius: 2px;
+    }
+
+    .guide-nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 10px;
+      border-radius: 8px;
+      color: var(--ds-text-2, rgba(226,226,232,0.65));
+      text-decoration: none;
+      font-size: 12px;
+      font-weight: 500;
+      transition: all 220ms cubic-bezier(0.16,1,0.3,1);
+      margin-bottom: 2px;
+      border: 1px solid transparent;
+      cursor: pointer;
+    }
+
+    .guide-nav-item:hover {
+      background: var(--ds-surface-hover, rgba(255,255,255,0.07));
+      color: var(--ds-text, #E2E2E8);
+    }
+
+    .guide-nav-item.active {
+      background: var(--ds-accent-muted, rgba(108,99,255,0.12));
+      border-color: rgba(108,99,255,0.25);
+      color: var(--ds-accent, #6C63FF);
+    }
+
+    .guide-nav-num {
+      font-family: var(--ds-font-mono, 'DM Mono', monospace);
+      font-size: 10px;
+      color: var(--ds-text-3, rgba(226,226,232,0.35));
+      flex-shrink: 0;
+      width: 22px;
+      transition: color 220ms;
+    }
+
+    .guide-nav-item.active .guide-nav-num {
+      color: var(--ds-accent, #6C63FF);
+    }
+
+    /* Progress footer */
+    .guide-sidebar-footer {
+      padding: 12px 14px;
+      border-top: 1px solid var(--ds-border, rgba(255,255,255,0.08));
+      flex-shrink: 0;
+    }
+
+    .guide-progress-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 10px;
+      color: var(--ds-text-3, rgba(226,226,232,0.35));
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 6px;
+    }
+
+    #guide-read-pct { color: var(--ds-accent, #6C63FF); }
+
+    .guide-progress-track {
+      height: 3px;
+      background: var(--ds-surface, rgba(255,255,255,0.04));
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .guide-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--ds-accent, #6C63FF), #9b5de5);
+      border-radius: 2px;
+      width: 0%;
+      transition: width 0.15s ease;
+    }
+
+    /* ── Main scrollable area ───────────────────────────────── */
+    .guide-main {
+      height: 100%;
+      overflow-y: auto;
+      overflow-x: hidden;
+      background: var(--ds-bg, #06060C);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      scrollbar-width: thin;
+      scrollbar-color: var(--ds-border, rgba(255,255,255,0.08)) transparent;
+    }
+
+    .guide-main::-webkit-scrollbar { width: 4px; }
+    .guide-main::-webkit-scrollbar-track { background: transparent; }
+    .guide-main::-webkit-scrollbar-thumb {
+      background: rgba(255,255,255,0.1);
+      border-radius: 2px;
+    }
+
+    /* Reading bar */
+    .guide-reading-bar {
+      position: sticky;
+      top: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--ds-accent, #6C63FF), #9b5de5);
+      transform-origin: left;
+      transform: scaleX(0);
+      transition: transform 0.1s linear;
+      z-index: 10;
+      flex-shrink: 0;
+    }
+
+    /* Content column */
+    .guide-content {
+      max-width: 820px;
+      margin: 0 auto;
+      padding: 48px 40px;
+      display: flex;
+      flex-direction: column;
+      gap: 80px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    /* Footer */
+    .guide-footer {
+      padding: 40px;
+      border-top: 1px solid var(--ds-border, rgba(255,255,255,0.08));
+      text-align: center;
+      margin-top: auto;
+    }
+
+    .guide-footer-nav {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+
+    .guide-footer-link {
+      color: var(--ds-accent, #6C63FF);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 600;
+      transition: opacity 220ms;
+    }
+
+    .guide-footer-link:hover { opacity: 0.75; }
+
+    .guide-footer-copy {
+      font-size: 11px;
+      color: var(--ds-text-3, rgba(226,226,232,0.35));
+      margin: 0;
+    }
+
+    /* Ambient orbs */
+    .guide-orb {
+      position: fixed;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 0;
+      filter: blur(120px);
+      opacity: 0.12;
+    }
+
+    .guide-orb-1 {
+      width: 500px; height: 500px;
+      top: -150px; left: -120px;
+      background: var(--ds-accent, #6C63FF);
+    }
+
+    .guide-orb-2 {
+      width: 360px; height: 360px;
+      bottom: -100px; right: -80px;
+      background: #9b5de5;
+    }
+
+    /* ── Mobile sidebar overlay ─────────────────────────────── */
+    .guide-sidebar-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 149;
+      backdrop-filter: blur(2px);
+    }
+
+    .guide-sidebar-backdrop.visible { display: block; }
+
+    /* ── Responsive ─────────────────────────────────────────── */
+    @media (max-width: 900px) {
+      .guide-body {
+        grid-template-columns: 1fr;
+      }
+
+      .guide-sidebar {
+        position: fixed;
+        left: 0;
+        top: 52px;
+        bottom: 0;
+        width: 280px;
+        height: calc(100vh - 52px);
+        transform: translateX(-100%);
+        z-index: 150;
+        transition: transform 220ms cubic-bezier(0.16,1,0.3,1);
+      }
+
+      .guide-sidebar.open {
+        transform: translateX(0);
+      }
+
+      .guide-main {
+        height: calc(100vh - 52px);
+      }
+
+      .guide-content {
+        padding: 28px 20px;
+        gap: 56px;
+      }
+
+      .guide-footer {
+        padding: 28px 20px;
+      }
+
+      /* Show hamburger in topbar on mobile */
+      .guide-topbar-menu-btn {
+        display: flex !important;
+      }
+
+      /* Hide some topbar buttons on mobile */
+      .guide-topbar-btn.hide-mobile {
+        display: none;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .guide-topbar-name { display: none; }
+      .guide-topbar-sep { display: none; }
+      .guide-topbar-page { font-size: 12px; }
+
+      .guide-content {
+        padding: 20px 16px;
+        gap: 48px;
+      }
+    }
+
+    /* Topbar hamburger (hidden on desktop) */
+    .guide-topbar-menu-btn {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      background: var(--ds-surface, rgba(255,255,255,0.04));
+      border: 1px solid var(--ds-border, rgba(255,255,255,0.08));
+      border-radius: 8px;
+      cursor: pointer;
+      color: var(--ds-text-2, rgba(226,226,232,0.65));
+      padding: 0;
+      transition: all 220ms;
+      margin-right: 8px;
+    }
+
+    .guide-topbar-menu-btn:hover {
+      background: var(--ds-surface-hover, rgba(255,255,255,0.07));
+      color: var(--ds-text, #E2E2E8);
+    }
+  </style>
 </head>
-<body class="guide-page">
+<body>
 
-<!-- Ambient orbs -->
-<div class="orb orb-1"></div>
-<div class="orb orb-2"></div>
+<!-- Ambient atmosphere -->
+<div class="guide-orb guide-orb-1"></div>
+<div class="guide-orb guide-orb-2"></div>
 
-<!-- GUIDE LAYOUT: sidebar + main -->
-<div class="guide-shell">
+<!-- ══ TOP NAVBAR ══ -->
+<header class="guide-topbar">
 
-  <!-- ══ GUIDE SIDEBAR ══ -->
-  <nav class="guide-sidebar ds-glass" id="guide-sidebar">
+  <!-- Left: hamburger (mobile) + brand + page name -->
+  <div style="display:flex;align-items:center;gap:0;">
+    <button class="guide-topbar-menu-btn" id="guide-menu-btn" onclick="toggleGuideNav()" aria-label="Menu">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+      </svg>
+    </button>
+    <a href="/" class="guide-topbar-brand">
+      <div class="guide-topbar-logo">◈</div>
+      <span class="guide-topbar-name">CarouselGen</span>
+    </a>
+    <div class="guide-topbar-sep"></div>
+    <span class="guide-topbar-page">Guide d'utilisation</span>
+  </div>
 
-    <!-- Brand/back link -->
-    <div class="guide-sidebar-brand">
-      <a href="/" class="guide-back-link">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
-        Retour à l'éditeur
-      </a>
-      <div class="guide-sidebar-title">
-        <span class="guide-sidebar-label">Guide</span>
-        <span class="guide-sidebar-sub">d'utilisation</span>
+  <!-- Right: nav buttons -->
+  <nav class="guide-topbar-nav">
+    <a href="/" class="guide-topbar-btn accent">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <polyline points="15 18 9 12 15 6"/>
+      </svg>
+      Éditeur
+    </a>
+    <a href="/generator" class="guide-topbar-btn hide-mobile">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+        <rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>
+      </svg>
+      Bibliothèque
+    </a>
+    <a href="/logout" class="guide-topbar-btn danger hide-mobile">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+        <polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
+      </svg>
+      Déconnexion
+    </a>
+  </nav>
+
+</header>
+
+<!-- Mobile sidebar backdrop -->
+<div class="guide-sidebar-backdrop" id="guide-backdrop" onclick="toggleGuideNav()"></div>
+
+<!-- ══ BODY: sidebar + main ══ -->
+<div class="guide-body">
+
+  <!-- ══ SIDEBAR ══ -->
+  <aside class="guide-sidebar" id="guide-sidebar">
+
+    <!-- Sidebar header -->
+    <div class="guide-sidebar-header">
+      <div class="guide-sidebar-title-row">
+        <div class="guide-sidebar-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+            <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+          </svg>
+        </div>
+        <div>
+          <div class="guide-sidebar-heading">Guide</div>
+          <div class="guide-sidebar-sub">d'utilisation</div>
+        </div>
       </div>
     </div>
 
-    <!-- Navigation sections -->
-    <div class="guide-nav" id="guide-nav">
+    <!-- Nav items -->
+    <nav class="guide-nav" id="guide-nav">
       <a class="guide-nav-item active" href="#hero" data-section="hero">
         <span class="guide-nav-num">00</span>
         <span>Introduction</span>
@@ -92,36 +604,28 @@
         <span class="guide-nav-num">10</span>
         <span>Conseils et astuces</span>
       </a>
-    </div>
+    </nav>
 
-    <!-- Sidebar footer -->
+    <!-- Progress footer -->
     <div class="guide-sidebar-footer">
-      <div class="guide-progress-info">
-        <span id="guide-read-pct">0%</span> lu
-        <div class="guide-progress-track">
-          <div class="guide-progress-fill" id="guide-progress-fill"></div>
-        </div>
+      <div class="guide-progress-label">
+        <span>Progression</span>
+        <span id="guide-read-pct">0%</span>
+      </div>
+      <div class="guide-progress-track">
+        <div class="guide-progress-fill" id="guide-progress-fill"></div>
       </div>
     </div>
 
-  </nav>
+  </aside>
 
-  <!-- ══ GUIDE MAIN CONTENT ══ -->
+  <!-- ══ MAIN CONTENT ══ -->
   <main class="guide-main" id="guide-main">
 
-    <!-- Mobile header -->
-    <div class="guide-mobile-header">
-      <button class="guide-menu-btn" id="guide-menu-btn" onclick="toggleGuideNav()">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-      </button>
-      <span class="guide-mobile-title">Guide d'utilisation</span>
-      <a href="/" class="guide-mobile-back">← Éditeur</a>
-    </div>
-
-    <!-- Reading progress bar (top) -->
+    <!-- Reading progress bar (top of scroll area) -->
     <div class="guide-reading-bar" id="guide-reading-bar"></div>
 
-    <!-- ALL SECTIONS (using Jinja2 includes) -->
+    <!-- All sections -->
     <div class="guide-content">
       {% include 'guide/hero.html' %}
       {% include 'guide/platform.html' %}
@@ -142,7 +646,7 @@
         <a href="/" class="guide-footer-link">← Retour à l'éditeur</a>
         <a href="/generator" class="guide-footer-link">Bibliothèque →</a>
       </div>
-      <p class="guide-footer-copy">© 2026 Africa Centred Technology. CarouselGen v2.0</p>
+      <p class="guide-footer-copy">© 2026 Africa Centred Technology · CarouselGen v2.0</p>
     </footer>
 
   </main>

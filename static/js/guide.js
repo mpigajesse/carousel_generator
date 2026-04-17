@@ -4,20 +4,17 @@
 // ─── Mobile sidebar toggle (global — called by onclick in HTML) ───────────────
 function toggleGuideNav() {
   const sidebar = document.getElementById('guide-sidebar');
+  const backdrop = document.getElementById('guide-backdrop');
   if (!sidebar) return;
 
   const isOpen = sidebar.classList.contains('open');
 
   if (isOpen) {
     sidebar.classList.remove('open');
-    const backdrop = document.querySelector('.guide-backdrop');
-    if (backdrop) backdrop.remove();
+    backdrop?.classList.remove('visible');
   } else {
     sidebar.classList.add('open');
-    const backdrop = document.createElement('div');
-    backdrop.className = 'guide-backdrop';
-    backdrop.addEventListener('click', toggleGuideNav);
-    sidebar.parentNode.insertBefore(backdrop, sidebar);
+    backdrop?.classList.add('visible');
   }
 }
 
