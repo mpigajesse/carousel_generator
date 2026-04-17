@@ -259,6 +259,7 @@ pre {
   text-transform: uppercase;
   word-break: break-word;
   hyphens: auto;
+  flex-shrink: 0;
 }
 
 .body {

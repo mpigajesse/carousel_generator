@@ -149,6 +149,22 @@
 }
 .ig-compare-body .bullets { margin-top: 8px; margin-bottom: 8px; }
 
+/* ── COMPARE TAG ── */
+.ig-compare-tag {
+  display: inline-block;
+  font-family: 'Manrope', sans-serif;
+  font-size: 16px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 8px 18px;
+  border-radius: 100px;
+  margin-top: 20px;
+  background: transparent;
+  border: 1.5px solid var(--tag-color);
+  color: var(--tag-color);
+}
+
 /* ── CTA SLIDE ── */
 .ig-cta-content {
   flex: 1;
