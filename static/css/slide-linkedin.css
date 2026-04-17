@@ -1,7 +1,7 @@
 /* ══════════════════════════════════════════════════════════════════
    slide-linkedin.css — Static CSS for LinkedIn 1080×1080 slides
-   Inlined at render time via Jinja2 {% include %}.
-   Dynamic theme tokens ({{ theme.xxx }}) live in slide.html.j2.
+   Inlined at render time via Jinja2 (jinja2:include).
+   Dynamic theme tokens ([theme.xxx]) live in slide.html.j2.
    Base styles: see slide-base.css (included before this file)
    ══════════════════════════════════════════════════════════════════ */
 

@@ -1,8 +1,8 @@
 /* ══════════════════════════════════════════════════════════════
    slide-instagram.css
    Static CSS for slide_instagram.html.j2 (1080×1350 Instagram)
-   Inlined at render time via Jinja2 {% include %}.
-   Rules containing {{ theme.* }} or {{ slide.* }} live in the
+   Inlined at render time via Jinja2 (jinja2:include).
+   Rules containing [theme.*] or [slide.*] live in the
    template's inline <style> block — do NOT add them here.
    Base styles: see slide-base.css (included before this file)
 ══════════════════════════════════════════════════════════════ */
