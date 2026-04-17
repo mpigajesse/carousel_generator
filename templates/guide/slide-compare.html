@@ -1,0 +1,388 @@
+<section class="guide-section" id="slide-compare">
+  <div class="guide-section-header">
+    <span class="guide-step-num">05</span>
+    <h2 class="guide-section-title">Slide Comparaison</h2>
+  </div>
+
+  <p class="guide-section-lead">
+    Le slide comparaison met en opposition deux approches, options ou états &mdash;
+    idéal pour le format Avant/Après.
+  </p>
+
+  <!-- ─── Champs disponibles ─── -->
+  <div class="guide-card" style="margin-bottom: var(--space-lg, 2rem);">
+    <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.5rem;">
+      <span class="guide-badge">Champs disponibles</span>
+      <span style="opacity: 0.5; font-size: 0.8rem;">Structure du slide comparaison</span>
+    </div>
+
+    <!-- Field list -->
+    <div style="display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 2rem;">
+
+      <div style="display: flex; align-items: flex-start; gap: 0.875rem; padding: 0.875rem 1rem; border-radius: 0.5rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07);">
+        <span style="flex-shrink: 0; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em; padding: 0.25rem 0.55rem; border-radius: 9999px; background: rgba(139,92,246,0.15); color: #c4b5fd; border: 1px solid rgba(139,92,246,0.25); margin-top: 0.1rem;">optionnel</span>
+        <div>
+          <strong style="font-size: 0.9rem;">Badge</strong>
+          <p style="margin: 0.2rem 0 0; opacity: 0.6; font-size: 0.82rem; line-height: 1.55;">
+            Étiquette courte de catégorie affichée en haut du slide. Exemples : <code style="font-size: 0.78rem; padding: 0.1rem 0.35rem; border-radius: 3px; background: rgba(255,255,255,0.08);">VS</code>, <code style="font-size: 0.78rem; padding: 0.1rem 0.35rem; border-radius: 3px; background: rgba(255,255,255,0.08);">COMPARAISON</code>, <code style="font-size: 0.78rem; padding: 0.1rem 0.35rem; border-radius: 3px; background: rgba(255,255,255,0.08);">AVANT / APRÈS</code>
+          </p>
+        </div>
+      </div>
+
+      <div style="display: flex; align-items: flex-start; gap: 0.875rem; padding: 0.875rem 1rem; border-radius: 0.5rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07);">
+        <span style="flex-shrink: 0; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em; padding: 0.25rem 0.55rem; border-radius: 9999px; background: rgba(16,185,129,0.15); color: #6ee7b7; border: 1px solid rgba(16,185,129,0.25); margin-top: 0.1rem;">requis</span>
+        <div>
+          <strong style="font-size: 0.9rem;">Titre</strong>
+          <p style="margin: 0.2rem 0 0; opacity: 0.6; font-size: 0.82rem; line-height: 1.55;">
+            Question principale ou titre de la comparaison. Doit poser clairement l'opposition.
+          </p>
+        </div>
+      </div>
+
+      <div style="display: flex; align-items: flex-start; gap: 0.875rem; padding: 0.875rem 1rem; border-radius: 0.5rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07);">
+        <span style="flex-shrink: 0; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em; padding: 0.25rem 0.55rem; border-radius: 9999px; background: rgba(16,185,129,0.15); color: #6ee7b7; border: 1px solid rgba(16,185,129,0.25); margin-top: 0.1rem;">requis</span>
+        <div>
+          <strong style="font-size: 0.9rem;">Colonne 1 &amp; Colonne 2</strong>
+          <p style="margin: 0.2rem 0 0; opacity: 0.6; font-size: 0.82rem; line-height: 1.55;">
+            Chaque colonne contient trois sous-champs :
+            <strong>tag</strong> (étiquette de colonne, supporte les emojis),
+            <strong>title</strong> (titre court de la colonne),
+            <strong>body</strong> (texte descriptif, 60-80 mots recommandés).
+          </p>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Mock slide visual -->
+    <div style="margin-top: 0.5rem;">
+      <p style="margin: 0 0 0.875rem; font-size: 0.78rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; opacity: 0.45;">Aperçu de la structure</p>
+
+      <div style="
+        border-radius: 0.75rem;
+        border: 1px solid rgba(255,255,255,0.1);
+        background: linear-gradient(145deg, rgba(30,27,75,0.9) 0%, rgba(20,18,55,0.95) 100%);
+        overflow: hidden;
+        font-family: 'Poppins', sans-serif;
+      ">
+        <!-- Slide header -->
+        <div style="padding: 1.25rem 1.5rem 0.75rem; border-bottom: 1px solid rgba(255,255,255,0.07);">
+          <span style="
+            display: inline-block;
+            font-size: 0.65rem;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            padding: 0.2rem 0.65rem;
+            border-radius: 9999px;
+            background: rgba(139,92,246,0.2);
+            color: #c4b5fd;
+            border: 1px solid rgba(139,92,246,0.3);
+            margin-bottom: 0.65rem;
+          ">VS</span>
+          <h3 style="margin: 0; font-size: 1rem; font-weight: 700; color: #f1f0ff; line-height: 1.3;">
+            Code synchrone vs Asynchrone
+          </h3>
+        </div>
+
+        <!-- Two columns -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0;">
+
+          <!-- Column 1 -->
+          <div style="padding: 1.1rem 1.25rem 1.25rem; border-right: 1px solid rgba(255,255,255,0.07);">
+            <span style="
+              display: inline-block;
+              font-size: 0.68rem;
+              font-weight: 700;
+              padding: 0.18rem 0.55rem;
+              border-radius: 9999px;
+              background: rgba(239,68,68,0.15);
+              color: #fca5a5;
+              border: 1px solid rgba(239,68,68,0.25);
+              margin-bottom: 0.6rem;
+            ">&#10060; Synchrone</span>
+            <p style="margin: 0 0 0.45rem; font-size: 0.82rem; font-weight: 700; color: #e2e0ff;">Bloquant</p>
+            <p style="margin: 0; font-size: 0.72rem; line-height: 1.55; color: rgba(200,198,240,0.65);">
+              Le programme attend la fin de chaque opération avant de continuer.
+              Performances limitées avec les opérations I/O.
+            </p>
+          </div>
+
+          <!-- Column 2 -->
+          <div style="padding: 1.1rem 1.25rem 1.25rem;">
+            <span style="
+              display: inline-block;
+              font-size: 0.68rem;
+              font-weight: 700;
+              padding: 0.18rem 0.55rem;
+              border-radius: 9999px;
+              background: rgba(16,185,129,0.15);
+              color: #6ee7b7;
+              border: 1px solid rgba(16,185,129,0.25);
+              margin-bottom: 0.6rem;
+            ">&#9989; Asynchrone</span>
+            <p style="margin: 0 0 0.45rem; font-size: 0.82rem; font-weight: 700; color: #e2e0ff;">Non-bloquant</p>
+            <p style="margin: 0; font-size: 0.72rem; line-height: 1.55; color: rgba(200,198,240,0.65);">
+              Les opérations s'exécutent en parallèle. Idéal pour les API, bases de données, et fichiers.
+            </p>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── Cas d'usage ─── -->
+  <div class="guide-card" style="margin-bottom: var(--space-lg, 2rem);">
+    <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.25rem;">
+      <span class="guide-badge" style="background: rgba(16,185,129,0.2); color: #6ee7b7;">Cas d'usage</span>
+      <span style="opacity: 0.5; font-size: 0.8rem;">Excellent pour ces formats de contenu</span>
+    </div>
+
+    <ul style="margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 0.6rem;">
+
+      <li style="display: flex; align-items: center; gap: 0.6rem; padding: 0.65rem 0.875rem; border-radius: 0.45rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07);">
+        <span style="font-size: 1rem;" aria-hidden="true">&#128259;</span>
+        <span style="font-size: 0.83rem; line-height: 1.4;"><strong>Avant / Après</strong><br><span style="opacity: 0.55; font-size: 0.76rem;">transformation</span></span>
+      </li>
+
+      <li style="display: flex; align-items: center; gap: 0.6rem; padding: 0.65rem 0.875rem; border-radius: 0.45rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07);">
+        <span style="font-size: 1rem;" aria-hidden="true">&#128200;</span>
+        <span style="font-size: 0.83rem; line-height: 1.4;"><strong>Junior vs Senior</strong><br><span style="opacity: 0.55; font-size: 0.76rem;">niveaux de compétences</span></span>
+      </li>
+
+      <li style="display: flex; align-items: center; gap: 0.6rem; padding: 0.65rem 0.875rem; border-radius: 0.45rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07);">
+        <span style="font-size: 1rem;" aria-hidden="true">&#128295;</span>
+        <span style="font-size: 0.83rem; line-height: 1.4;"><strong>Avec / Sans outil</strong><br><span style="opacity: 0.55; font-size: 0.76rem;">impact d'une méthode</span></span>
+      </li>
+
+      <li style="display: flex; align-items: center; gap: 0.6rem; padding: 0.65rem 0.875rem; border-radius: 0.45rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07);">
+        <span style="font-size: 1rem;" aria-hidden="true">&#9876;&#65039;</span>
+        <span style="font-size: 0.83rem; line-height: 1.4;"><strong>Option A vs Option B</strong><br><span style="opacity: 0.55; font-size: 0.76rem;">aide à la décision</span></span>
+      </li>
+
+      <li style="display: flex; align-items: center; gap: 0.6rem; padding: 0.65rem 0.875rem; border-radius: 0.45rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07);">
+        <span style="font-size: 1rem;" aria-hidden="true">&#10060;</span>
+        <span style="font-size: 0.83rem; line-height: 1.4;"><strong>Mauvaise vs Bonne pratique</strong><br><span style="opacity: 0.55; font-size: 0.76rem;">erreur vs solution</span></span>
+      </li>
+
+      <li style="display: flex; align-items: center; gap: 0.6rem; padding: 0.65rem 0.875rem; border-radius: 0.45rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07);">
+        <span style="font-size: 1rem;" aria-hidden="true">&#9889;</span>
+        <span style="font-size: 0.83rem; line-height: 1.4;"><strong>Complexe vs Simple</strong><br><span style="opacity: 0.55; font-size: 0.76rem;">simplification</span></span>
+      </li>
+
+    </ul>
+  </div>
+
+  <!-- ─── Exemple complet ─── -->
+  <div class="guide-card" style="margin-bottom: var(--space-lg, 2rem);">
+    <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.5rem;">
+      <span class="guide-badge" style="background: rgba(99,102,241,0.2); color: #a5b4fc;">Exemple complet</span>
+      <span style="opacity: 0.5; font-size: 0.8rem;">Code synchrone vs Asynchrone</span>
+    </div>
+
+    <!-- Field-by-field breakdown -->
+    <div style="display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1.75rem;">
+
+      <div style="display: grid; grid-template-columns: 6rem 1fr; gap: 0.5rem 0.875rem; align-items: baseline; padding: 0.6rem 0.875rem; border-radius: 0.45rem; background: rgba(255,255,255,0.025);">
+        <span style="font-size: 0.72rem; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: rgba(165,180,252,0.7);">Badge</span>
+        <code style="font-size: 0.8rem; color: #e2e0ff;">"VS"</code>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 6rem 1fr; gap: 0.5rem 0.875rem; align-items: baseline; padding: 0.6rem 0.875rem; border-radius: 0.45rem; background: rgba(255,255,255,0.025);">
+        <span style="font-size: 0.72rem; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: rgba(165,180,252,0.7);">Titre</span>
+        <code style="font-size: 0.8rem; color: #e2e0ff;">"Code synchrone vs Asynchrone"</code>
+      </div>
+
+      <div style="padding: 0.75rem 0.875rem; border-radius: 0.45rem; background: rgba(255,255,255,0.025); display: grid; grid-template-columns: 1fr 1fr; gap: 0.875rem;">
+
+        <div>
+          <p style="margin: 0 0 0.5rem; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: rgba(252,165,165,0.75);">Colonne 1</p>
+          <div style="display: flex; flex-direction: column; gap: 0.35rem;">
+            <span style="font-size: 0.78rem;"><span style="opacity: 0.5; font-size: 0.72rem;">tag &nbsp;</span><code style="font-size: 0.78rem; color: #fca5a5;">"&#10060; Synchrone"</code></span>
+            <span style="font-size: 0.78rem;"><span style="opacity: 0.5; font-size: 0.72rem;">title</span> <code style="font-size: 0.78rem; color: #e2e0ff;">"Bloquant"</code></span>
+            <span style="font-size: 0.78rem; line-height: 1.5; opacity: 0.65; font-style: italic; font-size: 0.75rem; margin-top: 0.15rem;">
+              "Le programme attend la fin de chaque opération avant de continuer. Performances limitées avec les opérations I/O."
+            </span>
+          </div>
+        </div>
+
+        <div style="padding-left: 0.875rem; border-left: 1px solid rgba(255,255,255,0.08);">
+          <p style="margin: 0 0 0.5rem; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: rgba(110,231,183,0.75);">Colonne 2</p>
+          <div style="display: flex; flex-direction: column; gap: 0.35rem;">
+            <span style="font-size: 0.78rem;"><span style="opacity: 0.5; font-size: 0.72rem;">tag &nbsp;</span><code style="font-size: 0.78rem; color: #6ee7b7;">"&#9989; Asynchrone"</code></span>
+            <span style="font-size: 0.78rem;"><span style="opacity: 0.5; font-size: 0.72rem;">title</span> <code style="font-size: 0.78rem; color: #e2e0ff;">"Non-bloquant"</code></span>
+            <span style="font-size: 0.78rem; line-height: 1.5; opacity: 0.65; font-style: italic; font-size: 0.75rem; margin-top: 0.15rem;">
+              "Les opérations s'exécutent en parallèle. Idéal pour les API, bases de données, et fichiers."
+            </span>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- Rendered mock compare slide -->
+    <p style="margin: 0 0 0.875rem; font-size: 0.78rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; opacity: 0.45;">Rendu visuel approximatif</p>
+
+    <div style="
+      position: relative;
+      border-radius: 0.875rem;
+      overflow: hidden;
+      border: 1px solid rgba(139,92,246,0.2);
+      box-shadow: 0 8px 40px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.04);
+      background: linear-gradient(145deg, #1e1b4b 0%, #0f0e2e 100%);
+      font-family: 'Poppins', sans-serif;
+      aspect-ratio: 1 / 1;
+      max-width: 420px;
+      margin: 0 auto;
+    ">
+      <!-- Background blobs -->
+      <div style="position: absolute; top: -15%; left: -10%; width: 55%; height: 55%; border-radius: 50%; background: radial-gradient(circle, rgba(139,92,246,0.18) 0%, transparent 70%); pointer-events: none;" aria-hidden="true"></div>
+      <div style="position: absolute; bottom: -10%; right: -10%; width: 50%; height: 50%; border-radius: 50%; background: radial-gradient(circle, rgba(99,102,241,0.14) 0%, transparent 70%); pointer-events: none;" aria-hidden="true"></div>
+
+      <!-- Slide content -->
+      <div style="position: relative; z-index: 1; display: flex; flex-direction: column; height: 100%; padding: 7% 6%;">
+
+        <!-- Badge -->
+        <div style="margin-bottom: 3%;">
+          <span style="
+            display: inline-block;
+            font-size: clamp(0.55rem, 1.5vw, 0.7rem);
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            padding: 0.3em 0.9em;
+            border-radius: 9999px;
+            background: rgba(139,92,246,0.2);
+            color: #c4b5fd;
+            border: 1px solid rgba(139,92,246,0.35);
+          ">VS</span>
+        </div>
+
+        <!-- Title -->
+        <h2 style="
+          margin: 0 0 5%;
+          font-size: clamp(0.85rem, 2.8vw, 1.2rem);
+          font-weight: 800;
+          color: #f1f0ff;
+          line-height: 1.25;
+          letter-spacing: -0.01em;
+        ">Code synchrone vs Asynchrone</h2>
+
+        <!-- Divider -->
+        <div style="width: 2.5rem; height: 2px; background: rgba(139,92,246,0.5); border-radius: 1px; margin-bottom: 5%;"></div>
+
+        <!-- Two columns -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 3%; flex: 1; align-items: start;">
+
+          <!-- Column 1 -->
+          <div style="
+            padding: 5% 6%;
+            border-radius: 0.5rem;
+            background: rgba(239,68,68,0.07);
+            border: 1px solid rgba(239,68,68,0.2);
+            height: 100%;
+            box-sizing: border-box;
+          ">
+            <span style="
+              display: inline-block;
+              font-size: clamp(0.5rem, 1.3vw, 0.65rem);
+              font-weight: 700;
+              padding: 0.2em 0.6em;
+              border-radius: 9999px;
+              background: rgba(239,68,68,0.15);
+              color: #fca5a5;
+              border: 1px solid rgba(239,68,68,0.25);
+              margin-bottom: 5%;
+            ">&#10060; Synchrone</span>
+            <p style="margin: 0 0 4%; font-size: clamp(0.7rem, 2vw, 0.9rem); font-weight: 700; color: #fde8e8; line-height: 1.2;">Bloquant</p>
+            <p style="margin: 0; font-size: clamp(0.55rem, 1.6vw, 0.72rem); line-height: 1.6; color: rgba(253,232,232,0.6);">
+              Le programme attend la fin de chaque opération avant de continuer. Performances limitées avec les opérations I/O.
+            </p>
+          </div>
+
+          <!-- Column 2 -->
+          <div style="
+            padding: 5% 6%;
+            border-radius: 0.5rem;
+            background: rgba(16,185,129,0.07);
+            border: 1px solid rgba(16,185,129,0.2);
+            height: 100%;
+            box-sizing: border-box;
+          ">
+            <span style="
+              display: inline-block;
+              font-size: clamp(0.5rem, 1.3vw, 0.65rem);
+              font-weight: 700;
+              padding: 0.2em 0.6em;
+              border-radius: 9999px;
+              background: rgba(16,185,129,0.15);
+              color: #6ee7b7;
+              border: 1px solid rgba(16,185,129,0.25);
+              margin-bottom: 5%;
+            ">&#9989; Asynchrone</span>
+            <p style="margin: 0 0 4%; font-size: clamp(0.7rem, 2vw, 0.9rem); font-weight: 700; color: #d1fae5; line-height: 1.2;">Non-bloquant</p>
+            <p style="margin: 0; font-size: clamp(0.55rem, 1.6vw, 0.72rem); line-height: 1.6; color: rgba(209,250,229,0.6);">
+              Les opérations s'exécutent en parallèle. Idéal pour les API, bases de données, et fichiers.
+            </p>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── Conseils de rédaction ─── -->
+  <div class="guide-card">
+    <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.25rem;">
+      <span class="guide-badge" style="background: rgba(245,158,11,0.2); color: #fcd34d;">Conseils de rédaction</span>
+    </div>
+
+    <ul style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 0.75rem;">
+
+      <li style="display: flex; gap: 0.875rem; align-items: flex-start;">
+        <span style="flex-shrink: 0; width: 1.6rem; height: 1.6rem; border-radius: 50%; background: rgba(245,158,11,0.12); border: 1px solid rgba(245,158,11,0.25); display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 800; color: #fcd34d; margin-top: 0.1rem;">1</span>
+        <div>
+          <strong style="font-size: 0.88rem; display: block; margin-bottom: 0.15rem;">Gardez les deux colonnes équilibrées en longueur</strong>
+          <span style="opacity: 0.55; font-size: 0.8rem; line-height: 1.6;">
+            Une colonne beaucoup plus longue que l'autre brise l'harmonie visuelle. Visez un nombre de mots similaire dans chaque panel.
+          </span>
+        </div>
+      </li>
+
+      <li style="display: flex; gap: 0.875rem; align-items: flex-start;">
+        <span style="flex-shrink: 0; width: 1.6rem; height: 1.6rem; border-radius: 50%; background: rgba(245,158,11,0.12); border: 1px solid rgba(245,158,11,0.25); display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 800; color: #fcd34d; margin-top: 0.1rem;">2</span>
+        <div>
+          <strong style="font-size: 0.88rem; display: block; margin-bottom: 0.15rem;">Le "tag" de colonne peut contenir des emojis</strong>
+          <span style="opacity: 0.55; font-size: 0.8rem; line-height: 1.6;">
+            Les emojis comme &#9989; &#10060; &#128308; &#128994; &#128276; &#9888;&#65039; renforcent instantanément le sens de l'opposition et captent l'attention.
+          </span>
+        </div>
+      </li>
+
+      <li style="display: flex; gap: 0.875rem; align-items: flex-start;">
+        <span style="flex-shrink: 0; width: 1.6rem; height: 1.6rem; border-radius: 50%; background: rgba(245,158,11,0.12); border: 1px solid rgba(245,158,11,0.25); display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 800; color: #fcd34d; margin-top: 0.1rem;">3</span>
+        <div>
+          <strong style="font-size: 0.88rem; display: block; margin-bottom: 0.15rem;">Limitez à 60-80 mots par colonne</strong>
+          <span style="opacity: 0.55; font-size: 0.8rem; line-height: 1.6;">
+            L'espace disponible est réduit car le slide est divisé en deux. Un texte trop dense force l'auto-réduction de police et nuit à la lisibilité.
+          </span>
+        </div>
+      </li>
+
+      <li style="display: flex; gap: 0.875rem; align-items: flex-start;">
+        <span style="flex-shrink: 0; width: 1.6rem; height: 1.6rem; border-radius: 50%; background: rgba(245,158,11,0.12); border: 1px solid rgba(245,158,11,0.25); display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 800; color: #fcd34d; margin-top: 0.1rem;">4</span>
+        <div>
+          <strong style="font-size: 0.88rem; display: block; margin-bottom: 0.15rem;">Utilisez les mêmes critères de comparaison dans les deux colonnes</strong>
+          <span style="opacity: 0.55; font-size: 0.8rem; line-height: 1.6;">
+            Si la colonne 1 parle de performance, la colonne 2 aussi. La parallélisme structurel rend la comparaison plus percutante et facile à scanner.
+          </span>
+        </div>
+      </li>
+
+    </ul>
+  </div>
+
+</section>

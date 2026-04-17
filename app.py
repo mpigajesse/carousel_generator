@@ -260,6 +260,12 @@ def generator():
     return render_template('generator.html')
 
 
+@app.route('/guide')
+@require_login
+def guide():
+    return render_template('guide.html')
+
+
 # ─────────────────────────────────────────
 #  LIBRARY API — lecture disque (persistante)
 # ─────────────────────────────────────────

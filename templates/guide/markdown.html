@@ -1,0 +1,345 @@
+<section class="guide-section" id="markdown">
+  <div class="guide-section-header">
+    <span class="guide-step-num">07</span>
+    <h2 class="guide-section-title">Import Markdown</h2>
+  </div>
+
+  <p class="guide-section-lead">
+    Rédigez l'intégralité de votre carousel dans un fichier <code style="font-size:0.9em;background:rgba(255,255,255,0.08);padding:2px 7px;border-radius:5px;">.md</code>
+    et importez-le en un clic. Le parser détecte automatiquement la structure
+    et construit vos slides &mdash; aucune manipulation manuelle requise.
+  </p>
+
+  <!-- ── INTRO ──────────────────────────────────────────────────────────── -->
+  <div class="guide-card" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:28px;margin-bottom:var(--space-lg,2rem);">
+    <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:1.5rem;">
+      <span class="guide-badge" style="background:rgba(108,99,255,0.15);color:#8B84FF;border:1px solid rgba(108,99,255,0.3);border-radius:100px;padding:3px 10px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;">Importation</span>
+      <span style="opacity:0.5;font-size:0.8rem;">Deux méthodes disponibles</span>
+    </div>
+
+    <p style="font-size:0.875rem;line-height:1.7;opacity:0.8;margin:0 0 1.5rem;">
+      L'import Markdown vous permet de préparer tout votre contenu dans votre éditeur de texte préféré,
+      puis de l'importer directement dans CarouselGen. Les métadonnées (série, auteur, thème, format)
+      peuvent être déclarées dans un bloc YAML en tête de fichier.
+    </p>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+
+      <!-- Méthode 1 : bouton Import fichier -->
+      <div style="background:rgba(108,99,255,0.07);border:1px solid rgba(108,99,255,0.2);border-radius:10px;padding:1.1rem 1.25rem;">
+        <div style="display:flex;align-items:center;gap:0.6rem;margin-bottom:0.75rem;">
+          <span style="width:2.25rem;height:2.25rem;background:rgba(108,99,255,0.18);border:1px solid rgba(108,99,255,0.35);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;" aria-hidden="true">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8B84FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="17 8 12 3 7 8"/>
+              <line x1="12" y1="3" x2="12" y2="15"/>
+            </svg>
+          </span>
+          <strong style="font-size:0.9rem;">Bouton "Import fichier"</strong>
+        </div>
+        <p style="margin:0;font-size:0.82rem;line-height:1.65;opacity:0.7;">
+          Cliquez sur <strong>Import fichier</strong> dans la barre d'outils pour sélectionner
+          un fichier <code style="background:rgba(255,255,255,0.1);padding:1px 5px;border-radius:4px;">.md</code>
+          depuis votre ordinateur. Le contenu est parsé et les slides sont générés automatiquement.
+        </p>
+      </div>
+
+      <!-- Méthode 2 : éditeur Markdown intégré -->
+      <div style="background:rgba(16,185,129,0.06);border:1px solid rgba(16,185,129,0.2);border-radius:10px;padding:1.1rem 1.25rem;">
+        <div style="display:flex;align-items:center;gap:0.6rem;margin-bottom:0.75rem;">
+          <span style="width:2.25rem;height:2.25rem;background:rgba(16,185,129,0.15);border:1px solid rgba(16,185,129,0.3);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;" aria-hidden="true">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6ee7b7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="16 18 22 12 16 6"/>
+              <polyline points="8 6 2 12 8 18"/>
+            </svg>
+          </span>
+          <strong style="font-size:0.9rem;">Éditeur Markdown intégré</strong>
+        </div>
+        <p style="margin:0;font-size:0.82rem;line-height:1.65;opacity:0.7;">
+          Collez ou tapez directement votre Markdown dans l'éditeur intégré de l'application.
+          Les slides sont prévisualisés en temps réel au fur et à mesure de votre saisie.
+        </p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── YAML FRONTMATTER ───────────────────────────────────────────────── -->
+  <div class="guide-card" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:28px;margin-bottom:var(--space-lg,2rem);">
+    <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:1.5rem;">
+      <span class="guide-badge" style="background:rgba(108,99,255,0.15);color:#8B84FF;border:1px solid rgba(108,99,255,0.3);border-radius:100px;padding:3px 10px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;">YAML Frontmatter</span>
+      <span style="opacity:0.5;font-size:0.8rem;">Métadonnées du carousel</span>
+    </div>
+
+    <p style="font-size:0.875rem;line-height:1.7;opacity:0.8;margin:0 0 1.25rem;">
+      Ajoutez un bloc YAML délimité par <code style="background:rgba(255,255,255,0.08);padding:1px 6px;border-radius:4px;">---</code> en début de fichier
+      pour pré-remplir les paramètres du carousel. Tous les champs sont optionnels.
+    </p>
+
+    <!-- Bloc de code frontmatter -->
+    <div class="guide-code-block" style="background:#0D0D14;border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:20px 24px;font-family:'DM Mono',monospace;font-size:13px;line-height:1.7;color:#E2E2E8;overflow-x:auto;white-space:pre;margin-bottom:1.5rem;"><span style="color:rgba(255,255,255,0.35);">---</span>
+<span style="color:#8B84FF;">series</span><span style="color:rgba(255,255,255,0.5);">:</span> <span style="color:#6ee7b7;">"Mon Titre de Série"</span>
+<span style="color:#8B84FF;">author</span><span style="color:rgba(255,255,255,0.5);">:</span> <span style="color:#6ee7b7;">"@votre_pseudo"</span>
+<span style="color:#8B84FF;">platform</span><span style="color:rgba(255,255,255,0.5);">:</span> <span style="color:#fcd34d;">linkedin</span>   <span style="color:rgba(255,255,255,0.3);"># ou instagram</span>
+<span style="color:#8B84FF;">theme</span><span style="color:rgba(255,255,255,0.5);">:</span>    <span style="color:#fcd34d;">dark_purple</span> <span style="color:rgba(255,255,255,0.3);"># ou 'random'</span>
+<span style="color:#8B84FF;">format</span><span style="color:rgba(255,255,255,0.5);">:</span>   <span style="color:#fcd34d;">png</span>         <span style="color:rgba(255,255,255,0.3);"># ou pdf</span>
+<span style="color:rgba(255,255,255,0.35);">---</span></div>
+
+    <!-- Tableau des champs -->
+    <div style="overflow-x:auto;">
+      <table style="width:100%;border-collapse:collapse;font-size:0.825rem;line-height:1.6;">
+        <thead>
+          <tr style="border-bottom:1px solid rgba(255,255,255,0.1);">
+            <th style="text-align:left;padding:0.6rem 1rem 0.6rem 0;color:rgba(255,255,255,0.45);font-weight:600;font-size:0.72rem;text-transform:uppercase;letter-spacing:0.07em;white-space:nowrap;">Champ</th>
+            <th style="text-align:left;padding:0.6rem 1rem;color:rgba(255,255,255,0.45);font-weight:600;font-size:0.72rem;text-transform:uppercase;letter-spacing:0.07em;">Valeur</th>
+            <th style="text-align:left;padding:0.6rem 0 0.6rem 1rem;color:rgba(255,255,255,0.45);font-weight:600;font-size:0.72rem;text-transform:uppercase;letter-spacing:0.07em;">Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-bottom:1px solid rgba(255,255,255,0.05);">
+            <td style="padding:0.7rem 1rem 0.7rem 0;vertical-align:top;">
+              <code style="background:rgba(108,99,255,0.12);color:#8B84FF;padding:2px 7px;border-radius:5px;font-size:0.8rem;">series</code>
+            </td>
+            <td style="padding:0.7rem 1rem;vertical-align:top;opacity:0.7;">Texte libre</td>
+            <td style="padding:0.7rem 0 0.7rem 1rem;vertical-align:top;opacity:0.7;">Titre de la série, affiché comme badge de catégorie sur chaque slide</td>
+          </tr>
+          <tr style="border-bottom:1px solid rgba(255,255,255,0.05);">
+            <td style="padding:0.7rem 1rem 0.7rem 0;vertical-align:top;">
+              <code style="background:rgba(108,99,255,0.12);color:#8B84FF;padding:2px 7px;border-radius:5px;font-size:0.8rem;">author</code>
+            </td>
+            <td style="padding:0.7rem 1rem;vertical-align:top;opacity:0.7;">Texte libre</td>
+            <td style="padding:0.7rem 0 0.7rem 1rem;vertical-align:top;opacity:0.7;">Nom ou pseudo affiché en pied de page (ex.&nbsp;: <em>"@devfrancais"</em>)</td>
+          </tr>
+          <tr style="border-bottom:1px solid rgba(255,255,255,0.05);">
+            <td style="padding:0.7rem 1rem 0.7rem 0;vertical-align:top;">
+              <code style="background:rgba(108,99,255,0.12);color:#8B84FF;padding:2px 7px;border-radius:5px;font-size:0.8rem;">platform</code>
+            </td>
+            <td style="padding:0.7rem 1rem;vertical-align:top;opacity:0.7;"><code style="background:rgba(255,255,255,0.08);padding:1px 5px;border-radius:4px;">linkedin</code> / <code style="background:rgba(255,255,255,0.08);padding:1px 5px;border-radius:4px;">instagram</code></td>
+            <td style="padding:0.7rem 0 0.7rem 1rem;vertical-align:top;opacity:0.7;">Détermine le format de rendu (1080×1080 LinkedIn ou 1080×1350 Instagram)</td>
+          </tr>
+          <tr style="border-bottom:1px solid rgba(255,255,255,0.05);">
+            <td style="padding:0.7rem 1rem 0.7rem 0;vertical-align:top;">
+              <code style="background:rgba(108,99,255,0.12);color:#8B84FF;padding:2px 7px;border-radius:5px;font-size:0.8rem;">theme</code>
+            </td>
+            <td style="padding:0.7rem 1rem;vertical-align:top;opacity:0.7;">Nom de thème ou <code style="background:rgba(255,255,255,0.08);padding:1px 5px;border-radius:4px;">random</code></td>
+            <td style="padding:0.7rem 0 0.7rem 1rem;vertical-align:top;opacity:0.7;">Thème couleur appliqué à tous les slides (ex.&nbsp;: <em>dark_purple</em>, <em>cyber_neon</em>)</td>
+          </tr>
+          <tr>
+            <td style="padding:0.7rem 1rem 0.7rem 0;vertical-align:top;">
+              <code style="background:rgba(108,99,255,0.12);color:#8B84FF;padding:2px 7px;border-radius:5px;font-size:0.8rem;">format</code>
+            </td>
+            <td style="padding:0.7rem 1rem;vertical-align:top;opacity:0.7;"><code style="background:rgba(255,255,255,0.08);padding:1px 5px;border-radius:4px;">png</code> / <code style="background:rgba(255,255,255,0.08);padding:1px 5px;border-radius:4px;">pdf</code></td>
+            <td style="padding:0.7rem 0 0.7rem 1rem;vertical-align:top;opacity:0.7;">Format de sortie — PNG individuel (ZIP) ou PDF fusionné</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ── STRUCTURE PAR SÉPARATEURS ─────────────────────────────────────── -->
+  <div class="guide-card" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:28px;margin-bottom:var(--space-lg,2rem);">
+    <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:1.5rem;">
+      <span class="guide-badge" style="background:rgba(245,158,11,0.15);color:#fcd34d;border:1px solid rgba(245,158,11,0.3);border-radius:100px;padding:3px 10px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;">Séparateurs</span>
+      <span style="opacity:0.5;font-size:0.8rem;">Méthode explicite — recommandée</span>
+    </div>
+
+    <p style="font-size:0.875rem;line-height:1.7;opacity:0.8;margin:0 0 1.25rem;">
+      Utilisez <code style="background:rgba(255,255,255,0.08);padding:1px 6px;border-radius:4px;">---</code> pour délimiter chaque slide.
+      Le premier bloc <code style="background:rgba(255,255,255,0.08);padding:1px 6px;border-radius:4px;">---</code> ferme le frontmatter YAML ;
+      les suivants créent de nouveaux slides. Un titre <code style="background:rgba(255,255,255,0.08);padding:1px 6px;border-radius:4px;">#</code>
+      génère une slide <strong>cover</strong>, un titre <code style="background:rgba(255,255,255,0.08);padding:1px 6px;border-radius:4px;">##</code>
+      génère une slide <strong>content</strong>.
+    </p>
+
+    <!-- Bloc de code exemple complet -->
+    <div class="guide-code-block" style="background:#0D0D14;border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:20px 24px;font-family:'DM Mono',monospace;font-size:13px;line-height:1.7;color:#E2E2E8;overflow-x:auto;white-space:pre;margin-bottom:1.5rem;"><span style="color:rgba(255,255,255,0.35);">---</span>
+<span style="color:#8B84FF;">series</span><span style="color:rgba(255,255,255,0.5);">:</span> <span style="color:#6ee7b7;">"Docker pour Débutants"</span>
+<span style="color:#8B84FF;">author</span><span style="color:rgba(255,255,255,0.5);">:</span> <span style="color:#6ee7b7;">"@devfrancais"</span>
+<span style="color:rgba(255,255,255,0.35);">---</span>
+
+<span style="color:#fcd34d;"># Docker pour Débutants</span>   <span style="color:rgba(255,255,255,0.3);">← slide cover</span>
+
+<span style="color:rgba(255,255,255,0.35);">---</span>                          <span style="color:rgba(255,255,255,0.3);">← séparateur → nouvelle slide</span>
+
+<span style="color:#93c5fd;">## Slide 1 : Pourquoi Docker ?</span>   <span style="color:rgba(255,255,255,0.3);">← slide content</span>
+
+Docker isole vos applications dans des <span style="color:#E2E2E8;">**conteneurs**</span> légers.
+
+<span style="color:rgba(255,255,255,0.35);">---</span>                          <span style="color:rgba(255,255,255,0.3);">← séparateur → nouvelle slide</span>
+
+<span style="color:#93c5fd;">## Slide 2 : Installation</span>
+
+<span style="color:rgba(255,255,255,0.5);">```</span>bash
+apt-get install docker.io
+<span style="color:rgba(255,255,255,0.5);">```</span></div>
+
+    <!-- Légende des éléments -->
+    <div style="display:flex;flex-direction:column;gap:0.625rem;">
+      <div style="display:flex;align-items:center;gap:0.75rem;font-size:0.825rem;">
+        <code style="background:rgba(255,255,255,0.08);padding:2px 8px;border-radius:5px;flex-shrink:0;">---</code>
+        <span style="opacity:0.7;">Premier <code style="background:rgba(255,255,255,0.06);padding:1px 5px;border-radius:4px;">---</code> = fin du frontmatter YAML ; les suivants = séparateur de slide</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:0.75rem;font-size:0.825rem;">
+        <code style="background:rgba(252,211,77,0.12);color:#fcd34d;padding:2px 8px;border-radius:5px;flex-shrink:0;">#</code>
+        <span style="opacity:0.7;">Titre de niveau 1 = slide <strong>cover</strong> (grande mise en avant, pas de topbar)</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:0.75rem;font-size:0.825rem;">
+        <code style="background:rgba(147,197,253,0.12);color:#93c5fd;padding:2px 8px;border-radius:5px;flex-shrink:0;">##</code>
+        <span style="opacity:0.7;">Titre de niveau 2 = slide <strong>content</strong> (badge + titre + corps)</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── STRUCTURE PAR TITRES ───────────────────────────────────────────── -->
+  <div class="guide-card" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:28px;margin-bottom:var(--space-lg,2rem);">
+    <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:1.5rem;">
+      <span class="guide-badge" style="background:rgba(16,185,129,0.15);color:#6ee7b7;border:1px solid rgba(16,185,129,0.3);border-radius:100px;padding:3px 10px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;">Hiérarchie de titres</span>
+      <span style="opacity:0.5;font-size:0.8rem;">Méthode alternative — sans séparateurs</span>
+    </div>
+
+    <p style="font-size:0.875rem;line-height:1.7;opacity:0.8;margin:0 0 1.5rem;">
+      Si vous préférez ne pas insérer de <code style="background:rgba(255,255,255,0.08);padding:1px 6px;border-radius:4px;">---</code> manuellement,
+      le parser utilise la hiérarchie des titres Markdown pour découper le contenu en slides.
+      Chaque changement de niveau de titre crée une nouvelle slide ou section.
+    </p>
+
+    <!-- Tableau hiérarchie -->
+    <div style="display:flex;flex-direction:column;gap:0.75rem;margin-bottom:1.5rem;">
+
+      <div style="display:flex;gap:1rem;align-items:flex-start;background:rgba(252,211,77,0.05);border:1px solid rgba(252,211,77,0.15);border-radius:8px;padding:0.875rem 1rem;">
+        <code style="flex-shrink:0;background:rgba(252,211,77,0.15);color:#fcd34d;padding:3px 10px;border-radius:6px;font-family:'DM Mono',monospace;font-size:0.8rem;font-weight:700;">#</code>
+        <div>
+          <strong style="display:block;font-size:0.875rem;margin-bottom:0.2rem;">Titre de niveau 1</strong>
+          <span style="font-size:0.8rem;opacity:0.65;">Génère une slide <strong>cover</strong> — titre principal du carousel, affiché en grand</span>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:1rem;align-items:flex-start;background:rgba(147,197,253,0.05);border:1px solid rgba(147,197,253,0.15);border-radius:8px;padding:0.875rem 1rem;">
+        <code style="flex-shrink:0;background:rgba(147,197,253,0.15);color:#93c5fd;padding:3px 10px;border-radius:6px;font-family:'DM Mono',monospace;font-size:0.8rem;font-weight:700;">##</code>
+        <div>
+          <strong style="display:block;font-size:0.875rem;margin-bottom:0.2rem;">Titre de niveau 2</strong>
+          <span style="font-size:0.8rem;opacity:0.65;">Crée une <strong>nouvelle slide content</strong> — chaque <code style="background:rgba(255,255,255,0.08);padding:1px 5px;border-radius:4px;">##</code> déclenche un nouveau slide</span>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:1rem;align-items:flex-start;background:rgba(110,231,183,0.05);border:1px solid rgba(110,231,183,0.15);border-radius:8px;padding:0.875rem 1rem;">
+        <code style="flex-shrink:0;background:rgba(110,231,183,0.15);color:#6ee7b7;padding:3px 10px;border-radius:6px;font-family:'DM Mono',monospace;font-size:0.8rem;font-weight:700;">###</code>
+        <div>
+          <strong style="display:block;font-size:0.875rem;margin-bottom:0.2rem;">Titre de niveau 3</strong>
+          <span style="font-size:0.8rem;opacity:0.65;">Sous-titre <strong>dans la même slide</strong> — ne crée pas de nouvelle slide, enrichit la slide parente</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Callout info hiérarchie -->
+    <div class="guide-callout-info" style="background:rgba(108,99,255,0.08);border:1px solid rgba(108,99,255,0.2);border-radius:10px;padding:16px;font-size:13px;color:rgba(255,255,255,0.7);display:flex;gap:0.75rem;align-items:flex-start;">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#8B84FF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:1px;" aria-hidden="true">
+        <circle cx="12" cy="12" r="10"/>
+        <line x1="12" y1="8" x2="12" y2="12"/>
+        <line x1="12" y1="16" x2="12.01" y2="16"/>
+      </svg>
+      <span>
+        Le parser choisit automatiquement la méthode hiérarchie dès qu'aucun séparateur
+        <code style="background:rgba(255,255,255,0.08);padding:1px 5px;border-radius:4px;">---</code> n'est présent
+        après le frontmatter. Les deux méthodes produisent le même résultat final.
+      </span>
+    </div>
+  </div>
+
+  <!-- ── CONSEILS ────────────────────────────────────────────────────────── -->
+  <div class="guide-card" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:28px;margin-bottom:var(--space-lg,2rem);">
+    <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:1.5rem;">
+      <span class="guide-badge" style="background:rgba(139,92,246,0.15);color:#c4b5fd;border:1px solid rgba(139,92,246,0.3);border-radius:100px;padding:3px 10px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;">Conseils</span>
+      <span style="opacity:0.5;font-size:0.8rem;">Meilleures pratiques de rédaction</span>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:0.875rem;margin-bottom:1.5rem;">
+
+      <!-- Encodage -->
+      <div style="display:flex;gap:0.875rem;align-items:flex-start;">
+        <span style="flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;width:1.625rem;height:1.625rem;border-radius:5px;background:rgba(108,99,255,0.15);border:1px solid rgba(108,99,255,0.3);margin-top:0.05rem;" aria-hidden="true">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#8B84FF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+        </span>
+        <p style="margin:0;font-size:0.875rem;line-height:1.65;opacity:0.8;">
+          <strong>Encodage UTF-8</strong> — Sauvegardez votre fichier en UTF-8 pour garantir l'affichage
+          correct des caractères accentués et des emoji.
+        </p>
+      </div>
+
+      <!-- Longueur par slide -->
+      <div style="display:flex;gap:0.875rem;align-items:flex-start;">
+        <span style="flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;width:1.625rem;height:1.625rem;border-radius:5px;background:rgba(108,99,255,0.15);border:1px solid rgba(108,99,255,0.3);margin-top:0.05rem;" aria-hidden="true">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#8B84FF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+        </span>
+        <p style="margin:0;font-size:0.875rem;line-height:1.65;opacity:0.8;">
+          <strong>Maximum 150 mots par slide</strong> — Au-delà, le texte sera tronqué ou redimensionné
+          automatiquement. Privilégiez des formulations concises et percutantes.
+        </p>
+      </div>
+
+      <!-- Gras -->
+      <div style="display:flex;gap:0.875rem;align-items:flex-start;">
+        <span style="flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;width:1.625rem;height:1.625rem;border-radius:5px;background:rgba(108,99,255,0.15);border:1px solid rgba(108,99,255,0.3);margin-top:0.05rem;" aria-hidden="true">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#8B84FF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+        </span>
+        <p style="margin:0;font-size:0.875rem;line-height:1.65;opacity:0.8;">
+          <strong>Gras <code style="background:rgba(255,255,255,0.08);padding:1px 5px;border-radius:4px;">**texte**</code></strong>
+          — Converti en classe <code style="background:rgba(255,255,255,0.08);padding:1px 5px;border-radius:4px;">.bold</code>
+          dans le corps du slide, affichant le texte en blanc éclatant sur fond coloré.
+        </p>
+      </div>
+
+      <!-- Code inline -->
+      <div style="display:flex;gap:0.875rem;align-items:flex-start;">
+        <span style="flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;width:1.625rem;height:1.625rem;border-radius:5px;background:rgba(108,99,255,0.15);border:1px solid rgba(108,99,255,0.3);margin-top:0.05rem;" aria-hidden="true">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#8B84FF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+        </span>
+        <p style="margin:0;font-size:0.875rem;line-height:1.65;opacity:0.8;">
+          <strong>Code inline <code style="background:rgba(255,255,255,0.08);padding:1px 5px;border-radius:4px;">`code`</code></strong>
+          — Rendu en balise <code style="background:rgba(255,255,255,0.08);padding:1px 5px;border-radius:4px;">&lt;code&gt;</code>
+          avec police monospace et fond sombre dans le slide.
+        </p>
+      </div>
+
+      <!-- Listes à puces -->
+      <div style="display:flex;gap:0.875rem;align-items:flex-start;">
+        <span style="flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;width:1.625rem;height:1.625rem;border-radius:5px;background:rgba(108,99,255,0.15);border:1px solid rgba(108,99,255,0.3);margin-top:0.05rem;" aria-hidden="true">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#8B84FF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+        </span>
+        <p style="margin:0;font-size:0.875rem;line-height:1.65;opacity:0.8;">
+          <strong>Listes à puces <code style="background:rgba(255,255,255,0.08);padding:1px 5px;border-radius:4px;">- item</code></strong>
+          — Converties en <code style="background:rgba(255,255,255,0.08);padding:1px 5px;border-radius:4px;">&lt;ul class="bullets"&gt;</code>
+          avec les styles de puces stylisés du thème actif.
+        </p>
+      </div>
+
+    </div>
+
+    <!-- Tip : détection automatique -->
+    <div class="guide-tip" style="background:rgba(99,102,241,0.09);border-left:3px solid rgba(99,102,241,0.55);border-radius:0 8px 8px 0;padding:0.875rem 1.1rem;font-size:0.835rem;line-height:1.65;">
+      <strong style="display:block;margin-bottom:0.25rem;color:#a5b4fc;">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:4px;" aria-hidden="true">
+          <circle cx="12" cy="12" r="10"/>
+          <line x1="12" y1="8" x2="12" y2="12"/>
+          <line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+        Détection automatique de structure
+      </strong>
+      Le parser détecte automatiquement la structure &mdash; vous n'avez pas besoin de choisir manuellement
+      le mode. Il évalue la présence de séparateurs, la hiérarchie des titres, les listes dominantes
+      et le contenu non structuré, puis applique la stratégie la plus adaptée.
+    </div>
+  </div>
+
+</section>

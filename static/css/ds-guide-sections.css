@@ -1,0 +1,411 @@
+/*
+ * ds-guide-sections.css
+ * CarouselGen — Guide page section components
+ *
+ * Loaded AFTER ds-guide.css and ds-guide-layout.css.
+ * Does not redefine tokens, base resets, or layout utilities from those files.
+ * All rules are scoped inside @layer ds-guide-sections.
+ */
+
+@layer ds-guide-sections {
+
+  /* =========================================================
+     FIELDS TABLE
+     Used inside slide-type reference sections to list YAML
+     fields with name / required / description columns.
+     ========================================================= */
+
+  .guide-fields-table {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    border-radius: var(--ds-r-lg);
+    overflow: hidden;
+    border: 1px solid var(--ds-border);
+  }
+
+  .guide-field-row {
+    display: grid;
+    grid-template-columns: 120px 90px 1fr;
+    align-items: start;
+    gap: 16px;
+    padding: 14px 16px;
+    background: var(--ds-surface);
+    font-size: 13px;
+  }
+
+  .guide-field-row:not(:last-child) {
+    border-bottom: 1px solid var(--ds-border);
+  }
+
+  .guide-field-row:nth-child(even) {
+    background: var(--ds-bg-3);
+  }
+
+  /* Field name — monospaced key label */
+  .guide-field-name {
+    font-family: var(--ds-font-mono);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--ds-text);
+  }
+
+  /* Required / optional badge shared base */
+  .guide-field-required {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 2px 7px;
+    border-radius: var(--ds-r-full);
+    white-space: nowrap;
+  }
+
+  /* Required variant — accent tint */
+  .guide-field-required.req {
+    background: rgba(108, 99, 255, 0.15);
+    color: var(--ds-accent-2);
+    border: 1px solid var(--ds-border-accent);
+  }
+
+  /* Optional variant — subtle muted */
+  .guide-field-required.opt {
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--ds-text-3);
+    border: 1px solid var(--ds-border);
+  }
+
+  /* Description cell */
+  .guide-field-desc {
+    color: var(--ds-text-2);
+    line-height: 1.55;
+  }
+
+
+  /* =========================================================
+     FORMAT TABLE
+     Body-formatting reference: syntax tag / live preview /
+     short description.
+     ========================================================= */
+
+  .guide-format-table {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .guide-format-row {
+    display: grid;
+    grid-template-columns: 100px 1fr 1fr;
+    gap: 14px;
+    align-items: center;
+    padding: 12px 16px;
+    background: var(--ds-surface);
+    border: 1px solid var(--ds-border);
+    border-radius: var(--ds-r-md);
+    font-size: 13px;
+  }
+
+  /* Syntax tag — monospaced, accent color */
+  .guide-format-tag {
+    font-family: var(--ds-font-mono);
+    font-size: 12px;
+    color: var(--ds-accent-2);
+  }
+
+  /* Inline rendered preview */
+  .guide-format-preview {
+    font-size: 12px;
+  }
+
+  /* Explanation of what the tag does */
+  .guide-format-desc {
+    font-size: 12px;
+    color: var(--ds-text-2);
+  }
+
+
+  /* =========================================================
+     THEME PREVIEW GRID
+     Color-swatch grid displayed in the author/theme section.
+     ========================================================= */
+
+  .guide-theme-preview {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(88px, 1fr));
+    gap: 8px;
+  }
+
+  /* Individual swatch card */
+  .guide-theme-swatch {
+    border-radius: var(--ds-r-lg);
+    padding: 10px 8px;
+    border: 1px solid var(--ds-border);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    cursor: pointer;
+    transition: border-color var(--ds-t-base) var(--ds-ease);
+    text-align: center;
+  }
+
+  .guide-theme-swatch:hover {
+    border-color: var(--ds-border-strong);
+  }
+
+  /* Row of color dots representing the theme palette */
+  .guide-theme-dots {
+    display: flex;
+    justify-content: center;
+    gap: 4px;
+  }
+
+  .guide-theme-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+  }
+
+  /* Theme name label below the dots */
+  .guide-theme-name {
+    font-size: 9px;
+    color: var(--ds-text-3);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-family: var(--ds-font-mono);
+    line-height: 1.3;
+  }
+
+
+  /* =========================================================
+     FIELD DEMO MOCK
+     Visual form-field mockup used inside guide sections to
+     illustrate how a real field looks.
+     ========================================================= */
+
+  .guide-field-demo {
+    background: var(--ds-bg-3);
+    border: 1px solid var(--ds-border);
+    border-radius: var(--ds-r-xl);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .guide-field-demo-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  /* Icon slot on the left of each demo row */
+  .guide-field-demo-icon {
+    width: 32px;
+    height: 32px;
+    background: var(--ds-surface);
+    border: 1px solid var(--ds-border);
+    border-radius: var(--ds-r-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ds-text-3);
+    flex-shrink: 0;
+  }
+
+  /* Simulated text input */
+  .guide-field-demo-input {
+    flex: 1;
+    background: var(--ds-surface);
+    border: 1px solid var(--ds-border);
+    border-radius: var(--ds-r-md);
+    padding: 8px 12px;
+    font-size: 13px;
+    color: var(--ds-text);
+    font-family: var(--ds-font-sans);
+  }
+
+  /* Small label to the left of an input */
+  .guide-field-demo-label {
+    font-size: 11px;
+    color: var(--ds-text-3);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    min-width: 70px;
+  }
+
+
+  /* =========================================================
+     SLIDE MOCK
+     Scaled-down visual preview of a carousel slide embedded
+     directly in the guide for illustration.
+     ========================================================= */
+
+  .guide-slide-mock {
+    border-radius: var(--ds-r-xl);
+    overflow: hidden;
+    background: #0a0a12;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    position: relative;
+  }
+
+  /* 1:1 square — matches Instagram carousel dimensions */
+  .guide-slide-mock.aspect-square {
+    aspect-ratio: 1 / 1;
+  }
+
+  /* 4:5 portrait — alternate Instagram format */
+  .guide-slide-mock.aspect-portrait {
+    aspect-ratio: 4 / 5;
+  }
+
+
+  /* =========================================================
+     USE CASE GRID
+     Tile grid shown in the "compare" slide section to list
+     common real-world applications.
+     ========================================================= */
+
+  .guide-usecase-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 8px;
+  }
+
+  .guide-usecase-item {
+    background: var(--ds-bg-3);
+    border: 1px solid var(--ds-border);
+    border-radius: var(--ds-r-lg);
+    padding: 14px 12px;
+    text-align: center;
+    transition: border-color var(--ds-t-base) var(--ds-ease);
+  }
+
+  .guide-usecase-item:hover {
+    border-color: var(--ds-border-strong);
+  }
+
+  /* Large emoji icon at the top of each tile */
+  .guide-usecase-emoji {
+    font-size: 24px;
+    margin-bottom: 6px;
+  }
+
+  /* Primary tile label */
+  .guide-usecase-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--ds-text);
+    margin-bottom: 2px;
+  }
+
+  /* Secondary sub-label */
+  .guide-usecase-sub {
+    font-size: 10px;
+    color: var(--ds-text-3);
+  }
+
+
+  /* =========================================================
+     BEST PRACTICES CHECKLIST
+     Vertical list of check items with a success-colored icon.
+     ========================================================= */
+
+  .guide-checklist {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .guide-check-item {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    font-size: 13px;
+    color: var(--ds-text-2);
+    line-height: 1.6;
+  }
+
+  /* Circular checkmark badge */
+  .guide-check-icon {
+    width: 20px;
+    height: 20px;
+    background: rgba(52, 211, 153, 0.15);
+    border: 1px solid rgba(52, 211, 153, 0.3);
+    border-radius: var(--ds-r-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ds-success);
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+
+  /* =========================================================
+     FAQ ACCORDION
+     Native <details>/<summary> accordion with custom indicator
+     and accent highlight when open.
+     ========================================================= */
+
+  details.guide-faq-item {
+    border: 1px solid var(--ds-border);
+    border-radius: var(--ds-r-lg);
+    overflow: hidden;
+    transition: border-color var(--ds-t-base) var(--ds-ease);
+  }
+
+  /* Highlight open item with accent border */
+  details.guide-faq-item[open] {
+    border-color: var(--ds-border-accent);
+  }
+
+  /* Stack consecutive items with a small gap */
+  details.guide-faq-item + details.guide-faq-item {
+    margin-top: 8px;
+  }
+
+  /* Summary / trigger row */
+  details.guide-faq-item summary {
+    padding: 16px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    color: var(--ds-text);
+    list-style: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  /* Remove the browser-default disclosure triangle */
+  details.guide-faq-item summary::-webkit-details-marker {
+    display: none;
+  }
+
+  /* Custom open/close indicator — collapsed shows '+' */
+  details.guide-faq-item summary::after {
+    content: '+';
+    font-family: var(--ds-font-mono);
+    color: var(--ds-text-3);
+    font-size: 16px;
+    transition: transform var(--ds-t-base) var(--ds-ease);
+  }
+
+  /* Swap to '×' with accent color when the item is expanded */
+  details.guide-faq-item[open] summary::after {
+    content: '×';
+    color: var(--ds-accent);
+  }
+
+  /* Answer body — revealed when item is open */
+  .guide-faq-answer {
+    padding: 0 20px 16px;
+    font-size: 13px;
+    color: var(--ds-text-2);
+    line-height: 1.7;
+    border-top: 1px solid var(--ds-border);
+  }
+
+} /* end @layer ds-guide-sections */

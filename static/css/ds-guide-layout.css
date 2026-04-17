@@ -1,0 +1,336 @@
+/*
+ * ds-guide-layout.css
+ * Layout and structural styles for the CarouselGen guide page (guide.html).
+ * Loaded AFTER ds-guide.css — base component classes are already defined there.
+ * This file owns: section containers, cards, badges, flow diagrams,
+ * feature grids, compare layouts, callouts, and how-to panels.
+ */
+
+@layer ds-guide-layout {
+
+  /* ─────────────────────────────────────────────
+   * SECTION CONTAINER
+   * Top-level wrapper for each guide section.
+   * Stacks its child cards with consistent gap.
+   * ───────────────────────────────────────────── */
+  .guide-section {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  /* ─────────────────────────────────────────────
+   * SECTION HEADER
+   * Flex row that pairs a numbered badge with the
+   * section title. The badge (.guide-step-num) is
+   * styled here for its header-context appearance.
+   * ───────────────────────────────────────────── */
+  .guide-section-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 4px;
+  }
+
+  /* Large section-number badge inside the header */
+  .guide-section-header .guide-step-num {
+    font-family: var(--ds-font-mono);
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--ds-accent);
+    background: var(--ds-accent-muted);
+    border: 1px solid var(--ds-border-accent);
+    border-radius: var(--ds-r-md);
+    padding: 5px 10px;
+    flex-shrink: 0;
+    letter-spacing: 0.05em;
+  }
+
+  /* ─────────────────────────────────────────────
+   * CARD
+   * Primary glass-dark content container.
+   * Gap between sibling cards is provided by the
+   * parent .guide-section flex gap.
+   * ───────────────────────────────────────────── */
+  .guide-card {
+    background: var(--ds-surface);
+    border: 1px solid var(--ds-border);
+    border-radius: var(--ds-r-xl);
+    padding: 28px;
+    transition: border-color var(--ds-t-base) var(--ds-ease);
+  }
+
+  .guide-card:hover {
+    border-color: var(--ds-border-strong);
+  }
+
+  /* Consecutive cards rely on parent flex gap; no extra margin needed */
+  .guide-card + .guide-card {
+    margin-top: 0;
+  }
+
+  /* ─────────────────────────────────────────────
+   * BADGE
+   * Small monospaced accent pill for labelling
+   * sections, statuses, or categories.
+   * ───────────────────────────────────────────── */
+  .guide-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 10px;
+    background: var(--ds-accent-muted);
+    color: var(--ds-accent-2);
+    border: 1px solid var(--ds-border-accent);
+    border-radius: var(--ds-r-full);
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    font-family: var(--ds-font-mono);
+    flex-shrink: 0;
+  }
+
+  /* ─────────────────────────────────────────────
+   * WORKFLOW FLOW DIAGRAM
+   * Horizontal strip of numbered steps separated
+   * by arrow connectors.
+   * ───────────────────────────────────────────── */
+  .guide-flow {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  /* Individual step column */
+  .guide-flow-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    text-align: center;
+    flex: 1;
+    min-width: 100px;
+    max-width: 140px;
+  }
+
+  /* Accent icon box */
+  .guide-flow-icon {
+    width: 44px;
+    height: 44px;
+    background: var(--ds-accent-muted);
+    border: 1px solid var(--ds-border-accent);
+    border-radius: var(--ds-r-lg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ds-accent);
+    flex-shrink: 0;
+  }
+
+  /* Step index label (e.g. "01") */
+  .guide-flow-num {
+    font-family: var(--ds-font-mono);
+    font-size: 10px;
+    color: var(--ds-accent);
+    font-weight: 700;
+  }
+
+  /* Text content beneath the icon */
+  .guide-flow-content {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    align-items: center;
+  }
+
+  .guide-flow-content strong {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ds-text);
+  }
+
+  .guide-flow-desc {
+    font-size: 11px;
+    color: var(--ds-text-3);
+    line-height: 1.5;
+  }
+
+  /* Arrow connector between steps */
+  .guide-flow-arrow {
+    color: var(--ds-text-3);
+    display: flex;
+    align-items: center;
+    padding-top: 14px; /* vertically aligns with icon centre */
+    flex-shrink: 0;
+  }
+
+  /* ─────────────────────────────────────────────
+   * FEATURE GRID
+   * Responsive auto-fill grid of feature cards.
+   * ───────────────────────────────────────────── */
+  .guide-feature-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 12px;
+  }
+
+  .guide-feature {
+    background: var(--ds-bg-3);
+    border: 1px solid var(--ds-border);
+    border-radius: var(--ds-r-lg);
+    padding: 18px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    transition: border-color var(--ds-t-base) var(--ds-ease);
+  }
+
+  .guide-feature:hover {
+    border-color: var(--ds-border-strong);
+  }
+
+  .guide-feature-icon {
+    color: var(--ds-accent);
+    flex-shrink: 0;
+  }
+
+  .guide-feature-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ds-text);
+  }
+
+  .guide-feature-desc {
+    font-size: 12px;
+    color: var(--ds-text-2);
+    line-height: 1.5;
+  }
+
+  /* ─────────────────────────────────────────────
+   * COMPARE GRID
+   * Side-by-side two-column platform comparison.
+   * ───────────────────────────────────────────── */
+  .guide-compare-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  .guide-platform-card {
+    background: var(--ds-bg-3);
+    border: 1px solid var(--ds-border);
+    border-radius: var(--ds-r-xl);
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    transition: border-color var(--ds-t-base) var(--ds-ease);
+  }
+
+  .guide-platform-card:hover {
+    border-color: var(--ds-border-strong);
+  }
+
+  /* ─────────────────────────────────────────────
+   * CALLOUT BLOCKS
+   * Contextual info / warning notices inside cards.
+   * ───────────────────────────────────────────── */
+  .guide-callout {
+    border-radius: var(--ds-r-lg);
+    padding: 16px 18px;
+    font-size: 13px;
+    line-height: 1.6;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+
+  /* Informational — purple tint */
+  .guide-callout-info {
+    background: rgba(108, 99, 255, 0.08);
+    border: 1px solid rgba(108, 99, 255, 0.2);
+    color: var(--ds-text-2);
+  }
+
+  /* Warning — amber tint */
+  .guide-callout-warning {
+    background: rgba(245, 158, 11, 0.08);
+    border: 1px solid rgba(245, 158, 11, 0.25);
+    color: rgba(245, 158, 11, 0.85);
+  }
+
+  /* Keep icon pinned to the first line of text */
+  .guide-callout svg,
+  .guide-callout .guide-callout-icon {
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  /* ─────────────────────────────────────────────
+   * HOW-TO PANEL
+   * Two-column layout: step list on the left,
+   * an optional illustration panel on the right.
+   * ───────────────────────────────────────────── */
+  .guide-how-to {
+    display: grid;
+    grid-template-columns: 1fr 280px;
+    gap: 28px;
+    align-items: start;
+  }
+
+  /* Visual mock / screenshot placeholder on the right */
+  .guide-sidebar-illustration {
+    background: var(--ds-bg-5);
+    border: 1px solid var(--ds-border);
+    border-radius: var(--ds-r-xl);
+    overflow: hidden;
+    padding: 16px;
+    min-height: 200px;
+  }
+
+} /* end @layer ds-guide-layout */
+
+/* ───────────────────────────────────────────────────
+ * RESPONSIVE OVERRIDES
+ * Kept outside @layer so specificity is unambiguous
+ * and no cascade-layer ordering conflict occurs.
+ * ─────────────────────────────────────────────────── */
+@media (max-width: 640px) {
+  /* Compare grid collapses to single column */
+  .guide-compare-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* How-to panel collapses; illustration hidden to save space */
+  .guide-how-to {
+    grid-template-columns: 1fr;
+  }
+
+  .guide-how-to .guide-sidebar-illustration {
+    display: none;
+  }
+
+  /* Flow diagram becomes a vertical list */
+  .guide-flow {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .guide-flow-step {
+    flex-direction: row;
+    text-align: left;
+    max-width: 100%;
+  }
+
+  /* Arrow rotates to point downward between vertical steps */
+  .guide-flow-arrow {
+    transform: rotate(90deg);
+    padding-top: 0;
+  }
+
+  /* Tighter minimum so cards fit two-per-row on small phones */
+  .guide-feature-grid {
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  }
+}

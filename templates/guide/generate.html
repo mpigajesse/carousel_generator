@@ -1,0 +1,769 @@
+<section class="guide-section" id="generate">
+  <div class="guide-section-header">
+    <span class="guide-step-num">08</span>
+    <h2 class="guide-section-title">Générer et télécharger</h2>
+  </div>
+
+  <p class="guide-section-lead">
+    Une fois vos slides configurées, la génération est lancée d'un seul clic.
+    Playwright photographie chaque slide en haute résolution et assemble les fichiers
+    prêts à publier sur LinkedIn ou Instagram.
+  </p>
+
+  <!-- ── 1. Le bouton Générer ──────────────────────────────────── -->
+  <div class="guide-card" style="margin-bottom: var(--ds-space-8);">
+    <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.5rem;">
+      <span class="guide-badge">Lancer la génération</span>
+    </div>
+
+    <p style="font-size: var(--ds-text-sm); color: var(--ds-text-2); line-height: var(--ds-leading-relaxed); margin: 0 0 1.5rem;">
+      Le bouton <strong style="color: var(--ds-text);">Générer le carousel</strong> se trouve en bas
+      du panneau latéral, sous la liste des slides. Il est toujours visible, quelle que soit
+      la hauteur du contenu. Un clic déclenche une génération asynchrone&nbsp;: chaque slide est
+      rendue par Playwright en headless Chromium puis capturée en screenshot haute résolution.
+    </p>
+
+    <!-- Mock visuel du bouton -->
+    <div class="gen-button-mock-wrap" role="img" aria-label="Aperçu du bouton Générer le carousel">
+      <div class="gen-button-mock">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <polygon points="5 3 19 12 5 21 5 3"/>
+        </svg>
+        Générer le carousel
+      </div>
+      <span class="gen-button-mock-label">↑ Panneau latéral — bas de page</span>
+    </div>
+
+    <!-- Résolutions générées -->
+    <div class="gen-res-row" style="margin-top: 1.5rem;">
+      <div class="gen-res-pill">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+        </svg>
+        LinkedIn — 1080 × 1080 px
+      </div>
+      <div class="gen-res-pill gen-res-pill--ig">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+          <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+          <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+        </svg>
+        Instagram — 1080 × 1350 px
+      </div>
+    </div>
+
+    <div class="guide-tip" style="margin-top: 1.5rem;">
+      La génération prend <strong>~3–8 secondes</strong> selon le nombre de slides.
+      Ne fermez pas l'onglet pendant ce temps — le job tourne en arrière-plan sur le serveur.
+    </div>
+  </div>
+
+  <!-- ── 2. Formats disponibles ────────────────────────────────── -->
+  <div class="guide-card" style="margin-bottom: var(--ds-space-8);">
+    <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.5rem;">
+      <span class="guide-badge">Formats disponibles</span>
+    </div>
+
+    <p style="font-size: var(--ds-text-sm); color: var(--ds-text-2); line-height: var(--ds-leading-relaxed); margin: 0 0 1.5rem;">
+      Choisissez le format de sortie avant de lancer la génération via le sélecteur
+      <strong style="color: var(--ds-text);">Format</strong> dans le panneau latéral.
+      Deux options sont disponibles selon votre usage.
+    </p>
+
+    <div class="gen-format-grid">
+
+      <!-- PNG -->
+      <div class="gen-format-card">
+        <div class="gen-format-card__icon gen-format-card__icon--png" aria-hidden="true">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+            <circle cx="8.5" cy="8.5" r="1.5"/>
+            <polyline points="21 15 16 10 5 21"/>
+          </svg>
+        </div>
+        <div class="gen-format-card__body">
+          <h3 class="gen-format-card__title">PNG</h3>
+          <p class="gen-format-card__desc">
+            ZIP contenant les PNGs individuels, un fichier par slide.
+            Idéal pour <strong style="color: var(--ds-text);">poster directement</strong>
+            sur LinkedIn ou Instagram sans conversion supplémentaire.
+          </p>
+          <ul class="gen-format-pros">
+            <li>Import natif dans les réseaux sociaux</li>
+            <li>Fichiers légers et partageables</li>
+            <li>Accès slide par slide</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- PDF -->
+      <div class="gen-format-card">
+        <div class="gen-format-card__icon gen-format-card__icon--pdf" aria-hidden="true">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+            <line x1="16" y1="13" x2="8" y2="13"/>
+            <line x1="16" y1="17" x2="8" y2="17"/>
+            <polyline points="10 9 9 9 8 9"/>
+          </svg>
+        </div>
+        <div class="gen-format-card__body">
+          <h3 class="gen-format-card__title">PDF</h3>
+          <p class="gen-format-card__desc">
+            Fichier PDF unique regroupant toutes les slides en ordre.
+            Idéal pour <strong style="color: var(--ds-text);">partager ou archiver</strong>
+            le contenu sans dépendre d'une plateforme.
+          </p>
+          <ul class="gen-format-pros">
+            <li>Document unique facile à envoyer</li>
+            <li>Compatible avec tous les lecteurs PDF</li>
+            <li>Idéal pour les présentations hors ligne</li>
+          </ul>
+        </div>
+      </div>
+
+    </div><!-- /.gen-format-grid -->
+  </div>
+
+  <!-- ── 3. Suivi de la génération ────────────────────────────── -->
+  <div class="guide-card" style="margin-bottom: var(--ds-space-8);">
+    <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.5rem;">
+      <span class="guide-badge" style="background: rgba(16,185,129,0.15); color: #6ee7b7;">Panneau de statut</span>
+    </div>
+
+    <p style="font-size: var(--ds-text-sm); color: var(--ds-text-2); line-height: var(--ds-leading-relaxed); margin: 0 0 1.5rem;">
+      Chaque génération crée un <strong style="color: var(--ds-text);">job</strong> identifié par un horodatage unique
+      au format <code class="gen-inline-code">AAAA-MM-JJ_HH-MM-SS_nom-série</code>.
+      Le panneau de statut, situé en bas à droite de l'écran, liste les jobs en cours et terminés.
+    </p>
+
+    <!-- Mock du panneau de statut -->
+    <div class="gen-status-panel" role="img" aria-label="Aperçu du panneau de statut des jobs">
+      <div class="gen-status-panel__header">
+        <span class="gen-status-panel__title">Générations récentes</span>
+        <span class="gen-status-panel__count">3 jobs</span>
+      </div>
+
+      <!-- Job running -->
+      <div class="gen-job-card">
+        <span class="gen-job-dot gen-job-dot--running" aria-hidden="true"></span>
+        <div class="gen-job-card__body">
+          <span class="gen-job-card__id">2026-04-17_14-32-01_mon-carousel</span>
+          <span class="gen-job-card__status gen-job-card__status--running">En cours…</span>
+        </div>
+        <span class="gen-job-card__time">0 s</span>
+      </div>
+
+      <!-- Job done -->
+      <div class="gen-job-card">
+        <span class="gen-job-dot gen-job-dot--done" aria-hidden="true">
+          <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+        </span>
+        <div class="gen-job-card__body">
+          <span class="gen-job-card__id">2026-04-17_14-28-44_veille-tech</span>
+          <span class="gen-job-card__status gen-job-card__status--done">Terminé — 6 slides</span>
+        </div>
+        <span class="gen-job-card__time">5 s</span>
+      </div>
+
+      <!-- Job error -->
+      <div class="gen-job-card">
+        <span class="gen-job-dot gen-job-dot--error" aria-hidden="true">
+          <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"/>
+            <line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </span>
+        <div class="gen-job-card__body">
+          <span class="gen-job-card__id">2026-04-17_14-10-12_test-draft</span>
+          <span class="gen-job-card__status gen-job-card__status--error">Erreur — slide invalide</span>
+        </div>
+        <span class="gen-job-card__time">2 s</span>
+      </div>
+    </div><!-- /.gen-status-panel -->
+
+    <div class="guide-callout-info" style="margin-top: 1.5rem;">
+      <strong style="color: var(--ds-text-accent);">Jobs en mémoire.</strong>
+      Les jobs sont stockés en mémoire vive&nbsp;: ils disparaissent au redémarrage du serveur.
+      L'identifiant horodaté vous permet de retrouver les fichiers dans
+      <code class="gen-inline-code">static/generated/</code> tant que le serveur tourne.
+    </div>
+  </div>
+
+  <!-- ── 4. Télécharger les slides ────────────────────────────── -->
+  <div class="guide-card" style="margin-bottom: var(--ds-space-8);">
+    <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.5rem;">
+      <span class="guide-badge" style="background: rgba(245,158,11,0.15); color: #fcd34d;">Téléchargement</span>
+    </div>
+
+    <p style="font-size: var(--ds-text-sm); color: var(--ds-text-2); line-height: var(--ds-leading-relaxed); margin: 0 0 1.5rem;">
+      Deux méthodes pour récupérer vos fichiers une fois la génération terminée.
+    </p>
+
+    <div class="gen-dl-methods">
+
+      <!-- Méthode 1 : Télécharger tout -->
+      <div class="gen-dl-method">
+        <div class="gen-dl-method__icon" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="7 10 12 15 17 10"/>
+            <line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+        </div>
+        <div class="gen-dl-method__body">
+          <strong class="gen-dl-method__title">Télécharger tout</strong>
+          <p class="gen-dl-method__desc">
+            Le bouton <strong style="color: var(--ds-text);">Télécharger tout</strong>
+            dans le panneau de statut déclenche le téléchargement du fichier
+            ZIP (PNG) ou PDF complet. Un seul clic pour tout récupérer.
+          </p>
+        </div>
+      </div>
+
+      <!-- Méthode 2 : Slide individuelle -->
+      <div class="gen-dl-method">
+        <div class="gen-dl-method__icon gen-dl-method__icon--single" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+            <circle cx="8.5" cy="8.5" r="1.5"/>
+            <polyline points="21 15 16 10 5 21"/>
+          </svg>
+        </div>
+        <div class="gen-dl-method__body">
+          <strong class="gen-dl-method__title">Slide individuelle</strong>
+          <p class="gen-dl-method__desc">
+            Dans la zone d'aperçu, chaque slide affiche une icône de téléchargement
+            au survol. Cliquez dessus pour télécharger uniquement ce PNG sans passer
+            par le ZIP.
+          </p>
+        </div>
+      </div>
+
+    </div><!-- /.gen-dl-methods -->
+
+    <!-- Chemin serveur -->
+    <div class="gen-path-row" style="margin-top: 1.5rem;">
+      <span class="gen-path-label">Stockage serveur</span>
+      <code class="gen-path-code">static/generated/&lt;job_id&gt;/slide_01.png … slide_N.png</code>
+    </div>
+
+    <div class="guide-tip" style="margin-top: 1.25rem;">
+      Les fichiers restent disponibles jusqu'au redémarrage du serveur.
+      <strong>Téléchargez-les immédiatement</strong> après génération pour éviter toute perte.
+    </div>
+  </div>
+
+  <!-- ── 5. Workflow complet ───────────────────────────────────── -->
+  <div class="guide-card">
+    <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.5rem;">
+      <span class="guide-badge" style="background: rgba(108,99,255,0.18); color: #a99dff;">Workflow complet</span>
+    </div>
+
+    <p style="font-size: var(--ds-text-sm); color: var(--ds-text-2); line-height: var(--ds-leading-relaxed); margin: 0 0 1.75rem;">
+      Du paramétrage au téléchargement, voici les étapes dans l'ordre recommandé.
+    </p>
+
+    <ol class="guide-steps">
+
+      <li class="guide-step">
+        <span class="guide-step__num">1</span>
+        <div class="guide-step__body">
+          <strong>Configurer la plateforme</strong>
+          <span class="guide-step__desc">
+            Sélectionnez <strong>LinkedIn</strong> (1080 × 1080 px) ou
+            <strong>Instagram</strong> (1080 × 1350 px) via les onglets en haut du panneau latéral.
+          </span>
+        </div>
+      </li>
+
+      <li class="guide-step">
+        <span class="guide-step__num">2</span>
+        <div class="guide-step__body">
+          <strong>Remplir auteur, série et thème</strong>
+          <span class="guide-step__desc">
+            Saisissez le nom d'auteur (<code class="gen-inline-code">@pseudo</code>), le titre de la série
+            et choisissez un thème parmi les 19 disponibles. Ces informations apparaissent
+            dans le footer et la cover.
+          </span>
+        </div>
+      </li>
+
+      <li class="guide-step">
+        <span class="guide-step__num">3</span>
+        <div class="guide-step__body">
+          <strong>Ajouter vos slides</strong>
+          <span class="guide-step__desc">
+            Créez une slide de type <strong>couverture</strong> puis ajoutez vos slides
+            de <strong>contenu</strong> et/ou <strong>comparaison</strong>. Réorganisez-les
+            par glisser-déposer si nécessaire.
+          </span>
+        </div>
+      </li>
+
+      <li class="guide-step">
+        <span class="guide-step__num">4</span>
+        <div class="guide-step__body">
+          <strong>Choisir le format</strong>
+          <span class="guide-step__desc">
+            Sélectionnez <strong>PNG</strong> (ZIP de PNGs) ou <strong>PDF</strong>
+            (fichier unique) selon votre usage final.
+          </span>
+        </div>
+      </li>
+
+      <li class="guide-step">
+        <span class="guide-step__num">5</span>
+        <div class="guide-step__body">
+          <strong>Cliquer sur "Générer le carousel"</strong>
+          <span class="guide-step__desc">
+            Le bouton violet en bas du panneau latéral lance la génération. Un job
+            est immédiatement créé et visible dans le panneau de statut.
+          </span>
+        </div>
+      </li>
+
+      <li class="guide-step">
+        <span class="guide-step__num">6</span>
+        <div class="guide-step__body">
+          <strong>Attendre la génération (~3–8 s)</strong>
+          <span class="guide-step__desc">
+            Playwright capture chaque slide en headless Chromium. Le statut du job
+            passe de <em>En cours</em> à <em>Terminé</em> dès que tous les fichiers
+            sont prêts.
+          </span>
+        </div>
+      </li>
+
+      <li class="guide-step">
+        <span class="guide-step__num">7</span>
+        <div class="guide-step__body">
+          <strong>Télécharger via le panneau de statut ou l'aperçu</strong>
+          <span class="guide-step__desc">
+            Cliquez sur <strong>Télécharger tout</strong> dans le panneau de statut
+            pour récupérer le ZIP/PDF, ou utilisez l'icône de téléchargement sur chaque
+            aperçu pour un PNG individuel.
+          </span>
+        </div>
+      </li>
+
+    </ol>
+  </div>
+
+</section>
+
+
+<style>
+/* ================================================================
+   guide/generate.html — scoped styles
+   All selectors are prefixed with gen- to avoid collisions.
+   ================================================================ */
+
+/* ── Mock bouton Générer ──────────────────────────────────────── */
+
+.gen-button-mock-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.gen-button-mock {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.625rem;
+  padding: 0.875rem 2rem;
+  border-radius: 12px;
+  font-size: var(--ds-text-base);
+  font-weight: var(--ds-weight-semi);
+  letter-spacing: 0.01em;
+  color: #fff;
+  background: linear-gradient(135deg, #6C63FF 0%, #8B55F5 100%);
+  box-shadow:
+    0 0 0 1px rgba(108, 99, 255, 0.45),
+    0 4px 24px rgba(108, 99, 255, 0.40),
+    0 1px 4px rgba(0, 0, 0, 0.35);
+  cursor: default;
+  user-select: none;
+  width: 100%;
+  max-width: 320px;
+}
+
+.gen-button-mock-label {
+  font-size: var(--ds-text-xs);
+  color: var(--ds-text-3);
+  font-style: italic;
+}
+
+/* ── Pills résolution ─────────────────────────────────────────── */
+
+.gen-res-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ds-space-3);
+}
+
+.gen-res-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 5px 12px;
+  border-radius: 100px;
+  font-size: var(--ds-text-xs);
+  font-weight: var(--ds-weight-medium);
+  font-family: var(--ds-font-mono);
+  letter-spacing: 0.02em;
+  background: rgba(10, 102, 194, 0.12);
+  color: #60a5fa;
+  border: 1px solid rgba(10, 102, 194, 0.25);
+}
+
+.gen-res-pill--ig {
+  background: rgba(225, 48, 108, 0.10);
+  color: #f472b6;
+  border-color: rgba(225, 48, 108, 0.22);
+}
+
+/* ── Grille formats PNG / PDF ─────────────────────────────────── */
+
+.gen-format-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--ds-space-5);
+}
+
+@media (max-width: 580px) {
+  .gen-format-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.gen-format-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-space-4);
+  padding: var(--ds-space-5);
+  border-radius: 12px;
+  background: var(--ds-bg-inset);
+  border: 1px solid var(--ds-border);
+  transition: border-color var(--ds-t-base) var(--ds-ease),
+              box-shadow   var(--ds-t-base) var(--ds-ease);
+}
+
+.gen-format-card:hover {
+  border-color: rgba(108, 99, 255, 0.30);
+  box-shadow: 0 0 20px rgba(108, 99, 255, 0.08);
+}
+
+.gen-format-card__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  flex-shrink: 0;
+}
+
+.gen-format-card__icon--png {
+  background: rgba(16, 185, 129, 0.12);
+  color: #6ee7b7;
+  border: 1px solid rgba(16, 185, 129, 0.22);
+}
+
+.gen-format-card__icon--pdf {
+  background: rgba(245, 158, 11, 0.12);
+  color: #fcd34d;
+  border: 1px solid rgba(245, 158, 11, 0.22);
+}
+
+.gen-format-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-space-3);
+  flex: 1;
+}
+
+.gen-format-card__title {
+  margin: 0;
+  font-family: var(--ds-font-mono);
+  font-size: var(--ds-text-lg);
+  font-weight: var(--ds-weight-bold);
+  letter-spacing: 0.04em;
+  color: var(--ds-text);
+  text-transform: uppercase;
+}
+
+.gen-format-card__desc {
+  margin: 0;
+  font-size: var(--ds-text-sm);
+  color: var(--ds-text-2);
+  line-height: var(--ds-leading-relaxed);
+}
+
+.gen-format-pros {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.gen-format-pros li {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: var(--ds-text-xs);
+  color: var(--ds-text-2);
+  line-height: 1.5;
+}
+
+.gen-format-pros li::before {
+  content: '';
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: rgba(108, 99, 255, 0.55);
+  flex-shrink: 0;
+}
+
+/* ── Panneau de statut mock ───────────────────────────────────── */
+
+.gen-status-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-space-2);
+  padding: var(--ds-space-4) var(--ds-space-5);
+  border-radius: 12px;
+  background: var(--ds-bg-inset);
+  border: 1px solid var(--ds-border);
+  box-shadow: var(--ds-shadow-inset);
+  max-width: 520px;
+}
+
+.gen-status-panel__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: var(--ds-space-3);
+  border-bottom: 1px solid var(--ds-border);
+  margin-bottom: var(--ds-space-1);
+}
+
+.gen-status-panel__title {
+  font-size: var(--ds-text-xs);
+  font-weight: var(--ds-weight-semi);
+  letter-spacing: var(--ds-tracking-caps);
+  text-transform: uppercase;
+  color: var(--ds-text-3);
+}
+
+.gen-status-panel__count {
+  font-size: var(--ds-text-xs);
+  font-family: var(--ds-font-mono);
+  color: var(--ds-text-3);
+  background: var(--ds-surface);
+  border: 1px solid var(--ds-border);
+  padding: 1px 7px;
+  border-radius: 100px;
+}
+
+/* Job card row */
+.gen-job-card {
+  display: flex;
+  align-items: center;
+  gap: var(--ds-space-3);
+  padding: var(--ds-space-3) var(--ds-space-2);
+  border-radius: 8px;
+  transition: background var(--ds-t-fast) var(--ds-ease);
+}
+
+.gen-job-card:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.gen-job-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.gen-job-card__id {
+  font-size: 11px;
+  font-family: var(--ds-font-mono);
+  color: var(--ds-text-2);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.gen-job-card__status {
+  font-size: var(--ds-text-xs);
+  font-weight: var(--ds-weight-medium);
+}
+
+.gen-job-card__status--running { color: #a99dff; }
+.gen-job-card__status--done    { color: #6ee7b7; }
+.gen-job-card__status--error   { color: #f87171; }
+
+.gen-job-card__time {
+  font-size: var(--ds-text-xs);
+  font-family: var(--ds-font-mono);
+  color: var(--ds-text-3);
+  flex-shrink: 0;
+}
+
+/* Status dots */
+.gen-job-dot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.gen-job-dot--running {
+  background: rgba(108, 99, 255, 0.20);
+  border: 1px solid rgba(108, 99, 255, 0.45);
+  animation: gen-pulse 1.6s ease-in-out infinite;
+  box-shadow: 0 0 0 0 rgba(108, 99, 255, 0.50);
+}
+
+@keyframes gen-pulse {
+  0%, 100% { box-shadow: 0 0 0 0   rgba(108, 99, 255, 0.50); }
+  50%       { box-shadow: 0 0 0 5px rgba(108, 99, 255, 0.00); }
+}
+
+.gen-job-dot--done {
+  background: rgba(16, 185, 129, 0.18);
+  border: 1px solid rgba(16, 185, 129, 0.40);
+  color: #6ee7b7;
+}
+
+.gen-job-dot--error {
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  color: #f87171;
+}
+
+/* ── Méthodes de téléchargement ───────────────────────────────── */
+
+.gen-dl-methods {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-space-4);
+}
+
+.gen-dl-method {
+  display: flex;
+  gap: var(--ds-space-4);
+  align-items: flex-start;
+  padding: var(--ds-space-4);
+  border-radius: 10px;
+  background: var(--ds-bg-inset);
+  border: 1px solid var(--ds-border);
+}
+
+.gen-dl-method__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  flex-shrink: 0;
+  background: rgba(108, 99, 255, 0.12);
+  color: #8B84FF;
+  border: 1px solid rgba(108, 99, 255, 0.22);
+}
+
+.gen-dl-method__icon--single {
+  background: rgba(16, 185, 129, 0.10);
+  color: #6ee7b7;
+  border-color: rgba(16, 185, 129, 0.22);
+}
+
+.gen-dl-method__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-space-2);
+  flex: 1;
+}
+
+.gen-dl-method__title {
+  display: block;
+  font-size: var(--ds-text-base);
+  font-weight: var(--ds-weight-semi);
+  color: var(--ds-text);
+  line-height: 1.4;
+}
+
+.gen-dl-method__desc {
+  margin: 0;
+  font-size: var(--ds-text-sm);
+  color: var(--ds-text-2);
+  line-height: var(--ds-leading-relaxed);
+}
+
+/* ── Chemin serveur ───────────────────────────────────────────── */
+
+.gen-path-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--ds-space-3);
+  padding: var(--ds-space-3) var(--ds-space-4);
+  border-radius: 8px;
+  background: var(--ds-bg-inset);
+  border: 1px solid var(--ds-border);
+}
+
+.gen-path-label {
+  font-size: var(--ds-text-xs);
+  font-weight: var(--ds-weight-medium);
+  letter-spacing: var(--ds-tracking-caps);
+  text-transform: uppercase;
+  color: var(--ds-text-3);
+  white-space: nowrap;
+}
+
+.gen-path-code {
+  font-size: 12px;
+  font-family: var(--ds-font-mono);
+  color: #8B84FF;
+  background: rgba(108, 99, 255, 0.10);
+  padding: 2px 8px;
+  border-radius: 5px;
+  border: 1px solid rgba(108, 99, 255, 0.18);
+  word-break: break-all;
+}
+
+/* ── Inline code générique ────────────────────────────────────── */
+
+.gen-inline-code {
+  font-family: var(--ds-font-mono);
+  font-size: 0.85em;
+  color: #a99dff;
+  background: rgba(108, 99, 255, 0.10);
+  padding: 1px 5px;
+  border-radius: 4px;
+  border: 1px solid rgba(108, 99, 255, 0.16);
+}
+</style>

@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Guide d'utilisation — CarouselGen</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <!-- Design system CSS (same as dashboard) -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/ds-tokens.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/ds-typography.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/ds-animations.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/ds-glass.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/ds-layout.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/ds-components.css') }}">
+  <!-- Guide-specific CSS -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/ds-guide.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/ds-guide-layout.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/ds-guide-sections.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/ds-guide-code.css') }}">
+  <meta name="color-scheme" content="dark">
+</head>
+<body class="guide-page">
+
+<!-- Ambient orbs -->
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+
+<!-- GUIDE LAYOUT: sidebar + main -->
+<div class="guide-shell">
+
+  <!-- ══ GUIDE SIDEBAR ══ -->
+  <nav class="guide-sidebar ds-glass" id="guide-sidebar">
+
+    <!-- Brand/back link -->
+    <div class="guide-sidebar-brand">
+      <a href="/" class="guide-back-link">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+        Retour à l'éditeur
+      </a>
+      <div class="guide-sidebar-title">
+        <span class="guide-sidebar-label">Guide</span>
+        <span class="guide-sidebar-sub">d'utilisation</span>
+      </div>
+    </div>
+
+    <!-- Navigation sections -->
+    <div class="guide-nav" id="guide-nav">
+      <a class="guide-nav-item active" href="#hero" data-section="hero">
+        <span class="guide-nav-num">00</span>
+        <span>Introduction</span>
+      </a>
+      <a class="guide-nav-item" href="#platform" data-section="platform">
+        <span class="guide-nav-num">01</span>
+        <span>Choisir la plateforme</span>
+      </a>
+      <a class="guide-nav-item" href="#author-theme" data-section="author-theme">
+        <span class="guide-nav-num">02</span>
+        <span>Auteur et thème</span>
+      </a>
+      <a class="guide-nav-item" href="#slide-cover" data-section="slide-cover">
+        <span class="guide-nav-num">03</span>
+        <span>Slide Couverture</span>
+      </a>
+      <a class="guide-nav-item" href="#slide-content" data-section="slide-content">
+        <span class="guide-nav-num">04</span>
+        <span>Slide Contenu</span>
+      </a>
+      <a class="guide-nav-item" href="#slide-compare" data-section="slide-compare">
+        <span class="guide-nav-num">05</span>
+        <span>Slide Comparaison</span>
+      </a>
+      <a class="guide-nav-item" href="#slide-instagram" data-section="slide-instagram">
+        <span class="guide-nav-num">06</span>
+        <span>Slides Instagram</span>
+      </a>
+      <a class="guide-nav-item" href="#markdown" data-section="markdown">
+        <span class="guide-nav-num">07</span>
+        <span>Import Markdown</span>
+      </a>
+      <a class="guide-nav-item" href="#generate" data-section="generate">
+        <span class="guide-nav-num">08</span>
+        <span>Générer et télécharger</span>
+      </a>
+      <a class="guide-nav-item" href="#preview" data-section="preview">
+        <span class="guide-nav-num">09</span>
+        <span>Aperçu et re-thème</span>
+      </a>
+      <a class="guide-nav-item" href="#tips" data-section="tips">
+        <span class="guide-nav-num">10</span>
+        <span>Conseils et astuces</span>
+      </a>
+    </div>
+
+    <!-- Sidebar footer -->
+    <div class="guide-sidebar-footer">
+      <div class="guide-progress-info">
+        <span id="guide-read-pct">0%</span> lu
+        <div class="guide-progress-track">
+          <div class="guide-progress-fill" id="guide-progress-fill"></div>
+        </div>
+      </div>
+    </div>
+
+  </nav>
+
+  <!-- ══ GUIDE MAIN CONTENT ══ -->
+  <main class="guide-main" id="guide-main">
+
+    <!-- Mobile header -->
+    <div class="guide-mobile-header">
+      <button class="guide-menu-btn" id="guide-menu-btn" onclick="toggleGuideNav()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+      <span class="guide-mobile-title">Guide d'utilisation</span>
+      <a href="/" class="guide-mobile-back">← Éditeur</a>
+    </div>
+
+    <!-- Reading progress bar (top) -->
+    <div class="guide-reading-bar" id="guide-reading-bar"></div>
+
+    <!-- ALL SECTIONS (using Jinja2 includes) -->
+    <div class="guide-content">
+      {% include 'guide/hero.html' %}
+      {% include 'guide/platform.html' %}
+      {% include 'guide/author-theme.html' %}
+      {% include 'guide/slide-cover.html' %}
+      {% include 'guide/slide-content.html' %}
+      {% include 'guide/slide-compare.html' %}
+      {% include 'guide/slide-instagram.html' %}
+      {% include 'guide/markdown.html' %}
+      {% include 'guide/generate.html' %}
+      {% include 'guide/preview.html' %}
+      {% include 'guide/tips.html' %}
+    </div>
+
+    <!-- Footer -->
+    <footer class="guide-footer">
+      <div class="guide-footer-nav">
+        <a href="/" class="guide-footer-link">← Retour à l'éditeur</a>
+        <a href="/generator" class="guide-footer-link">Bibliothèque →</a>
+      </div>
+      <p class="guide-footer-copy">© 2026 Africa Centred Technology. CarouselGen v2.0</p>
+    </footer>
+
+  </main>
+</div>
+
+<!-- Guide JS -->
+<script src="{{ url_for('static', filename='js/guide.js') }}"></script>
+<script src="{{ url_for('static', filename='js/guide-interactive.js') }}"></script>
+
+</body>
+</html>

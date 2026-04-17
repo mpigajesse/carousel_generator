@@ -1,0 +1,246 @@
+/*
+ * ds-guide-code.css
+ * CarouselGen — Guide page: advanced code display components
+ *
+ * Load order: ds-tokens.css → ds-guide.css → ds-guide-layout.css → ds-guide-code.css
+ *
+ * This file augments the basic `.guide-code` block defined in ds-guide.css with:
+ *   - .guide-code-wrap / .guide-code-header / .guide-code-block  (headered code block)
+ *   - Syntax highlight token spans (.tok-*)
+ *   - .guide-inline-code   (inline code within prose)
+ *   - kbd.guide-kbd        (keyboard key badge)
+ *   - .guide-shortcuts-table
+ *   - .guide-yaml-block    (YAML front-matter example with accent left-border)
+ */
+
+@layer ds-guide-code {
+
+  /* ═══════════════════════════════════════════════════════════
+   * CODE WRAP — outer container with border + overflow clip
+   * ═══════════════════════════════════════════════════════════ */
+
+  .guide-code-wrap {
+    position: relative;
+    border-radius: var(--ds-r-xl);
+    overflow: hidden;
+    border: 1px solid var(--ds-border);
+  }
+
+  /* ═══════════════════════════════════════════════════════════
+   * CODE HEADER — language label + copy button row
+   * ═══════════════════════════════════════════════════════════ */
+
+  .guide-code-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px;
+    background: rgba(255, 255, 255, 0.03);
+    border-bottom: 1px solid var(--ds-border);
+  }
+
+  /* Language label (e.g. "YAML", "MARKDOWN") */
+  .guide-code-lang {
+    font-family: var(--ds-font-mono);
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--ds-text-3);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  /* ═══════════════════════════════════════════════════════════
+   * COPY BUTTON — sits in the code header
+   * ═══════════════════════════════════════════════════════════ */
+
+  .guide-code-copy {
+    background: none;
+    border: 1px solid var(--ds-border);
+    border-radius: var(--ds-r-md);
+    padding: 4px 10px;
+    font-size: 11px;
+    font-family: var(--ds-font-mono);
+    color: var(--ds-text-3);
+    cursor: pointer;
+    transition: all var(--ds-t-base) var(--ds-ease);
+  }
+
+  .guide-code-copy:hover {
+    border-color: var(--ds-accent);
+    color: var(--ds-accent);
+  }
+
+  /* Transient "Copied!" state applied via JS */
+  .guide-code-copy.copied {
+    border-color: var(--ds-success);
+    color: var(--ds-success);
+  }
+
+  /* ═══════════════════════════════════════════════════════════
+   * CODE BLOCK — the <pre> that holds the actual source
+   * ═══════════════════════════════════════════════════════════ */
+
+  .guide-code-block {
+    background: var(--ds-bg-5);
+    padding: 20px 24px;
+    font-family: var(--ds-font-mono);
+    font-size: 13px;
+    line-height: 1.75;
+    color: var(--ds-text);
+    overflow-x: auto;
+    white-space: pre;
+    margin: 0;
+
+    /* Subtle thin scrollbar — Firefox */
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
+  }
+
+  /* Webkit scrollbar — horizontal track */
+  .guide-code-block::-webkit-scrollbar {
+    height: 4px;
+  }
+
+  .guide-code-block::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .guide-code-block::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 2px;
+  }
+
+  /* ═══════════════════════════════════════════════════════════
+   * SYNTAX HIGHLIGHT TOKENS
+   * Applied via inline <span class="tok-*"> inside .guide-code-block.
+   * Minimal palette — covers YAML, Markdown, and generic snippets.
+   * ═══════════════════════════════════════════════════════════ */
+
+  /* YAML / config keys  (e.g.  series:  author:) */
+  .guide-code-block .tok-key {
+    color: #8B84FF;
+  }
+
+  /* String values  (e.g.  "My Series"  '@username') */
+  .guide-code-block .tok-str {
+    color: #7DCEA0;
+  }
+
+  /* Comments  (e.g.  # this is a comment) */
+  .guide-code-block .tok-cmt {
+    color: rgba(226, 226, 232, 0.3);
+    font-style: italic;
+  }
+
+  /* Markdown headings  (#  ##  ###) */
+  .guide-code-block .tok-kw {
+    color: #F687B3;
+  }
+
+  /* Horizontal rules / slide separators  (---  ***) */
+  .guide-code-block .tok-sep {
+    color: rgba(226, 226, 232, 0.25);
+  }
+
+  /* **Bold** Markdown spans */
+  .guide-code-block .tok-bold {
+    color: #FBD38D;
+    font-weight: 600;
+  }
+
+  /* `inline code` spans inside a code block */
+  .guide-code-block .tok-code {
+    color: #7DCEA0;
+  }
+
+  /* ═══════════════════════════════════════════════════════════
+   * INLINE CODE — within running prose (not inside a code block)
+   * ═══════════════════════════════════════════════════════════ */
+
+  .guide-inline-code {
+    font-family: var(--ds-font-mono);
+    font-size: 0.85em;
+    background: rgba(108, 99, 255, 0.12); /* --ds-accent-muted */
+    color: var(--ds-accent-2);
+    border: 1px solid rgba(108, 99, 255, 0.2);
+    border-radius: 4px;
+    padding: 1px 6px;
+  }
+
+  /* ═══════════════════════════════════════════════════════════
+   * KEYBOARD KEY — <kbd class="guide-kbd">Ctrl</kbd>
+   * ═══════════════════════════════════════════════════════════ */
+
+  kbd.guide-kbd {
+    font-family: var(--ds-font-mono);
+    font-size: 11px;
+    font-weight: 600;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-bottom: 2px solid rgba(255, 255, 255, 0.08);
+    border-radius: 5px;
+    padding: 2px 8px;
+    color: var(--ds-text);
+    display: inline-block;
+    /* Subtle raised-key shadow */
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.05);
+  }
+
+  /* ═══════════════════════════════════════════════════════════
+   * SHORTCUTS TABLE — keyboard shortcut reference grid
+   * ═══════════════════════════════════════════════════════════ */
+
+  .guide-shortcuts-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+
+  .guide-shortcuts-table th {
+    text-align: left;
+    padding: 8px 14px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--ds-text-3);
+    border-bottom: 1px solid var(--ds-border);
+    font-family: var(--ds-font-mono);
+  }
+
+  .guide-shortcuts-table td {
+    padding: 10px 14px;
+    color: var(--ds-text-2);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  }
+
+  /* Remove bottom border on the last row */
+  .guide-shortcuts-table tr:last-child td {
+    border-bottom: none;
+  }
+
+  /* Row hover highlight */
+  .guide-shortcuts-table tr:hover td {
+    background: var(--ds-surface);
+  }
+
+  /* ═══════════════════════════════════════════════════════════
+   * YAML FRONT-MATTER BLOCK
+   * Distinct from .guide-code-block — uses a purple left accent
+   * border to signal "this is YAML configuration", not generic code.
+   * ═══════════════════════════════════════════════════════════ */
+
+  .guide-yaml-block {
+    background: var(--ds-bg-5);
+    border: 1px solid var(--ds-border);
+    border-left: 3px solid #8B84FF; /* --ds-accent-2 */
+    border-radius: 0 var(--ds-r-lg) var(--ds-r-lg) 0;
+    padding: 20px 24px;
+    font-family: var(--ds-font-mono);
+    font-size: 13px;
+    line-height: 1.75;
+    overflow-x: auto;
+    white-space: pre;
+  }
+
+} /* end @layer ds-guide-code */
