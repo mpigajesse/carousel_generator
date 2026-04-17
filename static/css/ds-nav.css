@@ -1,275 +1,394 @@
 /*
- * ds-nav.css — Premium dark navigation layer
- * Carousel Generator · Design System · Nav
+ * ds-nav.css — Premium sidebar navigation layer
+ * CarouselGen · Design System · Nav
  *
- * Targets the real sidebar HTML produced by index.html.
- * Defines --ds-* token aliases that map to the app's existing
- * color palette so this layer is self-contained and portable.
+ * Covers: .brand, .btn-hamburger, .sidebar-nav, .nav-tab,
+ *         .sidebar-section, .section-label, .sidebar-bottom,
+ *         .btn-sidebar-reopen
  */
 
 @layer ds-nav {
 
-  /* ── Token bridge: ds-* aliases → app vars ───────────────────── */
+  /* ================================================================
+     TOKEN BRIDGE
+     Local aliases so this layer is self-contained.
+     The canonical values come from ds-tokens.css; these are fallbacks.
+  ================================================================ */
+
   :root {
-    --ds-bg:            #06080d;
-    --ds-bg-2:          #0a0e16;
-    --ds-surface:       #0f1520;
-    --ds-border:        rgba(255, 255, 255, .06);
-    --ds-border-strong: rgba(255, 255, 255, .13);
-    --ds-accent:        #6c5ce7;
-    --ds-accent-hi:     #8b7cf8;
-    --ds-gradient:      linear-gradient(135deg, #6c5ce7 0%, #00cba9 100%);
-    --ds-gradient-text: linear-gradient(105deg, #a78bfa 0%, #34d399 100%);
-    --ds-text:          #e4e8f2;
-    --ds-text-2:        #9aa3b8;
-    --ds-text-3:        #4a5268;
-    --ds-r-sm:          8px;
-    --ds-r-md:          12px;
-    --ds-shadow-sm:     0 2px 8px rgba(0, 0, 0, .35);
-    --ds-t-base:        180ms;
-    --ds-ease:          cubic-bezier(.4, 0, .2, 1);
-    --ds-font-ui:       'DM Sans', system-ui, sans-serif;
-    --ds-font-display:  'Syne', system-ui, sans-serif;
-    --ds-font-mono:     'DM Mono', ui-monospace, monospace;
-    --ds-glass-bg:      rgba(10, 14, 22, .72);
-    --ds-glass-blur:    blur(24px);
-    --ds-topbar-h:      56px;
-    --ds-li:            #0a84d0;
-    --ds-ig:            #e1306c;
+    --ds-bg-2:              #0C0C18;
+    --ds-bg-4:              #161624;
+    --ds-bg-5:              #1C1C2C;
+    --ds-surface:           rgba(255, 255, 255, 0.045);
+    --ds-surface-hover:     rgba(255, 255, 255, 0.08);
+    --ds-surface-inset:     rgba(0, 0, 0, 0.18);
+    --ds-accent:            #6C63FF;
+    --ds-accent-muted:      rgba(108, 99, 255, 0.14);
+    --ds-border:            rgba(255, 255, 255, 0.07);
+    --ds-border-accent:     rgba(108, 99, 255, 0.45);
+    --ds-text:              #EDEEF2;
+    --ds-text-2:            #9B9DB0;
+    --ds-text-3:            #585A70;
+    --ds-linkedin:          #0A66C2;
+    --ds-linkedin-muted:    rgba(10, 102, 194, 0.18);
+    --ds-instagram:         #E1306C;
+    --ds-instagram-muted:   rgba(225, 48, 108, 0.18);
+    --ds-r-md:              10px;
+    --ds-r-lg:              16px;
+    --ds-r-xl:              22px;
+    --ds-t-base:            240ms;
+    --ds-ease:              cubic-bezier(0.16, 1, 0.3, 1);
+    --ds-space-2:           8px;
+    --ds-space-3:           12px;
+    --ds-space-4:           16px;
+    --ds-space-5:           20px;
+    --ds-space-6:           24px;
+    --ds-glass-bg:          rgba(12, 12, 24, 0.75);
+    --ds-font-heading:      'Syne', 'DM Sans', system-ui, sans-serif;
+    --ds-font-ui:           'DM Sans', system-ui, sans-serif;
+    --ds-font-mono:         'DM Mono', ui-monospace, monospace;
   }
 
-  /* ══════════════════════════════════════════════════════════════
-     TOPBAR / BRAND — Glass morphism header strip
-  ══════════════════════════════════════════════════════════════ */
+  /* ================================================================
+     BRAND — Top identity strip
+  ================================================================ */
 
   .brand {
-    position: sticky;
-    top: 0;
-    z-index: 10;
-    min-height: var(--ds-topbar-h);
-    padding: 0 18px;
     display: flex;
     align-items: center;
-    gap: 12px;
-    background: var(--ds-glass-bg);
-    -webkit-backdrop-filter: var(--ds-glass-blur);
-    backdrop-filter: var(--ds-glass-blur);
-    border-bottom: 1px solid var(--ds-border-strong);
-    box-shadow: 0 1px 0 rgba(255, 255, 255, .04), var(--ds-shadow-sm);
+    gap: var(--ds-space-3);
+    padding: var(--ds-space-5) var(--ds-space-4) var(--ds-space-4);
+    border-bottom: 1px solid var(--ds-border);
+    flex-shrink: 0;
+    position: relative;
   }
 
-  /* Logo image — subtle glow ring on hover */
+  /* Logo image */
   .brand-logo-img {
-    width: 36px;
-    height: 36px;
-    border-radius: var(--ds-r-sm);
-    object-fit: contain;
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    object-fit: cover;
     flex-shrink: 0;
-    box-shadow: 0 0 0 1px var(--ds-border-strong);
-    transition: box-shadow var(--ds-t-base) var(--ds-ease),
-                transform var(--ds-t-base) var(--ds-ease);
+    box-shadow:
+      0 0 0 1px var(--ds-border),
+      0 2px 8px rgba(0, 0, 0, 0.35);
+    transition:
+      box-shadow var(--ds-t-base) var(--ds-ease),
+      transform var(--ds-t-base) var(--ds-ease);
   }
 
   .brand:hover .brand-logo-img {
-    box-shadow: 0 0 0 2px var(--ds-accent),
-                0 0 12px rgba(108, 92, 231, .30);
+    box-shadow:
+      0 0 0 2px var(--ds-accent),
+      0 0 14px rgba(108, 99, 255, 0.28);
     transform: scale(1.04);
   }
 
-  /* Brand wordmark — gradient text */
+  /* Fallback emoji icon — shown when no logo image */
+  .brand > div:not(.brand-text) {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: var(--ds-accent-muted);
+    border: 1px solid var(--ds-border-accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+    color: var(--ds-accent);
+  }
+
+  /* Wordmark container */
   .brand-text {
-    flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 1px;
+    gap: 2px;
+    flex: 1;
     min-width: 0;
   }
 
+  /* Product name */
   .brand-name {
-    font-family: var(--ds-font-display);
-    font-size: 14px;
-    font-weight: 800;
-    letter-spacing: -.025em;
-    line-height: 1;
-    background: var(--ds-gradient-text);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
+    font-family: var(--ds-font-heading);
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--ds-text);
+    letter-spacing: -0.02em;
+    line-height: 1.15;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
   }
 
+  /* Sub-label */
   .brand-sub {
     font-family: var(--ds-font-mono);
     font-size: 9px;
-    letter-spacing: .12em;
+    font-weight: 700;
     text-transform: uppercase;
+    letter-spacing: 0.12em;
     color: var(--ds-text-3);
     white-space: nowrap;
   }
 
-  /* ══════════════════════════════════════════════════════════════
-     HAMBURGER / CLOSE TOGGLE
-  ══════════════════════════════════════════════════════════════ */
+  /* ================================================================
+     HAMBURGER TOGGLE — Collapse / expand the sidebar
+  ================================================================ */
 
   .btn-hamburger {
-    flex-shrink: 0;
-    width: 28px;
-    height: 28px;
-    border: 1px solid var(--ds-border-strong);
-    border-radius: var(--ds-r-sm);
-    background: transparent;
-    color: var(--ds-text-3);
-    cursor: pointer;
+    position: absolute;
+    right: var(--ds-space-4);
+    top: 50%;
+    transform: translateY(-50%);
+    width: 32px;
+    height: 32px;
     display: flex;
     flex-direction: column;
-    align-items: center;
     justify-content: center;
+    align-items: center;
     gap: 4px;
-    transition: background var(--ds-t-base) var(--ds-ease),
-                border-color var(--ds-t-base) var(--ds-ease),
-                color var(--ds-t-base) var(--ds-ease);
+    padding: 6px;
+    background: var(--ds-surface);
+    border: 1px solid var(--ds-border);
+    border-radius: var(--ds-space-2);
+    cursor: pointer;
+    flex-shrink: 0;
+    transition:
+      background var(--ds-t-base) var(--ds-ease),
+      border-color var(--ds-t-base) var(--ds-ease);
   }
 
   .btn-hamburger:hover {
-    background: rgba(108, 92, 231, .10);
-    border-color: rgba(108, 92, 231, .35);
-    color: var(--ds-accent-hi);
+    background: var(--ds-surface-hover);
+    border-color: rgba(108, 99, 255, 0.32);
   }
 
-  /* ══════════════════════════════════════════════════════════════
-     PLATFORM TOGGLE — Pill switcher (LinkedIn / Instagram)
-  ══════════════════════════════════════════════════════════════ */
+  /* Each bar */
+  .btn-hamburger span {
+    display: block;
+    width: 14px;
+    height: 1.5px;
+    background: var(--ds-text-2);
+    border-radius: 2px;
+    transition:
+      opacity var(--ds-t-base) var(--ds-ease),
+      transform var(--ds-t-base) var(--ds-ease);
+    transform-origin: center;
+  }
+
+  /* Open → X animation */
+  .btn-hamburger.is-open span:nth-child(1) {
+    transform: translateY(5.5px) rotate(45deg);
+  }
+
+  .btn-hamburger.is-open span:nth-child(2) {
+    opacity: 0;
+    transform: scaleX(0);
+  }
+
+  .btn-hamburger.is-open span:nth-child(3) {
+    transform: translateY(-5.5px) rotate(-45deg);
+  }
+
+  /* ================================================================
+     SIDEBAR NAV — Platform selector (LinkedIn / Instagram)
+  ================================================================ */
 
   .sidebar-nav {
-    position: relative;
-    padding: 10px 14px;
-    border-bottom: 1px solid var(--ds-border);
-    display: flex;
-    gap: 6px;
-    background: rgba(6, 8, 13, .45);
-  }
-
-  /* Shared tab base */
-  .nav-tab {
-    flex: 1;
-    position: relative;
-    padding: 8px 10px;
-    border: 1px solid transparent;
-    border-radius: var(--ds-r-sm);
-    background: transparent;
-    font-family: var(--ds-font-ui);
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: .025em;
-    color: var(--ds-text-3);
-    cursor: pointer;
     display: flex;
     flex-direction: column;
+    gap: 6px;
+    padding: var(--ds-space-3) var(--ds-space-3) var(--ds-space-2);
+    border-bottom: 1px solid var(--ds-border);
+    flex-shrink: 0;
+  }
+
+  /* ── Nav tab base ── */
+  .nav-tab {
+    width: 100%;
+    display: flex;
     align-items: center;
-    gap: 5px;
-    transition: background var(--ds-t-base) var(--ds-ease),
-                border-color var(--ds-t-base) var(--ds-ease),
-                color var(--ds-t-base) var(--ds-ease),
-                box-shadow var(--ds-t-base) var(--ds-ease);
-    overflow: hidden;
+    gap: 10px;
+    padding: 10px 14px;
+    border-radius: var(--ds-r-md);
+    border: 1px solid transparent;
+    background: transparent;
+    font-family: var(--ds-font-ui);
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ds-text-2);
+    cursor: pointer;
+    text-align: left;
+    transition:
+      background var(--ds-t-base) var(--ds-ease),
+      border-color var(--ds-t-base) var(--ds-ease),
+      color var(--ds-t-base) var(--ds-ease),
+      box-shadow var(--ds-t-base) var(--ds-ease);
   }
-
-  /* Shimmer pseudo on hover */
-  .nav-tab::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(120deg,
-      transparent 30%, rgba(255, 255, 255, .04) 50%, transparent 70%);
-    opacity: 0;
-    transition: opacity var(--ds-t-base) var(--ds-ease);
-  }
-
-  .nav-tab:not(.active):hover::before { opacity: 1; }
-
-  .nav-tab svg {
-    opacity: .4;
-    transition: opacity var(--ds-t-base) var(--ds-ease),
-                transform var(--ds-t-base) var(--ds-ease);
-  }
-
-  .nav-tab:hover svg { opacity: .7; transform: scale(1.08); }
-
-  /* Dimension badge */
-  .nav-tab-dim {
-    font-family: var(--ds-font-mono);
-    font-size: 8.5px;
-    letter-spacing: .05em;
-    opacity: .5;
-  }
-
-  /* ── LinkedIn active state ── */
-  .nav-tab.active.linkedin {
-    background: rgba(10, 132, 208, .10);
-    border-color: rgba(10, 132, 208, .25);
-    color: var(--ds-li);
-    box-shadow: 0 0 0 0 rgba(10, 132, 208, .0),
-                inset 0 1px 0 rgba(10, 132, 208, .15);
-  }
-
-  .nav-tab.active.linkedin svg { opacity: 1; color: var(--ds-li); }
-  .nav-tab.active.linkedin .nav-tab-dim { opacity: .65; }
-
-  /* ── Instagram active state ── */
-  .nav-tab.active.instagram {
-    background: rgba(225, 48, 108, .09);
-    border-color: rgba(225, 48, 108, .22);
-    color: var(--ds-ig);
-    box-shadow: 0 0 0 0 rgba(225, 48, 108, .0),
-                inset 0 1px 0 rgba(225, 48, 108, .15);
-  }
-
-  .nav-tab.active.instagram svg { opacity: 1; color: var(--ds-ig); }
-  .nav-tab.active.instagram .nav-tab-dim { opacity: .65; }
 
   /* Inactive hover */
   .nav-tab:not(.active):hover {
-    background: rgba(255, 255, 255, .04);
-    border-color: var(--ds-border-strong);
-    color: var(--ds-text-2);
+    background: var(--ds-surface-hover);
+    color: var(--ds-text);
   }
 
-  /* ══════════════════════════════════════════════════════════════
-     SECTION LABELS — Sub-navigation breadcrumbs / headings
-  ══════════════════════════════════════════════════════════════ */
+  /* SVG inside tab */
+  .nav-tab svg {
+    color: inherit;
+    flex-shrink: 0;
+    transition: color var(--ds-t-base) var(--ds-ease);
+  }
 
+  /* Dimension badge — pushed to far right */
+  .nav-tab-dim {
+    font-family: var(--ds-font-mono);
+    font-size: 9px;
+    color: var(--ds-text-3);
+    margin-left: auto;
+    letter-spacing: 0.04em;
+    flex-shrink: 0;
+  }
+
+  /* ── LinkedIn active ── */
+  .nav-tab.linkedin.active {
+    background: var(--ds-linkedin-muted);
+    border-color: rgba(10, 102, 194, 0.35);
+    color: #5BA3D9;
+    box-shadow: 0 0 12px rgba(10, 102, 194, 0.15);
+  }
+
+  .nav-tab.linkedin.active .nav-tab-dim {
+    color: rgba(91, 163, 217, 0.65);
+  }
+
+  /* ── Instagram active ── */
+  .nav-tab.instagram.active {
+    background: var(--ds-instagram-muted);
+    border-color: rgba(225, 48, 108, 0.35);
+    color: #E87DA8;
+    box-shadow: 0 0 12px rgba(225, 48, 108, 0.15);
+  }
+
+  .nav-tab.instagram.active .nav-tab-dim {
+    color: rgba(232, 125, 168, 0.65);
+  }
+
+  /* ================================================================
+     SIDEBAR SCROLL — Scrollable content area
+  ================================================================ */
+
+  .sidebar-scroll {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+    scrollbar-width: thin;
+    scrollbar-color: var(--ds-border) transparent;
+  }
+
+  .sidebar-scroll::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  .sidebar-scroll::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .sidebar-scroll::-webkit-scrollbar-thumb {
+    background: var(--ds-border);
+    border-radius: 4px;
+  }
+
+  /* ================================================================
+     SIDEBAR SECTION — Grouped content block
+  ================================================================ */
+
+  .sidebar-section {
+    padding: var(--ds-space-4) 14px var(--ds-space-3);
+    border-bottom: 1px solid var(--ds-border);
+  }
+
+  .sidebar-section:last-child {
+    border-bottom: none;
+  }
+
+  /* Section heading row */
   .section-label {
     display: flex;
     align-items: center;
-    gap: 7px;
+    gap: 6px;
     font-family: var(--ds-font-ui);
-    font-size: 9.5px;
+    font-size: 10px;
     font-weight: 700;
-    letter-spacing: .11em;
     text-transform: uppercase;
+    letter-spacing: 0.10em;
     color: var(--ds-text-3);
-    margin-bottom: 12px;
+    margin-bottom: 10px;
+    padding-bottom: 6px;
   }
 
   .section-label svg {
-    opacity: .45;
+    color: var(--ds-text-3);
     flex-shrink: 0;
-    color: var(--ds-accent);
+    opacity: 0.7;
   }
 
-  /* ══════════════════════════════════════════════════════════════
-     SERIES BREADCRUMB — Subtle carousel name display
-     (targets #footer-series input as read context)
-  ══════════════════════════════════════════════════════════════ */
+  /* ── Field rows inside sections ── */
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin-bottom: 10px;
+  }
 
-  #footer-series {
+  .field:last-child {
+    margin-bottom: 0;
+  }
+
+  .field label {
+    font-family: var(--ds-font-ui);
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--ds-text-3);
+    letter-spacing: 0.02em;
+  }
+
+  .field input {
+    width: 100%;
+    padding: 7px 10px;
+    background: var(--ds-surface);
+    border: 1px solid var(--ds-border);
+    border-radius: var(--ds-r-md);
     font-family: var(--ds-font-ui);
     font-size: 12px;
-    font-weight: 500;
     color: var(--ds-text);
-    letter-spacing: -.01em;
+    outline: none;
+    box-sizing: border-box;
+    transition:
+      border-color var(--ds-t-base) var(--ds-ease),
+      background var(--ds-t-base) var(--ds-ease),
+      box-shadow var(--ds-t-base) var(--ds-ease);
+  }
+
+  .field input::placeholder {
+    color: var(--ds-text-3);
+  }
+
+  .field input:focus {
+    border-color: var(--ds-border-accent);
+    background: var(--ds-accent-muted);
+    box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.10);
+  }
+
+  /* Specific field typography */
+  #footer-series {
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    color: var(--ds-text);
   }
 
   #footer-series::placeholder {
@@ -277,45 +396,99 @@
     font-style: italic;
   }
 
-  /* Author field — avatar-adjacent, muted treatment */
   #footer-author {
     font-family: var(--ds-font-mono);
     font-size: 11px;
     color: var(--ds-text-2);
-    letter-spacing: .01em;
+    letter-spacing: 0.01em;
   }
 
   #footer-author::placeholder {
     color: var(--ds-text-3);
   }
 
-  /* ══════════════════════════════════════════════════════════════
-     SIDEBAR REOPEN BUTTON — Floating glass pill when collapsed
-  ══════════════════════════════════════════════════════════════ */
+  /* ── Theme grid ── */
+  .theme-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(24px, 1fr));
+    gap: 5px;
+  }
+
+  /* ================================================================
+     SIDEBAR BOTTOM — Actions panel pinned at foot
+     Note: .btn-generate, .btn-import, .btn-structure, .format-row
+     are styled in ds-controls.css. Only layout/structure here.
+  ================================================================ */
+
+  .sidebar-bottom {
+    padding: 14px var(--ds-space-3);
+    display: flex;
+    flex-direction: column;
+    gap: var(--ds-space-2);
+    border-top: 1px solid var(--ds-border);
+    background: var(--ds-surface-inset);
+    margin-top: auto;
+    flex-shrink: 0;
+  }
+
+  /* ================================================================
+     SIDEBAR REOPEN — Desktop floating button when sidebar collapsed
+  ================================================================ */
 
   .btn-sidebar-reopen {
-    background: var(--ds-glass-bg);
-    -webkit-backdrop-filter: var(--ds-glass-blur);
-    backdrop-filter: var(--ds-glass-blur);
-    border: 1px solid var(--ds-border-strong);
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 32px;
+    height: 48px;
     border-radius: var(--ds-r-md);
-    box-shadow: var(--ds-shadow-sm),
-                0 0 0 1px rgba(108, 92, 231, .06);
+    background: var(--ds-glass-bg);
+    border: 1px solid var(--ds-border);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     color: var(--ds-text-3);
-    transition: background var(--ds-t-base) var(--ds-ease),
-                border-color var(--ds-t-base) var(--ds-ease),
-                color var(--ds-t-base) var(--ds-ease),
-                transform var(--ds-t-base) var(--ds-ease),
-                box-shadow var(--ds-t-base) var(--ds-ease);
+    opacity: 0;
+    pointer-events: none;
+    transition:
+      opacity var(--ds-t-base) var(--ds-ease),
+      background var(--ds-t-base) var(--ds-ease),
+      border-color var(--ds-t-base) var(--ds-ease),
+      color var(--ds-t-base) var(--ds-ease),
+      transform var(--ds-t-base) var(--ds-ease),
+      box-shadow var(--ds-t-base) var(--ds-ease);
+  }
+
+  /* Visible when shell has collapsed class */
+  .sidebar-collapsed .btn-sidebar-reopen {
+    opacity: 1;
+    pointer-events: auto;
   }
 
   .btn-sidebar-reopen:hover {
-    background: rgba(108, 92, 231, .12);
-    border-color: rgba(108, 92, 231, .40);
-    color: var(--ds-accent-hi);
-    transform: scale(1.07);
-    box-shadow: var(--ds-shadow-sm),
-                0 0 16px rgba(108, 92, 231, .20);
+    background: var(--ds-accent-muted);
+    border-color: var(--ds-border-accent);
+    color: var(--ds-accent);
+    box-shadow: 0 0 14px rgba(108, 99, 255, 0.22);
+    transform: translateY(-50%) scale(1.06);
+  }
+
+  /* ================================================================
+     GLASS SIDEBAR BASE — aside.ds-glass
+  ================================================================ */
+
+  aside.ds-glass {
+    display: flex;
+    flex-direction: column;
+    background: var(--ds-bg-4);
+    border-right: 1px solid var(--ds-border);
+    height: 100%;
+    overflow: hidden;
+    position: relative;
   }
 
 } /* end @layer ds-nav */

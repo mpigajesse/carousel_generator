@@ -2,65 +2,98 @@
    ds-overrides.css — Design System Bridge Layer
    Carousel Generator · v2 DS → existing app.css selectors
 
-   SCOPE: Patches legacy app.css selectors to consume DS tokens.
-          Does NOT restructure layout — only colour, radius, shadow,
-          transition, and surface values are changed.
+   LOAD ORDER: Last among all CSS files. Wins by @layer precedence or
+               !important on truly stubborn legacy rules.
 
-   LOAD ORDER: Must be loaded AFTER app.css and AFTER ds-tokens.css.
+   SCOPE:
+     1. Remap legacy custom-property aliases to DS canonical tokens.
+        (Must live OUTSIDE @layer so it beats app.css's unlayered :root.)
+     2. Override hardcoded legacy values (fonts, colours, radius) on
+        specific selectors via @layer ds-overrides.
+     3. Provide backward-compat aliases for vars used only in app.css.
    ═══════════════════════════════════════════════════════════════════════════ */
 
+/* ────────────────────────────────────────────────────────────────────────────
+   SECTION 1 — :root remapping (OUTSIDE @layer to beat app.css specificity)
+   app.css declares these with raw hex values; we point them at DS tokens.
+   !important is required here because app.css is also unlayered.
+──────────────────────────────────────────────────────────────────────────── */
+:root {
+  /* Surface palette */
+  --bg:        var(--ds-bg)       !important;
+  --surface:   var(--ds-bg-2)     !important;
+  --surface2:  var(--ds-bg-3)     !important;
+  --card:      var(--ds-bg-4)     !important;
+  --card2:     var(--ds-bg-5, var(--ds-bg-4)) !important;
+
+  /* Borders */
+  --border:    var(--ds-border)        !important;
+  --border2:   var(--ds-border-strong) !important;
+  --border3:   rgba(255,255,255,0.22)  !important;
+
+  /* Text */
+  --text:      var(--ds-text)   !important;
+  --muted:     var(--ds-text-3) !important;
+  --muted2:    var(--ds-text-2) !important;
+
+  /* Accent */
+  --accent:    var(--ds-accent)       !important;
+  --accent-hi: var(--ds-accent-hover, var(--ds-accent)) !important;
+  --accent2:   var(--ds-accent-2, #4F46E5) !important;
+  --accent3:   #f06292                !important;   /* kept as-is; no DS token */
+
+  /* Status */
+  --danger:    var(--ds-error-light,  #f87171) !important;
+  --success:   var(--ds-success-light, #34d399) !important;
+
+  /* Platform brand colours — unchanged, no DS equivalent */
+  --li-color:  #0a84d0 !important;
+  --ig-color:  #e1306c !important;
+
+  /* Radius */
+  --radius:    var(--ds-r-md)  !important;
+  --radius-sm: var(--ds-r-sm)  !important;
+  --radius-xs: var(--ds-r-xs)  !important;
+
+  /* Layout */
+  --sidebar-w: var(--ds-sidebar-w, 320px) !important;
+}
+
+
+/* ────────────────────────────────────────────────────────────────────────────
+   SECTION 2 — Selector-level overrides via @layer ds-overrides
+   Within a named layer this file loads after all other ds-* layers, so
+   no !important is needed for intra-DS conflicts.
+   !important is used only where app.css sets the property inline or via
+   an unlayered rule that still wins after the :root remap above.
+──────────────────────────────────────────────────────────────────────────── */
 @layer ds-overrides {
 
-  /* ──────────────────────────────────────────────────────────────────────────
-     ROOT — Remap legacy custom props to DS tokens.
-     Keeps all old var(--xxx) references in app.css working while pointing
-     them at the correct DS values.
-  ────────────────────────────────────────────────────────────────────────── */
-  :root {
-    --bg:       var(--ds-bg);
-    --surface:  var(--ds-bg-2);
-    --surface2: var(--ds-bg-3);
-    --card:     var(--ds-bg-4);
-    --card2:    var(--ds-bg-5);
-
-    --border:   var(--ds-border);
-    --border2:  var(--ds-border-strong);
-    --border3:  rgba(255,255,255,0.22);   /* kept for specificity parity */
-
-    --text:     var(--ds-text);
-    --muted:    var(--ds-text-3);
-    --muted2:   var(--ds-text-2);
-
-    --accent:    var(--ds-accent);
-    --accent-hi: var(--ds-accent-hover);
-
-    --danger:   var(--ds-error-light);
-    --success:  var(--ds-success-light);
-
-    /* Radius — align legacy vars with DS scale */
-    --radius:    var(--ds-r-md);
-    --radius-sm: var(--ds-r-sm);
-    --radius-xs: var(--ds-r-xs);
-  }
-
-
-  /* ──────────────────────────────────────────────────────────────────────────
-     BODY
-  ────────────────────────────────────────────────────────────────────────── */
+  /* ── Body ────────────────────────────────────────────────────────────── */
   body {
-    background: var(--ds-bg);
-    color: var(--ds-text);
+    background:  var(--ds-bg);
+    color:       var(--ds-text);
     font-family: var(--ds-font-ui);
+    font-size:   14px;
+    line-height: 1.6;
+  }
+
+  /* ── Headings ────────────────────────────────────────────────────────── */
+  h1, h2, h3 {
+    font-family: var(--ds-font-heading, var(--ds-font-ui));
   }
 
 
-  /* ──────────────────────────────────────────────────────────────────────────
-     SIDEBAR
-  ────────────────────────────────────────────────────────────────────────── */
+  /* ── Shell layout ────────────────────────────────────────────────────── */
+  .shell {
+    transition: grid-template-columns var(--ds-t-base) var(--ds-ease);
+  }
+
+
+  /* ── Sidebar ─────────────────────────────────────────────────────────── */
   aside {
-    background: var(--ds-bg-2);
-    border-right: 1px solid var(--ds-border);
-    backdrop-filter: var(--ds-glass-blur-sm);
+    background:    var(--ds-bg-2);
+    border-right:  1px solid var(--ds-border);
   }
 
   .brand {
@@ -69,6 +102,24 @@
 
   .brand-logo-img {
     border-radius: var(--ds-r-md);
+  }
+
+  /* app.css sets 'Syne' for brand-name; we override to DS heading font */
+  .brand-name {
+    font-family:    var(--ds-font-heading, var(--ds-font-ui));
+    font-size:      15px;
+    font-weight:    800;
+    letter-spacing: -0.02em;
+    color:          var(--ds-text);
+    line-height:    1;
+  }
+
+  /* app.css sets 'DM Mono' for brand-sub; we normalise */
+  .brand-sub {
+    font-family:    var(--ds-font-mono, monospace);
+    font-size:      10px;
+    color:          var(--ds-text-3);
+    letter-spacing: 0.04em;
   }
 
   .sidebar-nav {
@@ -83,55 +134,64 @@
     border-top: 1px solid var(--ds-border);
   }
 
+  .section-label {
+    color: var(--ds-text-3);
+  }
 
-  /* ──────────────────────────────────────────────────────────────────────────
-     HAMBURGER & REOPEN BUTTON
-  ────────────────────────────────────────────────────────────────────────── */
+
+  /* ── Hamburger & reopen button ───────────────────────────────────────── */
   .btn-hamburger {
-    border: 1px solid var(--ds-border);
+    border:        1px solid var(--ds-border);
     border-radius: var(--ds-r-sm);
-    color: var(--ds-text-2);
-    transition: var(--ds-transition-fast);
+    color:         var(--ds-text-2);
+    transition:    background var(--ds-t-fast) var(--ds-ease),
+                   border-color var(--ds-t-fast) var(--ds-ease),
+                   color var(--ds-t-fast) var(--ds-ease);
   }
   .btn-hamburger:hover {
-    background: var(--ds-surface-hover);
-    border-color: var(--ds-border-strong);
-    color: var(--ds-text);
+    background:    var(--ds-surface-hover, var(--ds-bg-4));
+    border-color:  var(--ds-border-strong);
+    color:         var(--ds-text);
   }
 
   .btn-sidebar-reopen {
-    border: 1px solid var(--ds-border-strong);
+    border:        1px solid var(--ds-border-strong);
     border-radius: var(--ds-r-sm);
-    background: var(--ds-glass-bg);
-    backdrop-filter: var(--ds-glass-blur-sm);
-    color: var(--ds-text-2);
-    box-shadow: var(--ds-shadow-md);
-    transition: var(--ds-transition-fast);
+    background:    var(--ds-glass-bg, var(--ds-bg-2));
+    color:         var(--ds-text-2);
+    box-shadow:    var(--ds-shadow-md);
+    transition:    background var(--ds-t-fast) var(--ds-ease),
+                   color var(--ds-t-fast) var(--ds-ease),
+                   border-color var(--ds-t-fast) var(--ds-ease);
   }
   .btn-sidebar-reopen:hover {
-    background: var(--ds-bg-4);
+    background:   var(--ds-bg-4);
     border-color: var(--ds-accent);
-    color: var(--ds-accent);
+    color:        var(--ds-accent);
   }
 
 
-  /* ──────────────────────────────────────────────────────────────────────────
-     NAV TABS (platform switcher)
-  ────────────────────────────────────────────────────────────────────────── */
+  /* ── Nav tabs (platform switcher) ────────────────────────────────────── */
   .nav-tab {
-    color: var(--ds-text-2);
+    /* app.css uses 'DM Sans'; normalise to DS ui font */
+    font-family: var(--ds-font-ui);
+    color:       var(--ds-text-2);
     border-radius: var(--ds-r-xs);
-    transition: var(--ds-transition-fast);
+    transition:  background var(--ds-t-fast) var(--ds-ease),
+                 color var(--ds-t-fast) var(--ds-ease);
   }
   .nav-tab:not(.active):hover {
-    background: var(--ds-surface-hover);
-    color: var(--ds-text);
+    background: var(--ds-surface-hover, var(--ds-bg-4));
+    color:      var(--ds-text);
+  }
+
+  /* app.css uses 'DM Mono' for the dimension label */
+  .nav-tab-dim {
+    font-family: var(--ds-font-mono, monospace);
   }
 
 
-  /* ──────────────────────────────────────────────────────────────────────────
-     FORM FIELDS — inputs, selects, textareas
-  ────────────────────────────────────────────────────────────────────────── */
+  /* ── Form fields ──────────────────────────────────────────────────────── */
   .field label {
     color: var(--ds-text-2);
   }
@@ -139,166 +199,197 @@
   .field input,
   .field select,
   .field textarea {
-    background: var(--ds-input-bg);
-    border: 1px solid var(--ds-input-border);
-    border-radius: var(--ds-input-r);
-    color: var(--ds-input-text);
-    transition: var(--ds-transition-fast);
-    box-shadow: var(--ds-shadow-inset);
+    /* app.css hardcodes 'DM Sans'; normalise */
+    font-family:  var(--ds-font-ui);
+    background:   var(--ds-input-bg, var(--ds-bg-4));
+    border:       1px solid var(--ds-input-border, var(--ds-border));
+    border-radius: var(--ds-input-r, var(--ds-r-xs));
+    color:        var(--ds-input-text, var(--ds-text));
+    transition:   border-color var(--ds-t-fast) var(--ds-ease),
+                  background var(--ds-t-fast) var(--ds-ease);
   }
   .field input::placeholder,
   .field textarea::placeholder {
-    color: var(--ds-input-placeholder);
+    color: var(--ds-input-placeholder, var(--ds-text-3));
   }
   .field input:focus,
   .field select:focus,
   .field textarea:focus {
-    border-color: var(--ds-input-border-focus);
-    background: var(--ds-input-bg-focus);
-    box-shadow: var(--ds-input-shadow-focus), var(--ds-shadow-inset);
-    outline: none;
+    border-color: var(--ds-input-border-focus, var(--ds-accent));
+    background:   var(--ds-input-bg-focus, var(--ds-bg-5, var(--ds-bg-4)));
+    box-shadow:   var(--ds-input-shadow-focus, 0 0 0 2px rgba(108,99,255,0.18));
+    outline:      none;
   }
   .field select option {
     background: var(--ds-bg-4);
   }
 
 
-  /* ──────────────────────────────────────────────────────────────────────────
-     THEME PICKER
-  ────────────────────────────────────────────────────────────────────────── */
+  /* ── Theme picker ────────────────────────────────────────────────────── */
+  .theme-grid {
+    display:               grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap:                   6px;
+  }
+
   .theme-pill {
-    background: var(--ds-bg-4);
-    border: 1px solid var(--ds-border);
+    background:    var(--ds-bg-4);
+    border:        1px solid var(--ds-border);
     border-radius: var(--ds-r-xs);
-    color: var(--ds-text-2);
-    transition: var(--ds-transition-fast);
+    color:         var(--ds-text-2);
+    transition:    background var(--ds-t-fast) var(--ds-ease),
+                   border-color var(--ds-t-fast) var(--ds-ease),
+                   color var(--ds-t-fast) var(--ds-ease);
   }
   .theme-pill:hover {
     border-color: var(--ds-border-strong);
-    background: var(--ds-bg-5);
+    background:   var(--ds-bg-5, var(--ds-bg-4));
   }
+  /* app.css uses raw rgba(108,92,231,.08); override with DS token */
   .theme-pill.active {
-    border-color: var(--ds-border-accent);
-    background: var(--ds-accent-lighter);
-    color: var(--ds-text);
-    box-shadow: var(--ds-glow-sm);
+    border-color: var(--ds-border-accent, var(--ds-accent));
+    background:   var(--ds-accent-lighter, rgba(108,99,255,0.08));
+    color:        var(--ds-text);
+    box-shadow:   var(--ds-glow-sm, 0 0 0 1px rgba(108,99,255,0.25));
   }
 
 
-  /* ──────────────────────────────────────────────────────────────────────────
-     FORMAT ROW (PNG / PDF toggle)
-  ────────────────────────────────────────────────────────────────────────── */
+  /* ── Format row (PNG / PDF toggle) ───────────────────────────────────── */
   .format-row {
-    background: var(--ds-bg-3);
-    border: 1px solid var(--ds-border);
+    background:    var(--ds-bg-3);
+    border:        1px solid var(--ds-border);
     border-radius: var(--ds-r-sm);
   }
+
+  /* app.css sets 'DM Mono' for fmt-btn */
   .fmt-btn {
-    color: var(--ds-text-2);
+    font-family:   var(--ds-font-mono, monospace);
+    color:         var(--ds-text-2);
     border-radius: var(--ds-r-xs);
-    transition: var(--ds-transition-fast);
+    transition:    background var(--ds-t-fast) var(--ds-ease),
+                   color var(--ds-t-fast) var(--ds-ease);
   }
   .fmt-btn.active {
-    background: var(--ds-surface-active);
-    color: var(--ds-text);
-    box-shadow: var(--ds-shadow-xs);
+    background: var(--ds-surface-active, var(--ds-bg-3));
+    color:      var(--ds-text);
+    box-shadow: var(--ds-shadow-xs, 0 1px 4px rgba(0,0,0,0.3));
   }
 
 
-  /* ──────────────────────────────────────────────────────────────────────────
-     PRIMARY GENERATE BUTTON
-  ────────────────────────────────────────────────────────────────────────── */
+  /* ── Primary generate button ─────────────────────────────────────────── */
+  /* app.css hardcodes 'Syne' font and a raw gradient; override both */
   .btn-generate {
-    background: var(--ds-gradient);
+    background:    var(--ds-gradient, linear-gradient(135deg, var(--ds-accent) 0%, var(--ds-accent-2, #4F46E5) 100%));
     border-radius: var(--ds-r-sm);
-    font-family: var(--ds-font-ui);
-    box-shadow: var(--ds-glow-sm);
-    transition: opacity var(--ds-t-fast) var(--ds-ease),
-                transform var(--ds-t-fast) var(--ds-ease-spring),
-                box-shadow var(--ds-t-base) var(--ds-ease);
+    font-family:   var(--ds-font-ui);
+    box-shadow:    var(--ds-glow-sm, 0 4px 18px rgba(108,99,255,0.35));
+    transition:    opacity var(--ds-t-fast) var(--ds-ease),
+                   transform var(--ds-t-fast) var(--ds-ease),
+                   box-shadow var(--ds-t-base) var(--ds-ease);
   }
   .btn-generate:hover {
-    box-shadow: var(--ds-glow);
-    opacity: 0.93;
+    box-shadow: var(--ds-glow, 0 6px 24px rgba(108,99,255,0.5));
+    opacity:    0.93;
   }
   .btn-generate:disabled {
-    opacity: 0.32;
+    opacity:    0.32;
     box-shadow: none;
   }
 
 
-  /* ──────────────────────────────────────────────────────────────────────────
-     SECONDARY BUTTONS (import, structure, header actions)
-  ────────────────────────────────────────────────────────────────────────── */
+  /* ── Secondary buttons ───────────────────────────────────────────────── */
   .btn-import {
-    border: 1px solid var(--ds-border-strong);
+    /* app.css: 'DM Sans'; override */
+    font-family:   var(--ds-font-ui);
+    border:        1px solid var(--ds-border-strong);
     border-radius: var(--ds-r-sm);
-    color: var(--ds-text-2);
-    transition: var(--ds-transition-fast);
+    color:         var(--ds-text-2);
+    transition:    background var(--ds-t-fast) var(--ds-ease),
+                   border-color var(--ds-t-fast) var(--ds-ease),
+                   color var(--ds-t-fast) var(--ds-ease);
   }
   .btn-import:hover {
-    background: var(--ds-surface-hover);
+    background:   var(--ds-surface-hover, var(--ds-bg-4));
     border-color: var(--ds-accent);
-    color: var(--ds-text-accent);
+    color:        var(--ds-text-accent, var(--ds-accent));
   }
 
+  /* app.css: hardcoded rgba(0,203,169,...) teal tint */
   .btn-structure {
+    font-family:   var(--ds-font-ui);
+    border-color:  var(--ds-border-strong);
     border-radius: var(--ds-r-sm);
-    transition: var(--ds-transition-fast);
+    color:         var(--ds-text-2);
+    transition:    background var(--ds-t-fast) var(--ds-ease),
+                   border-color var(--ds-t-fast) var(--ds-ease),
+                   color var(--ds-t-fast) var(--ds-ease);
+  }
+  .btn-structure:hover {
+    background:   var(--ds-surface-hover, var(--ds-bg-4));
+    border-color: var(--ds-accent);
+    border-style: solid;
+    color:        var(--ds-text-accent, var(--ds-accent));
   }
 
+  /* app.css: hardcoded rgba(0,203,169,...) */
   .btn-header-structure {
+    font-family:   var(--ds-font-ui);
+    border:        1px solid var(--ds-border-strong);
     border-radius: var(--ds-r-sm);
-    transition: var(--ds-transition-fast);
+    background:    transparent;
+    color:         var(--ds-text-2);
+    transition:    background var(--ds-t-fast) var(--ds-ease),
+                   border-color var(--ds-t-fast) var(--ds-ease),
+                   color var(--ds-t-fast) var(--ds-ease);
+  }
+  .btn-header-structure:hover {
+    background:   var(--ds-surface-hover, var(--ds-bg-4));
+    border-color: var(--ds-accent);
+    color:        var(--ds-text-accent, var(--ds-accent));
   }
 
 
-  /* ──────────────────────────────────────────────────────────────────────────
-     MAIN HEADER
-  ────────────────────────────────────────────────────────────────────────── */
+  /* ── Main header ──────────────────────────────────────────────────────── */
   .main-header {
     border-bottom: 1px solid var(--ds-border);
   }
   .main-header h1 {
-    font-family: var(--ds-font-ui);
-    font-weight: var(--ds-weight-bold);
+    font-family: var(--ds-font-heading, var(--ds-font-ui));
+    font-weight: var(--ds-weight-bold, 700);
   }
 
 
-  /* ──────────────────────────────────────────────────────────────────────────
-     TAB ROW (Editor / Aperçu)
-  ────────────────────────────────────────────────────────────────────────── */
+  /* ── Tab row (Editor / Preview) ─────────────────────────────────────── */
   .tab-row {
-    background: var(--ds-bg-3);
+    background:    var(--ds-bg-3);
     border-radius: var(--ds-r-sm);
   }
   .tab {
-    color: var(--ds-text-2);
+    font-family:   var(--ds-font-ui);
+    color:         var(--ds-text-2);
     border-radius: var(--ds-r-sm);
-    transition: var(--ds-transition-fast);
-    font-family: var(--ds-font-ui);
+    transition:    background var(--ds-t-fast) var(--ds-ease),
+                   color var(--ds-t-fast) var(--ds-ease);
   }
   .tab.active {
-    background: var(--ds-surface-active);
-    color: var(--ds-text);
+    background: var(--ds-surface-active, var(--ds-bg-3));
+    color:      var(--ds-text);
     box-shadow: var(--ds-shadow-xs);
   }
 
 
-  /* ──────────────────────────────────────────────────────────────────────────
-     SLIDE CARDS (editor)
-  ────────────────────────────────────────────────────────────────────────── */
+  /* ── Slide cards ─────────────────────────────────────────────────────── */
   .slide-card {
-    background: var(--ds-bg-4);
-    border: 1px solid var(--ds-border);
+    background:    var(--ds-bg-4);
+    border:        1px solid var(--ds-border);
     border-radius: var(--ds-r-md);
-    box-shadow: var(--ds-shadow-sm);
-    transition: border-color var(--ds-t-base) var(--ds-ease),
-                box-shadow var(--ds-t-base) var(--ds-ease);
+    box-shadow:    var(--ds-shadow-sm);
+    transition:    border-color var(--ds-t-base) var(--ds-ease),
+                   box-shadow var(--ds-t-base) var(--ds-ease);
   }
   .slide-card:hover {
     border-color: var(--ds-border-strong);
-    box-shadow: var(--ds-shadow-md);
+    box-shadow:   var(--ds-shadow-md);
   }
 
   .slide-body {
@@ -306,253 +397,243 @@
   }
 
   .slide-num {
-    background: var(--ds-accent-lighter);
-    color: var(--ds-text-accent);
+    background:    var(--ds-accent-lighter, rgba(108,99,255,0.08));
+    color:         var(--ds-text-accent, var(--ds-accent));
     border-radius: var(--ds-r-xs);
   }
 
   .icon-btn {
-    border: 1px solid var(--ds-border);
+    border:        1px solid var(--ds-border);
     border-radius: var(--ds-r-xs);
-    color: var(--ds-text-3);
-    transition: var(--ds-transition-fast);
+    color:         var(--ds-text-3);
+    transition:    background var(--ds-t-fast) var(--ds-ease),
+                   border-color var(--ds-t-fast) var(--ds-ease),
+                   color var(--ds-t-fast) var(--ds-ease);
   }
   .icon-btn:hover {
-    background: var(--ds-surface-hover);
+    background:   var(--ds-surface-hover, var(--ds-bg-4));
     border-color: var(--ds-border-strong);
-    color: var(--ds-text);
+    color:        var(--ds-text);
   }
   .icon-btn.danger:hover {
-    color: var(--ds-error-light);
-    border-color: var(--ds-error-light);
-    background: var(--ds-error-bg);
+    color:        var(--ds-error-light, #f87171);
+    border-color: var(--ds-error-light, #f87171);
+    background:   var(--ds-error-bg, rgba(248,113,113,0.08));
   }
 
-  /* Column blocks inside compare cards */
   .col-block {
-    background: var(--ds-bg-3);
-    border: 1px solid var(--ds-border);
+    background:    var(--ds-bg-3);
+    border:        1px solid var(--ds-border);
     border-radius: var(--ds-r-sm);
   }
 
 
-  /* ──────────────────────────────────────────────────────────────────────────
-     ADD SLIDE BAR
-  ────────────────────────────────────────────────────────────────────────── */
+  /* ── Add-slide bar ────────────────────────────────────────────────────── */
   .add-slide-bar {
-    background: var(--ds-bg-4);
-    border: 1px dashed var(--ds-border-strong);
+    background:    var(--ds-bg-4);
+    border:        1px dashed var(--ds-border-strong);
     border-radius: var(--ds-r-md);
   }
   .add-btn {
-    background: var(--ds-bg-3);
-    border: 1px solid var(--ds-border);
+    background:    var(--ds-bg-3);
+    border:        1px solid var(--ds-border);
     border-radius: var(--ds-r-sm);
-    color: var(--ds-text-2);
-    transition: var(--ds-transition-fast);
+    color:         var(--ds-text-2);
+    transition:    background var(--ds-t-fast) var(--ds-ease),
+                   border-color var(--ds-t-fast) var(--ds-ease),
+                   color var(--ds-t-fast) var(--ds-ease);
   }
   .add-btn:hover {
     border-color: var(--ds-accent);
-    color: var(--ds-text-accent);
-    background: var(--ds-accent-lighter);
+    color:        var(--ds-text-accent, var(--ds-accent));
+    background:   var(--ds-accent-lighter, rgba(108,99,255,0.08));
   }
 
 
-  /* ──────────────────────────────────────────────────────────────────────────
-     IMAGE FIELD PICKER
-  ────────────────────────────────────────────────────────────────────────── */
+  /* ── Image field picker ───────────────────────────────────────────────── */
   .btn-img-pick {
-    background: var(--ds-bg-3);
-    border: 1px solid var(--ds-border-strong);
+    background:    var(--ds-bg-3);
+    border:        1px solid var(--ds-border-strong);
     border-radius: var(--ds-r-sm);
-    color: var(--ds-text-2);
-    transition: var(--ds-transition-fast);
+    color:         var(--ds-text-2);
+    transition:    border-color var(--ds-t-fast) var(--ds-ease),
+                   color var(--ds-t-fast) var(--ds-ease);
   }
   .btn-img-pick:hover {
     border-color: var(--ds-accent);
-    color: var(--ds-text-accent);
+    color:        var(--ds-text-accent, var(--ds-accent));
   }
 
   .field-img-preview-wrap {
-    border: 1px solid var(--ds-border-strong);
-    background: var(--ds-bg-3);
+    border:        1px solid var(--ds-border-strong);
+    background:    var(--ds-bg-3);
     border-radius: var(--ds-r-sm);
   }
 
 
-  /* ──────────────────────────────────────────────────────────────────────────
-     GENERATION OVERLAY
-  ────────────────────────────────────────────────────────────────────────── */
+  /* ── Generation overlay ───────────────────────────────────────────────── */
   .gen-overlay {
-    background: var(--ds-bg);
+    background:    var(--ds-bg);
     border-radius: var(--ds-r-md);
   }
 
   .gen-dot {
-    background: var(--ds-bg-3);
-    border: 1px solid var(--ds-border);
+    background:    var(--ds-bg-3);
+    border:        1px solid var(--ds-border);
     border-radius: var(--ds-r-xs);
   }
   .gen-dot.done {
-    background: var(--ds-gradient);
-    border-color: transparent;
-    box-shadow: var(--ds-glow-sm);
+    background:    var(--ds-gradient, linear-gradient(135deg, var(--ds-accent) 0%, var(--ds-accent-2, #4F46E5) 100%));
+    border-color:  transparent;
+    box-shadow:    var(--ds-glow-sm);
   }
   .gen-dot.active {
     border-color: var(--ds-accent);
-    background: var(--ds-accent-lighter);
+    background:   var(--ds-accent-lighter, rgba(108,99,255,0.08));
   }
 
-  .gen-bar-track {
-    background: var(--ds-bg-3);
-  }
-  .gen-bar-fill {
-    background: var(--ds-gradient);
+  .gen-bar-track { background: var(--ds-bg-3); }
+  .gen-bar-fill  {
+    background:      var(--ds-gradient, linear-gradient(135deg, var(--ds-accent) 0%, var(--ds-accent-2, #4F46E5) 100%));
     background-size: 200% 100%;
   }
 
 
-  /* ──────────────────────────────────────────────────────────────────────────
-     JOBS PANEL (floating task tracker)
-  ────────────────────────────────────────────────────────────────────────── */
+  /* ── Jobs panel ───────────────────────────────────────────────────────── */
   .jobs-panel {
-    background: var(--ds-glass-bg);
-    backdrop-filter: var(--ds-glass-blur);
-    border: 1px solid var(--ds-border-strong);
+    background:    var(--ds-glass-bg, rgba(12,12,24,0.85));
+    border:        1px solid var(--ds-border-strong);
     border-radius: var(--ds-r-md);
-    box-shadow: var(--ds-shadow-xl), 0 0 0 1px rgba(255,255,255,0.04);
+    box-shadow:    var(--ds-shadow-xl), 0 0 0 1px rgba(255,255,255,0.04);
   }
 
   .jobs-panel-header {
-    background: var(--ds-bg-4);
+    background:    var(--ds-bg-4);
     border-bottom: 1px solid var(--ds-border);
   }
 
   .jobs-panel-chevron {
-    background: var(--ds-bg-3);
+    background:    var(--ds-bg-3);
     border-radius: var(--ds-r-xs);
-    color: var(--ds-text-2);
+    color:         var(--ds-text-2);
   }
 
   .jcard {
-    background: var(--ds-bg-3);
-    border: 1px solid var(--ds-border);
+    background:    var(--ds-bg-3);
+    border:        1px solid var(--ds-border);
     border-radius: var(--ds-r-sm);
   }
-  .jcard.jrunning { border-color: var(--ds-border-accent); }
-  .jcard.jdone    { border-color: var(--ds-border-success); }
-  .jcard.jerror   { border-color: var(--ds-border-error); }
+  .jcard.jrunning { border-color: var(--ds-border-accent,  var(--ds-accent)); }
+  .jcard.jdone    { border-color: var(--ds-border-success, var(--ds-success-light, #34d399)); }
+  .jcard.jerror   { border-color: var(--ds-border-error,   var(--ds-error-light,  #f87171)); }
 
-  .jcard-bar-track {
-    background: var(--ds-bg-2);
-  }
+  .jcard-bar-track { background: var(--ds-bg-2); }
+
   .jcard-btn {
-    border: 1px solid var(--ds-border-strong);
-    background: var(--ds-bg-4);
+    border:        1px solid var(--ds-border-strong);
+    background:    var(--ds-bg-4);
     border-radius: var(--ds-r-xs);
-    color: var(--ds-text-2);
-    transition: var(--ds-transition-fast);
+    color:         var(--ds-text-2);
+    transition:    background var(--ds-t-fast) var(--ds-ease),
+                   border-color var(--ds-t-fast) var(--ds-ease),
+                   color var(--ds-t-fast) var(--ds-ease);
   }
   .jcard-btn:hover {
     border-color: var(--ds-accent);
-    color: var(--ds-text-accent);
+    color:        var(--ds-text-accent, var(--ds-accent));
   }
   .jcard-btn.primary {
-    background: var(--ds-accent);
+    background:   var(--ds-accent);
     border-color: var(--ds-accent);
   }
   .jcard-btn.primary:hover {
-    background: var(--ds-accent-hover);
+    background: var(--ds-accent-hover, var(--ds-accent));
   }
 
 
-  /* ──────────────────────────────────────────────────────────────────────────
-     MARKDOWN IMPORT MODAL
-  ────────────────────────────────────────────────────────────────────────── */
+  /* ── Markdown import modal ────────────────────────────────────────────── */
   .md-block-item {
-    background: var(--ds-bg-3);
-    border: 1px solid var(--ds-border);
+    background:    var(--ds-bg-3);
+    border:        1px solid var(--ds-border);
     border-radius: var(--ds-r-sm);
   }
 
   .md-block-textarea {
-    background: var(--ds-input-bg);
-    border: 1px solid var(--ds-input-border);
+    background:    var(--ds-input-bg, var(--ds-bg-4));
+    border:        1px solid var(--ds-input-border, var(--ds-border));
     border-radius: var(--ds-r-sm);
-    color: var(--ds-input-text);
-    transition: var(--ds-transition-fast);
+    color:         var(--ds-input-text, var(--ds-text));
+    transition:    border-color var(--ds-t-fast) var(--ds-ease);
   }
   .md-block-textarea:focus {
-    border-color: var(--ds-input-border-focus);
-    box-shadow: var(--ds-input-shadow-focus);
-    outline: none;
+    border-color: var(--ds-input-border-focus, var(--ds-accent));
+    box-shadow:   var(--ds-input-shadow-focus, 0 0 0 2px rgba(108,99,255,0.18));
+    outline:      none;
   }
 
   .md-add-block-btn {
-    border: 1px dashed var(--ds-border-strong);
+    border:        1px dashed var(--ds-border-strong);
     border-radius: var(--ds-r-sm);
-    color: var(--ds-text-2);
-    transition: var(--ds-transition-fast);
+    color:         var(--ds-text-2);
+    transition:    background var(--ds-t-fast) var(--ds-ease),
+                   border-color var(--ds-t-fast) var(--ds-ease),
+                   color var(--ds-t-fast) var(--ds-ease);
   }
   .md-add-block-btn:hover {
     border-color: var(--ds-accent);
-    color: var(--ds-text-accent);
-    background: var(--ds-accent-lighter);
+    color:        var(--ds-text-accent, var(--ds-accent));
+    background:   var(--ds-accent-lighter, rgba(108,99,255,0.08));
   }
 
   .md-file-item {
-    background: var(--ds-bg-3);
-    border: 1px solid var(--ds-border);
+    background:    var(--ds-bg-3);
+    border:        1px solid var(--ds-border);
     border-radius: var(--ds-r-sm);
   }
 
   .md-modal-footer-multi {
-    background: var(--ds-bg-4);
-    border-top: 1px solid var(--ds-border);
+    background:  var(--ds-bg-4);
+    border-top:  1px solid var(--ds-border);
   }
 
 
-  /* ──────────────────────────────────────────────────────────────────────────
-     RE-THEME BAR (preview panel)
-  ────────────────────────────────────────────────────────────────────────── */
+  /* ── Re-theme bar (preview panel) ────────────────────────────────────── */
   .retheme-bar {
-    background: var(--ds-bg-4);
-    border: 1px solid var(--ds-border);
+    background:    var(--ds-bg-4);
+    border:        1px solid var(--ds-border);
     border-radius: var(--ds-r-md);
   }
 
   .retheme-pill {
-    background: var(--ds-bg-3);
-    border: 1.5px solid var(--ds-border);
+    background:    var(--ds-bg-3);
+    border:        1.5px solid var(--ds-border);
     border-radius: var(--ds-r-sm);
-    transition: var(--ds-transition-fast);
+    transition:    background var(--ds-t-fast) var(--ds-ease),
+                   border-color var(--ds-t-fast) var(--ds-ease);
   }
   .retheme-pill:hover {
     border-color: var(--ds-border-strong);
   }
   .retheme-pill.active {
-    border-color: var(--ds-border-accent);
-    background: var(--ds-accent-lighter);
-    box-shadow: var(--ds-glow-sm);
+    border-color: var(--ds-border-accent, var(--ds-accent));
+    background:   var(--ds-accent-lighter, rgba(108,99,255,0.08));
+    box-shadow:   var(--ds-glow-sm);
   }
 
 
-  /* ──────────────────────────────────────────────────────────────────────────
-     PREVIEW GRID
-  ────────────────────────────────────────────────────────────────────────── */
+  /* ── Preview grid items ───────────────────────────────────────────────── */
   .preview-item {
-    background: var(--ds-bg-4);
-    border: 1px solid var(--ds-border);
+    background:    var(--ds-bg-4);
+    border:        1px solid var(--ds-border);
     border-radius: var(--ds-r-md);
-    box-shadow: var(--ds-shadow-sm);
-    transition: border-color var(--ds-t-base) var(--ds-ease),
-                box-shadow var(--ds-t-base) var(--ds-ease),
-                transform var(--ds-t-base) var(--ds-ease-spring);
+    box-shadow:    var(--ds-shadow-sm);
+    transition:    border-color var(--ds-t-base) var(--ds-ease),
+                   box-shadow var(--ds-t-base) var(--ds-ease),
+                   transform var(--ds-t-base) var(--ds-ease);
   }
   .preview-item:hover {
     border-color: var(--ds-border-strong);
-    box-shadow: var(--ds-shadow-md);
+    box-shadow:   var(--ds-shadow-md);
   }
 
-}
-/* end @layer ds-overrides */
+} /* end @layer ds-overrides */

@@ -1,508 +1,541 @@
 /* ═══════════════════════════════════════════════════════════════════════════
-   ds-animations.css — Design System Animation Library v1
-   Carousel Generator — Premium Dark UI
+   ds-animations.css — Design System Animation Library v2
+   CarouselGen — Modern Dark Cinema direction
    ═══════════════════════════════════════════════════════════════════════════
 
-   USAGE
-   ──────────────────────────────────────────────────────────────────────────
-   All keyframes and utilities live in @layer ds-animations so they integrate
-   cleanly with the rest of the ds-* layer stack without specificity conflicts.
+   Architecture
+   ─────────────────────────────────────────────────────────────────────────
+   @keyframes live at root level (browser requirement — NOT inside @layer).
+   Utility classes live inside @layer ds-animations for clean cascade control.
 
-   Quick reference:
-     Entrance     .ds-animate-fade-in | .ds-animate-slide-up | .ds-animate-slide-down
-                  .ds-animate-slide-in-right | .ds-animate-scale-in
-     Exit         .ds-animate-fade-out | .ds-animate-scale-out
-     Loading      .ds-animate-shimmer | .ds-animate-spin | .ds-animate-dots
-     Status       .ds-animate-pulse | .ds-animate-bounce
-     Decorative   .ds-animate-gradient | .ds-animate-glow
-     Transitions  .ds-transition | .ds-transition-fast | .ds-transition-slow
-                  .ds-transition-spring | .ds-transition-color | .ds-transition-transform
+   Tokens: --ds-t-fast 150ms | --ds-t-base 240ms | --ds-t-slow 400ms | --ds-t-slower 600ms
+           --ds-ease expo-out | --ds-ease-std | --ds-ease-spring | --ds-ease-in
+           --ds-accent #6C63FF | --ds-accent-glow rgba(108,99,255,0.22)
 
-   Delay helpers  .ds-delay-75 → .ds-delay-700   (add to any animated element)
-   Fill helpers   .ds-fill-both | .ds-fill-forwards
-   Iteration      .ds-loop | .ds-loop-2 | .ds-loop-3
-   Direction      .ds-alternate
-   Play state     .ds-paused
-
-   Tokens consumed (defined in ds-tokens.css):
-     --ds-accent        --ds-gradient       --ds-t-fast
-     --ds-t-base        --ds-t-slow         --ds-t-slower
-     --ds-ease          --ds-ease-out       --ds-ease-spring
-     --ds-glow          --ds-glow-sm        --ds-glow-lg
-     --ds-accent-glow   --ds-t-instant      --ds-t-reveal
-
+   Entrance   .ds-animate-fade-in | .ds-animate-slide-up | .ds-animate-slide-down
+              .ds-animate-slide-in-left | .ds-animate-scale-in | .ds-animate-pop-in
+   Stagger    .ds-stagger > * (nth-child 1–8 at 40ms steps)
+   Spinner    .ds-spinner | .ds-spinner-sm | .ds-spinner-lg
+   Skeleton   .ds-skeleton | .ds-skeleton-text | .ds-skeleton-title | .ds-skeleton-avatar
+   Transition .ds-transition | .ds-transition-fast | .ds-transition-slow
+   Modifiers  .ds-delay-* | .ds-loop | .ds-paused | .ds-fill-both
    ═══════════════════════════════════════════════════════════════════════════ */
+
+
+/* ── 1. KEYFRAMES — root level (NOT inside @layer) ───────────────────────── */
+
+/* 1.1  Fade */
+@keyframes ds-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes ds-fade-out {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+
+/* 1.2  Slide up — content rises from 16 px below */
+@keyframes ds-slide-up {
+  from {
+    opacity:   0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity:   1;
+    transform: translateY(0);
+  }
+}
+
+/* 1.3  Slide down — content drops from 16 px above */
+@keyframes ds-slide-down {
+  from {
+    opacity:   0;
+    transform: translateY(-16px);
+  }
+  to {
+    opacity:   1;
+    transform: translateY(0);
+  }
+}
+
+/* 1.4  Slide in from left — panel / sheet entrance */
+@keyframes ds-slide-in-left {
+  from {
+    opacity:   0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity:   1;
+    transform: translateX(0);
+  }
+}
+
+/* 1.5  Slide in from right — reverse panel entrance */
+@keyframes ds-slide-in-right {
+  from {
+    opacity:   0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity:   1;
+    transform: translateX(0);
+  }
+}
+
+/* 1.6  Scale in — modal / card / popover entrance */
+@keyframes ds-scale-in {
+  from {
+    opacity:   0;
+    transform: scale(0.92);
+  }
+  to {
+    opacity:   1;
+    transform: scale(1);
+  }
+}
+
+/* 1.7  Scale out — modal / popover exit */
+@keyframes ds-scale-out {
+  from {
+    opacity:   1;
+    transform: scale(1);
+  }
+  to {
+    opacity:   0;
+    transform: scale(0.94);
+  }
+}
+
+/* 1.8  Pop in — spring overshoot entrance for badges / chips / toasts */
+@keyframes ds-pop-in {
+  0%   {
+    opacity:   0;
+    transform: scale(0.85);
+  }
+  60%  {
+    opacity:   1;
+    transform: scale(1.03);
+  }
+  100% {
+    opacity:   1;
+    transform: scale(1);
+  }
+}
+
+/* 1.9  Shake — error feedback for invalid inputs / rejected actions */
+@keyframes ds-shake {
+  0%   { transform: translate(0, 0);    }
+  15%  { transform: translate(-4px, 0); }
+  30%  { transform: translate(4px, 0);  }
+  50%  { transform: translate(-3px, 0); }
+  70%  { transform: translate(3px, 0);  }
+  100% { transform: translate(0, 0);    }
+}
+
+/* 1.10 Spin — full 360 rotation for loading spinners */
+@keyframes ds-spin {
+  from { transform: rotate(0deg);   }
+  to   { transform: rotate(360deg); }
+}
+
+/* 1.11 Pulse — subtle opacity throb for live indicators */
+@keyframes ds-pulse {
+  0%, 100% { opacity: 1;   }
+  50%       { opacity: 0.4; }
+}
+
+/* 1.12 Shimmer — skeleton loader background-position sweep */
+@keyframes ds-shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position:  200% center; }
+}
+
+/* 1.13 Ping — notification ring that expands and fades */
+@keyframes ds-ping {
+  0%   {
+    transform: scale(1);
+    opacity:   0.8;
+  }
+  100% {
+    transform: scale(2);
+    opacity:   0;
+  }
+}
+
+/* 1.14 Bounce light — subtle idle levitation, 3-step */
+@keyframes ds-bounce-light {
+  0%   { transform: translateY(0);    }
+  50%  { transform: translateY(-4px); }
+  100% { transform: translateY(0);    }
+}
+
+/* 1.15 Progress indeterminate — sliding gradient fill for infinite bars */
+@keyframes ds-progress-indeterminate {
+  0%   { background-position: -100% center; }
+  100% { background-position:  200% center; }
+}
+
+/* 1.16 Bar fill — determinate progress bar width expansion */
+@keyframes ds-bar-fill {
+  from { width: 0;    }
+  to   { width: 100%; }
+}
+
+/* 1.17 Orb float 1 — ambient background orb, slow triangular drift */
+@keyframes orb-float-1 {
+  0%   { transform: translate(0,     0);     }
+  40%  { transform: translate(30px, -20px);  }
+  75%  { transform: translate(-10px,  15px); }
+  100% { transform: translate(0,     0);     }
+}
+
+/* 1.18 Orb float 2 — counterpoint orb with different phase */
+@keyframes orb-float-2 {
+  0%   { transform: translate(0,     0);    }
+  35%  { transform: translate(-25px, 15px); }
+  70%  { transform: translate(10px, -10px); }
+  100% { transform: translate(0,     0);    }
+}
+
+/* 1.19 Glow pulse — accent border glow breathes in and out */
+@keyframes ds-glow-pulse {
+  0%, 100% {
+    box-shadow:
+      0 0 12px var(--ds-accent-glow),
+      0 0 24px rgba(108, 99, 255, 0.10);
+  }
+  50% {
+    box-shadow:
+      0 0 20px var(--ds-accent-glow),
+      0 0 40px rgba(108, 99, 255, 0.28),
+      0 0 64px rgba(108, 99, 255, 0.12);
+  }
+}
+
+/* 1.20 Toast in — slide + fade from right edge */
+@keyframes ds-toast-in {
+  from {
+    opacity:   0;
+    transform: translateX(24px) scale(0.97);
+  }
+  to {
+    opacity:   1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+/* 1.21 Toast out — reverse exit */
+@keyframes ds-toast-out {
+  from {
+    opacity:   1;
+    transform: translateX(0) scale(1);
+  }
+  to {
+    opacity:   0;
+    transform: translateX(24px) scale(0.97);
+  }
+}
+
+/* 1.22 Focus ring — expanding ring for keyboard focus */
+@keyframes ds-focus-ring {
+  0%   { box-shadow: 0 0 0 0   rgba(108, 99, 255, 0.5); }
+  60%  { box-shadow: 0 0 0 4px rgba(108, 99, 255, 0.4); }
+  100% { box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.35); }
+}
+
+
+/* ────────────────────────────────────────────────────────────────────────── */
 
 @layer ds-animations {
 
-  /* ─────────────────────────────────────────────────────────────────────────
-     1. KEYFRAMES
-     ───────────────────────────────────────────────────────────────────────── */
-
-  /* 1.1 Fade — pure opacity transitions */
-  @keyframes ds-fade-in {
-    from { opacity: 0; }
-    to   { opacity: 1; }
-  }
-
-  @keyframes ds-fade-out {
-    from { opacity: 1; }
-    to   { opacity: 0; }
-  }
-
-  /* 1.2 Slide up — content rises into view from below (16 px offset) */
-  @keyframes ds-slide-up {
-    from {
-      opacity:   0;
-      transform: translateY(16px);
-    }
-    to {
-      opacity:   1;
-      transform: translateY(0);
-    }
-  }
-
-  /* 1.3 Slide down — content drops into view from above (−16 px offset) */
-  @keyframes ds-slide-down {
-    from {
-      opacity:   0;
-      transform: translateY(-16px);
-    }
-    to {
-      opacity:   1;
-      transform: translateY(0);
-    }
-  }
-
-  /* 1.4 Slide in from the right — panel / sheet entrance */
-  @keyframes ds-slide-in-right {
-    from { transform: translateX(100%); }
-    to   { transform: translateX(0); }
-  }
-
-  /* 1.5 Slide in from the left — reverse panel entrance */
-  @keyframes ds-slide-in-left {
-    from { transform: translateX(-100%); }
-    to   { transform: translateX(0); }
-  }
-
-  /* 1.6 Scale in — modal / card / popover entrance */
-  @keyframes ds-scale-in {
-    from {
-      opacity:   0;
-      transform: scale(0.92);
-    }
-    to {
-      opacity:   1;
-      transform: scale(1);
-    }
-  }
-
-  /* 1.7 Scale out — modal / popover exit */
-  @keyframes ds-scale-out {
-    from {
-      opacity:   1;
-      transform: scale(1);
-    }
-    to {
-      opacity:   0;
-      transform: scale(0.92);
-    }
-  }
-
-  /* 1.8 Shimmer — skeleton loading sweep (left → right gradient wipe)
-     The element needs a gradient background set via .ds-shimmer-bg or manually. */
-  @keyframes ds-shimmer {
-    0%   { background-position: -200% center; }
-    100% { background-position:  200% center; }
-  }
-
-  /* 1.9 Pulse — gentle scale throb for status dots / live indicators */
-  @keyframes ds-pulse {
-    0%, 100% { transform: scale(1);    opacity: 1;    }
-    50%       { transform: scale(1.05); opacity: 0.75; }
-  }
-
-  /* 1.10 Spin — full 360° rotation for loading spinners */
-  @keyframes ds-spin {
-    from { transform: rotate(0deg); }
-    to   { transform: rotate(360deg); }
-  }
-
-  /* 1.11 Bounce — spring entrance for success / confirmation states
-     Overshoots slightly before settling at natural scale. */
-  @keyframes ds-bounce {
-    0%   { transform: scale(0);    opacity: 0; }
-    55%  { transform: scale(1.15); opacity: 1; }
-    75%  { transform: scale(0.95);             }
-    90%  { transform: scale(1.04);             }
-    100% { transform: scale(1);                }
-  }
-
-  /* 1.12 Gradient shift — animates background-position on gradient surfaces
-     Pair with background-size: 200% 200% on the target element. */
-  @keyframes ds-gradient-shift {
-    0%   { background-position:   0% 50%; }
-    50%  { background-position: 100% 50%; }
-    100% { background-position:   0% 50%; }
-  }
-
-  /* 1.13 Glow pulse — accent box-shadow breathes in and out */
-  @keyframes ds-glow-pulse {
-    0%, 100% {
-      box-shadow: 0 0 12px rgba(124, 58, 237, 0.15),
-                  0 0 24px rgba(124, 58, 237, 0.08);
-    }
-    50% {
-      box-shadow: 0 0 24px rgba(124, 58, 237, 0.45),
-                  0 0 48px rgba(124, 58, 237, 0.25),
-                  0 0 72px rgba(124, 58, 237, 0.12);
-    }
-  }
-
-  /* 1.14 Count up — numeric counter reveal (clip + translate combo)
-     Pair with a JS counter that updates the textContent on each tick.
-     The animation provides the visual "slot-machine" entrance. */
-  @keyframes ds-count-up {
-    from {
-      opacity:         0;
-      transform:       translateY(40%);
-      clip-path:       inset(0 0 100% 0);
-    }
-    to {
-      opacity:         1;
-      transform:       translateY(0);
-      clip-path:       inset(0 0 0% 0);
-    }
-  }
-
-  /* 1.15 Dots — three-dot loading indicator (used on ::after pseudo)
-     Apply to an element whose content cycles through "", ".", "..", "..." */
-  @keyframes ds-dots {
-    0%   { content: "";    }
-    25%  { content: ".";   }
-    50%  { content: "..";  }
-    75%  { content: "..."; }
-    100% { content: "";    }
-  }
-
-  /* ── Bonus keyframes for richer UI feedback ────────────────────────────── */
-
-  /* 1.16 Float — gentle idle levitation for hero graphics / illustrations */
-  @keyframes ds-float {
-    0%, 100% { transform: translateY(0px);  }
-    50%       { transform: translateY(-8px); }
-  }
-
-  /* 1.17 Shake — error feedback for invalid inputs / rejected actions */
-  @keyframes ds-shake {
-    0%, 100% { transform: translateX(0);    }
-    15%       { transform: translateX(-6px); }
-    30%       { transform: translateX(6px);  }
-    45%       { transform: translateX(-4px); }
-    60%       { transform: translateX(4px);  }
-    75%       { transform: translateX(-2px); }
-    90%       { transform: translateX(2px);  }
-  }
-
-  /* 1.18 Flash — brief background-color flash for copy / save confirmations */
-  @keyframes ds-flash {
-    0%   { background-color: transparent; }
-    30%  { background-color: rgba(124, 58, 237, 0.25); }
-    70%  { background-color: rgba(124, 58, 237, 0.12); }
-    100% { background-color: transparent; }
-  }
-
-  /* 1.19 Ripple — ink-ripple effect from a tap/click origin
-     Pair with a positioned ::after pseudo-element set to border-radius 50%. */
-  @keyframes ds-ripple {
-    from {
-      transform: scale(0);
-      opacity:   0.5;
-    }
-    to {
-      transform: scale(2.5);
-      opacity:   0;
-    }
-  }
-
-  /* 1.20 Progress — left-to-right fill for indeterminate progress bars */
-  @keyframes ds-progress {
-    0%   { transform: translateX(-100%) scaleX(0.5); }
-    50%  { transform: translateX(0%)    scaleX(0.8); }
-    100% { transform: translateX(100%)  scaleX(0.5); }
-  }
-
-
-  /* ─────────────────────────────────────────────────────────────────────────
-     2. UTILITY ANIMATION CLASSES
-     Single-responsibility classes — each applies exactly one animation.
-     Duration and easing defaults can be overridden via CSS custom properties.
-     ───────────────────────────────────────────────────────────────────────── */
-
-  /* 2.1 Entrance animations */
+  /* ── 2.  ANIMATION UTILITIES ─────────────────────────────────────────── */
 
   .ds-animate-fade-in {
-    animation:
-      ds-fade-in
-      var(--ds-anim-duration, var(--ds-t-base))
-      var(--ds-anim-easing, var(--ds-ease-out))
-      var(--ds-anim-delay, 0ms)
-      both;
+    animation: ds-fade-in 0.4s var(--ds-ease) both;
   }
 
   .ds-animate-fade-out {
-    animation:
-      ds-fade-out
-      var(--ds-anim-duration, var(--ds-t-base))
-      var(--ds-anim-easing, var(--ds-ease))
-      var(--ds-anim-delay, 0ms)
-      both;
+    animation: ds-fade-out var(--ds-t-base) var(--ds-ease) both;
   }
 
   .ds-animate-slide-up {
-    animation:
-      ds-slide-up
-      var(--ds-anim-duration, var(--ds-t-slow))
-      var(--ds-anim-easing, var(--ds-ease-out))
-      var(--ds-anim-delay, 0ms)
-      both;
+    animation: ds-slide-up 0.35s var(--ds-ease) both;
   }
 
   .ds-animate-slide-down {
-    animation:
-      ds-slide-down
-      var(--ds-anim-duration, var(--ds-t-slow))
-      var(--ds-anim-easing, var(--ds-ease-out))
-      var(--ds-anim-delay, 0ms)
-      both;
-  }
-
-  .ds-animate-slide-in-right {
-    animation:
-      ds-slide-in-right
-      var(--ds-anim-duration, var(--ds-t-slow))
-      var(--ds-anim-easing, var(--ds-ease-spring))
-      var(--ds-anim-delay, 0ms)
-      both;
+    animation: ds-slide-down 0.35s var(--ds-ease) both;
   }
 
   .ds-animate-slide-in-left {
-    animation:
-      ds-slide-in-left
-      var(--ds-anim-duration, var(--ds-t-slow))
-      var(--ds-anim-easing, var(--ds-ease-spring))
-      var(--ds-anim-delay, 0ms)
-      both;
+    animation: ds-slide-in-left 0.3s var(--ds-ease) both;
+  }
+
+  .ds-animate-slide-in-right {
+    animation: ds-slide-in-right 0.3s var(--ds-ease) both;
   }
 
   .ds-animate-scale-in {
-    animation:
-      ds-scale-in
-      var(--ds-anim-duration, var(--ds-t-base))
-      var(--ds-anim-easing, var(--ds-ease-spring))
-      var(--ds-anim-delay, 0ms)
-      both;
+    animation: ds-scale-in 0.3s var(--ds-ease-spring) both;
   }
 
   .ds-animate-scale-out {
-    animation:
-      ds-scale-out
-      var(--ds-anim-duration, var(--ds-t-base))
-      var(--ds-anim-easing, var(--ds-ease))
-      var(--ds-anim-delay, 0ms)
-      both;
+    animation: ds-scale-out var(--ds-t-base) var(--ds-ease) both;
   }
 
-  /* 2.2 Loading and status animations */
-
-  /* Shimmer skeleton — element needs a shimmer-compatible background.
-     Use .ds-shimmer-bg (below) alongside this class on skeleton loaders. */
-  .ds-animate-shimmer {
-    background-size: 200% auto;
-    animation:
-      ds-shimmer
-      var(--ds-anim-duration, 1.6s)
-      linear
-      var(--ds-anim-delay, 0ms)
-      infinite;
+  .ds-animate-pop-in {
+    animation: ds-pop-in 0.4s var(--ds-ease-spring) both;
   }
 
-  /* Convenience background preset for shimmer */
-  .ds-shimmer-bg {
-    background: linear-gradient(
-      105deg,
-      rgba(255, 255, 255, 0.00)  0%,
-      rgba(255, 255, 255, 0.00) 38%,
-      rgba(255, 255, 255, 0.06) 50%,
-      rgba(255, 255, 255, 0.00) 62%,
-      rgba(255, 255, 255, 0.00) 100%
-    ), var(--ds-surface);
-    background-size: 200% auto;
+  /* ── 2.2  Feedback ────────────────────────────────────────────────────── */
+
+  .ds-animate-shake {
+    animation: ds-shake 500ms var(--ds-ease) both;
+  }
+
+  /* ── 2.3  Continuous / looping ────────────────────────────────────────── */
+
+  .ds-animate-spin {
+    animation: ds-spin 700ms linear infinite;
+  }
+
+  .ds-animate-spin-slow {
+    animation: ds-spin 3s linear infinite;
   }
 
   .ds-animate-pulse {
-    animation:
-      ds-pulse
-      var(--ds-anim-duration, 2s)
-      var(--ds-anim-easing, var(--ds-ease))
-      var(--ds-anim-delay, 0ms)
-      infinite;
+    animation: ds-pulse 2s var(--ds-ease-std) infinite;
   }
 
-  .ds-animate-spin {
-    animation:
-      ds-spin
-      var(--ds-anim-duration, 700ms)
-      linear
-      var(--ds-anim-delay, 0ms)
-      infinite;
+  .ds-animate-ping {
+    animation: ds-ping 1s var(--ds-ease) infinite;
   }
 
-  /* Slower, softer spin for ambient / decorative use */
-  .ds-animate-spin-slow {
-    animation:
-      ds-spin
-      var(--ds-anim-duration, 3s)
-      linear
-      var(--ds-anim-delay, 0ms)
-      infinite;
+  .ds-animate-bounce-light {
+    animation: ds-bounce-light 1s var(--ds-ease-std) infinite;
   }
 
-  .ds-animate-bounce {
-    animation:
-      ds-bounce
-      var(--ds-anim-duration, var(--ds-t-slower))
-      var(--ds-anim-easing, var(--ds-ease-spring))
-      var(--ds-anim-delay, 0ms)
-      both;
+  /* ── 2.4  Progress ────────────────────────────────────────────────────── */
+
+  .ds-animate-progress-indeterminate {
+    background-size: 200% auto;
+    animation: ds-progress-indeterminate 1.8s linear infinite;
   }
 
-  /* 2.3 Decorative / ambient animations */
-
-  /* Shifting gradient — set background-size: 200% 200% on the element */
-  .ds-animate-gradient {
-    background-size: 200% 200%;
-    animation:
-      ds-gradient-shift
-      var(--ds-anim-duration, 6s)
-      ease
-      var(--ds-anim-delay, 0ms)
-      infinite;
+  .ds-animate-bar-fill {
+    animation: ds-bar-fill var(--ds-t-slower) var(--ds-ease) both;
   }
+
+  /* ── 2.5  Ambient / decorative ────────────────────────────────────────── */
 
   .ds-animate-glow {
-    animation:
-      ds-glow-pulse
-      var(--ds-anim-duration, 3s)
-      var(--ds-anim-easing, var(--ds-ease))
-      var(--ds-anim-delay, 0ms)
-      infinite;
+    animation: ds-glow-pulse 3s var(--ds-ease-std) infinite;
   }
 
-  .ds-animate-float {
-    animation:
-      ds-float
-      var(--ds-anim-duration, 4s)
-      var(--ds-anim-easing, var(--ds-ease))
-      var(--ds-anim-delay, 0ms)
-      infinite;
+  .ds-orb-1 {
+    animation: orb-float-1 20s var(--ds-ease-std) infinite;
   }
 
-  /* 2.4 Feedback animations */
-
-  .ds-animate-shake {
-    animation:
-      ds-shake
-      var(--ds-anim-duration, 500ms)
-      var(--ds-anim-easing, var(--ds-ease))
-      var(--ds-anim-delay, 0ms)
-      both;
+  .ds-orb-2 {
+    animation: orb-float-2 25s var(--ds-ease-std) infinite;
   }
 
-  .ds-animate-flash {
-    animation:
-      ds-flash
-      var(--ds-anim-duration, 800ms)
-      var(--ds-anim-easing, var(--ds-ease-out))
-      var(--ds-anim-delay, 0ms)
-      both;
+  /* ── 2.6  Toast ───────────────────────────────────────────────────────── */
+
+  .ds-animate-toast-in {
+    animation: ds-toast-in var(--ds-t-slow) var(--ds-ease-spring) both;
   }
 
-  /* 2.5 Counter and text reveal */
-
-  .ds-animate-count-up {
-    animation:
-      ds-count-up
-      var(--ds-anim-duration, var(--ds-t-slow))
-      var(--ds-anim-easing, var(--ds-ease-out))
-      var(--ds-anim-delay, 0ms)
-      both;
+  .ds-animate-toast-out {
+    animation: ds-toast-out var(--ds-t-base) var(--ds-ease) both;
   }
 
-  /* Three-dot loading indicator
-     Usage: <span class="ds-animate-dots"></span>
-     The ::after pseudo renders the animated content. */
-  .ds-animate-dots::after {
-    content:    "";
-    animation:
-      ds-dots
-      var(--ds-anim-duration, 1.4s)
-      step-start
-      var(--ds-anim-delay, 0ms)
-      infinite;
-  }
+  /* ── 2.7  Focus ring ──────────────────────────────────────────────────── */
 
-  /* 2.6 Progress bar */
-
-  .ds-animate-progress {
-    transform-origin: left center;
-    animation:
-      ds-progress
-      var(--ds-anim-duration, 1.8s)
-      var(--ds-anim-easing, var(--ds-ease))
-      var(--ds-anim-delay, 0ms)
-      infinite;
+  .ds-focus-animate:focus-visible {
+    outline:   none;
+    animation: ds-focus-ring var(--ds-t-base) var(--ds-ease) forwards;
   }
 
 
   /* ─────────────────────────────────────────────────────────────────────────
-     3. STAGGERED ENTRANCE HELPERS
-     Add .ds-stagger to a parent and the direct children receive incremental
-     animation-delay values. Supports up to 12 children.
+     3. STAGGER HELPERS
+     Add .ds-stagger to a parent; direct children get incremental delays.
+     Children must already carry an animation class to benefit.
      ───────────────────────────────────────────────────────────────────────── */
 
   .ds-stagger > * {
-    /* Children must carry an animation class to benefit from the delay */
-    animation-fill-mode: both;
+    animation:            ds-slide-up 0.3s var(--ds-ease) both;
+    animation-fill-mode:  both;
   }
 
-  .ds-stagger > *:nth-child(1)  { animation-delay:  0ms;  }
-  .ds-stagger > *:nth-child(2)  { animation-delay:  60ms; }
-  .ds-stagger > *:nth-child(3)  { animation-delay: 120ms; }
-  .ds-stagger > *:nth-child(4)  { animation-delay: 180ms; }
-  .ds-stagger > *:nth-child(5)  { animation-delay: 240ms; }
-  .ds-stagger > *:nth-child(6)  { animation-delay: 300ms; }
-  .ds-stagger > *:nth-child(7)  { animation-delay: 360ms; }
-  .ds-stagger > *:nth-child(8)  { animation-delay: 420ms; }
-  .ds-stagger > *:nth-child(9)  { animation-delay: 480ms; }
-  .ds-stagger > *:nth-child(10) { animation-delay: 540ms; }
-  .ds-stagger > *:nth-child(11) { animation-delay: 600ms; }
-  .ds-stagger > *:nth-child(12) { animation-delay: 660ms; }
-
-  /* Faster stagger cadence — 40ms steps */
-  .ds-stagger-fast > *:nth-child(1)  { animation-delay:   0ms; }
-  .ds-stagger-fast > *:nth-child(2)  { animation-delay:  40ms; }
-  .ds-stagger-fast > *:nth-child(3)  { animation-delay:  80ms; }
-  .ds-stagger-fast > *:nth-child(4)  { animation-delay: 120ms; }
-  .ds-stagger-fast > *:nth-child(5)  { animation-delay: 160ms; }
-  .ds-stagger-fast > *:nth-child(6)  { animation-delay: 200ms; }
-  .ds-stagger-fast > *:nth-child(7)  { animation-delay: 240ms; }
-  .ds-stagger-fast > *:nth-child(8)  { animation-delay: 280ms; }
+  .ds-stagger > *:nth-child(1) { animation-delay:   0ms; }
+  .ds-stagger > *:nth-child(2) { animation-delay:  40ms; }
+  .ds-stagger > *:nth-child(3) { animation-delay:  80ms; }
+  .ds-stagger > *:nth-child(4) { animation-delay: 120ms; }
+  .ds-stagger > *:nth-child(5) { animation-delay: 160ms; }
+  .ds-stagger > *:nth-child(6) { animation-delay: 200ms; }
+  .ds-stagger > *:nth-child(7) { animation-delay: 240ms; }
+  .ds-stagger > *:nth-child(8) { animation-delay: 280ms; }
 
 
   /* ─────────────────────────────────────────────────────────────────────────
-     4. MANUAL DELAY UTILITIES
+     4. SPINNER COMPONENT
+     Single-element spinner built with the border trick.
+     ───────────────────────────────────────────────────────────────────────── */
+
+  .ds-spinner {
+    display:          inline-flex;
+    align-items:      center;
+    justify-content:  center;
+    width:            20px;
+    height:           20px;
+    border:           2px solid rgba(108, 99, 255, 0.2);
+    border-top-color: var(--ds-accent);
+    border-radius:    9999px;
+    animation:        ds-spin 700ms linear infinite;
+    flex-shrink:      0;
+  }
+
+  .ds-spinner-sm {
+    width:        14px;
+    height:       14px;
+    border-width: 1.5px;
+  }
+
+  .ds-spinner-lg {
+    width:        32px;
+    height:       32px;
+    border-width: 3px;
+  }
+
+
+  /* ─────────────────────────────────────────────────────────────────────────
+     5. SKELETON LOADER
+     Shimmer sweep over a dark surface. Apply .ds-skeleton to the element;
+     add a size class or set explicit dimensions.
+     ───────────────────────────────────────────────────────────────────────── */
+
+  .ds-skeleton {
+    display:        block;
+    border-radius:  6px;
+    background:     linear-gradient(
+      105deg,
+      rgba(255, 255, 255, 0.04)  0%,
+      rgba(255, 255, 255, 0.04) 35%,
+      rgba(255, 255, 255, 0.09) 50%,
+      rgba(255, 255, 255, 0.04) 65%,
+      rgba(255, 255, 255, 0.04) 100%
+    );
+    background-size:  200% auto;
+    animation:        ds-shimmer 1.6s linear infinite;
+    pointer-events:   none;
+    user-select:      none;
+  }
+
+  .ds-skeleton-text   { height: 14px; }
+  .ds-skeleton-title  { height: 20px; max-width: 60%; }
+  .ds-skeleton-avatar {
+    width:         40px;
+    height:        40px;
+    border-radius: 9999px;
+  }
+  .ds-skeleton-thumb  {
+    aspect-ratio:  1;
+    border-radius: 8px;
+  }
+
+  /* Staggered shimmer offset for multi-line skeleton groups */
+  .ds-skeleton-group > .ds-skeleton:nth-child(2) { animation-delay: 0.10s; }
+  .ds-skeleton-group > .ds-skeleton:nth-child(3) { animation-delay: 0.20s; }
+  .ds-skeleton-group > .ds-skeleton:nth-child(4) { animation-delay: 0.30s; }
+
+
+  /* ─────────────────────────────────────────────────────────────────────────
+     6. TRANSITION UTILITIES
+     Composable one-liner transitions keyed to design-system tokens.
+     ───────────────────────────────────────────────────────────────────────── */
+
+  /* Standard — all properties, base duration, expo-out */
+  .ds-transition {
+    transition: all var(--ds-t-base) var(--ds-ease);
+  }
+
+  /* Fast — micro-interactions, hover states on small elements */
+  .ds-transition-fast {
+    transition: all var(--ds-t-fast) var(--ds-ease);
+  }
+
+  /* Slow — backdrop fades, large surface reveals */
+  .ds-transition-slow {
+    transition: all var(--ds-t-slow) var(--ds-ease);
+  }
+
+  /* Spring — physics overshoot, scale/translate transforms */
+  .ds-transition-spring {
+    transition: all var(--ds-t-slow) var(--ds-ease-spring);
+  }
+
+  /* Color only — avoids layout recalcs on hover states */
+  .ds-transition-color {
+    transition:
+      color            var(--ds-t-fast) var(--ds-ease),
+      background-color var(--ds-t-fast) var(--ds-ease),
+      border-color     var(--ds-t-fast) var(--ds-ease),
+      fill             var(--ds-t-fast) var(--ds-ease),
+      opacity          var(--ds-t-fast) var(--ds-ease);
+  }
+
+  /* Transform only — compositor-thread, zero layout impact */
+  .ds-transition-transform {
+    transition: transform var(--ds-t-base) var(--ds-ease-spring);
+  }
+
+  /* Opacity only — fade overlays without layout reflow */
+  .ds-transition-opacity {
+    transition: opacity var(--ds-t-base) var(--ds-ease);
+  }
+
+  /* Shadow only — elevation change on hover / focus */
+  .ds-transition-shadow {
+    transition: box-shadow var(--ds-t-base) var(--ds-ease);
+  }
+
+
+  /* ─────────────────────────────────────────────────────────────────────────
+     7. HOVER-LIFT PATTERN
+     Elevation + translate on interactive surfaces.
+     ───────────────────────────────────────────────────────────────────────── */
+
+  .ds-hover-lift {
+    transition:
+      transform  var(--ds-t-base) var(--ds-ease-spring),
+      box-shadow var(--ds-t-base) var(--ds-ease);
+  }
+
+  .ds-hover-lift:hover {
+    transform:  translateY(-3px) scale(1.01);
+    box-shadow:
+      0 8px 24px rgba(0, 0, 0, 0.3),
+      0 0 0 1px rgba(108, 99, 255, 0.18);
+  }
+
+  .ds-hover-lift:active {
+    transform:  translateY(-1px) scale(0.99);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  }
+
+  /* Rise variant — translate only, no scale */
+  .ds-hover-rise {
+    transition: transform var(--ds-t-base) var(--ds-ease-spring);
+  }
+
+  .ds-hover-rise:hover  { transform: translateY(-2px); }
+  .ds-hover-rise:active { transform: translateY(0);    }
+
+
+  /* ─────────────────────────────────────────────────────────────────────────
+     8. MANUAL DELAY UTILITIES
      Override animation-delay independently of the stagger system.
      ───────────────────────────────────────────────────────────────────────── */
 
@@ -518,268 +551,30 @@
 
 
   /* ─────────────────────────────────────────────────────────────────────────
-     5. ANIMATION MODIFIER UTILITIES
-     Control fill, iteration, direction, and play-state.
+     9. ANIMATION MODIFIER UTILITIES
+     Fill, iteration, direction, play-state.
      ───────────────────────────────────────────────────────────────────────── */
 
-  /* Fill mode */
   .ds-fill-both     { animation-fill-mode: both;     }
   .ds-fill-forwards { animation-fill-mode: forwards;  }
   .ds-fill-none     { animation-fill-mode: none;      }
 
-  /* Iteration */
   .ds-loop   { animation-iteration-count: infinite; }
   .ds-loop-2 { animation-iteration-count: 2;        }
   .ds-loop-3 { animation-iteration-count: 3;        }
 
-  /* Direction */
   .ds-alternate { animation-direction: alternate; }
   .ds-reverse   { animation-direction: reverse;   }
 
-  /* Play state — toggle with JS: el.classList.toggle('ds-paused') */
+  /* Toggle with JS: el.classList.toggle('ds-paused') */
   .ds-paused { animation-play-state: paused; }
 
 
   /* ─────────────────────────────────────────────────────────────────────────
-     6. TRANSITION UTILITIES
-     Composable one-liner transitions keyed to design-system tokens.
-     ───────────────────────────────────────────────────────────────────────── */
-
-  /* Standard — 250ms, all properties */
-  .ds-transition {
-    transition: all var(--ds-t-base) var(--ds-ease);
-  }
-
-  /* Fast — 150ms, good for hover feedback on small interactive elements */
-  .ds-transition-fast {
-    transition: all var(--ds-t-fast) var(--ds-ease);
-  }
-
-  /* Slow — 400ms, modal backdrops / large surface reveals */
-  .ds-transition-slow {
-    transition: all var(--ds-t-slow) var(--ds-ease-out);
-  }
-
-  /* Spring — physics-style overshoot, great for scale/translate transforms */
-  .ds-transition-spring {
-    transition: all var(--ds-t-slow) var(--ds-ease-spring);
-  }
-
-  /* Color only — avoids layout recalcs on hover states */
-  .ds-transition-color {
-    transition:
-      color            var(--ds-t-fast) var(--ds-ease),
-      background-color var(--ds-t-fast) var(--ds-ease),
-      border-color     var(--ds-t-fast) var(--ds-ease),
-      fill             var(--ds-t-fast) var(--ds-ease),
-      stroke           var(--ds-t-fast) var(--ds-ease),
-      opacity          var(--ds-t-fast) var(--ds-ease);
-  }
-
-  /* Transform only — compositor-thread only, zero layout impact */
-  .ds-transition-transform {
-    transition: transform var(--ds-t-base) var(--ds-ease-spring);
-  }
-
-  /* Opacity only — fade overlays without touching layout */
-  .ds-transition-opacity {
-    transition: opacity var(--ds-t-base) var(--ds-ease-out);
-  }
-
-  /* Shadow only — elevation change on hover / focus */
-  .ds-transition-shadow {
-    transition: box-shadow var(--ds-t-base) var(--ds-ease-out);
-  }
-
-
-  /* ─────────────────────────────────────────────────────────────────────────
-     7. HOVER-LIFT PATTERN
-     Combine elevation + subtle translate on interactive surfaces.
-     ───────────────────────────────────────────────────────────────────────── */
-
-  .ds-hover-lift {
-    transition:
-      transform    var(--ds-t-base)  var(--ds-ease-spring),
-      box-shadow   var(--ds-t-base)  var(--ds-ease-out);
-  }
-
-  .ds-hover-lift:hover {
-    transform:  translateY(-3px) scale(1.01);
-    box-shadow: var(--ds-shadow-lg), var(--ds-glow-sm);
-  }
-
-  .ds-hover-lift:active {
-    transform:  translateY(-1px) scale(0.99);
-    box-shadow: var(--ds-shadow-sm);
-  }
-
-  /* Subtle variant — only translates, no scale */
-  .ds-hover-rise {
-    transition: transform var(--ds-t-base) var(--ds-ease-spring);
-  }
-
-  .ds-hover-rise:hover  { transform: translateY(-2px); }
-  .ds-hover-rise:active { transform: translateY(0px);  }
-
-
-  /* ─────────────────────────────────────────────────────────────────────────
-     8. SKELETON LOADING COMPONENTS
-     Utility classes for building skeleton loaders with the shimmer keyframe.
-     ───────────────────────────────────────────────────────────────────────── */
-
-  /* Base skeleton block */
-  .ds-skeleton {
-    display:          block;
-    border-radius:    var(--ds-r-sm);
-    background:       linear-gradient(
-      105deg,
-      rgba(255, 255, 255, 0.04)  0%,
-      rgba(255, 255, 255, 0.04) 38%,
-      rgba(255, 255, 255, 0.08) 50%,
-      rgba(255, 255, 255, 0.04) 62%,
-      rgba(255, 255, 255, 0.04) 100%
-    );
-    background-size:  200% auto;
-    animation:        ds-shimmer 1.6s linear infinite;
-    pointer-events:   none;
-    user-select:      none;
-  }
-
-  /* Common skeleton size presets */
-  .ds-skeleton-text   { height: 14px; }
-  .ds-skeleton-title  { height: 20px; max-width: 60%; }
-  .ds-skeleton-avatar { width: 40px; height: 40px; border-radius: var(--ds-r-full); }
-  .ds-skeleton-thumb  { aspect-ratio: 1; border-radius: var(--ds-r-md); }
-
-  /* Stagger shimmer delays for multi-line skeleton text */
-  .ds-skeleton-group > .ds-skeleton:nth-child(2) { animation-delay: 0.10s; }
-  .ds-skeleton-group > .ds-skeleton:nth-child(3) { animation-delay: 0.20s; }
-  .ds-skeleton-group > .ds-skeleton:nth-child(4) { animation-delay: 0.30s; }
-
-
-  /* ─────────────────────────────────────────────────────────────────────────
-     9. SPINNER COMPONENT
-     Ready-to-use spinner built from a single element.
-     ───────────────────────────────────────────────────────────────────────── */
-
-  .ds-spinner {
-    display:       inline-block;
-    width:         20px;
-    height:        20px;
-    border:        2px solid var(--ds-border-strong);
-    border-top-color: var(--ds-accent);
-    border-radius: var(--ds-r-full);
-    animation:     ds-spin 700ms linear infinite;
-    flex-shrink:   0;
-  }
-
-  .ds-spinner-sm {
-    width:  14px;
-    height: 14px;
-    border-width: 1.5px;
-  }
-
-  .ds-spinner-lg {
-    width:  32px;
-    height: 32px;
-    border-width: 3px;
-  }
-
-  /* Accent-filled variant */
-  .ds-spinner-accent {
-    border-color:     var(--ds-accent-light);
-    border-top-color: var(--ds-accent);
-  }
-
-
-  /* ─────────────────────────────────────────────────────────────────────────
-     10. NOTIFICATION / TOAST ENTRANCE
-     Compound animation combining slide + fade for toasts entering from
-     the top-right corner.
-     ───────────────────────────────────────────────────────────────────────── */
-
-  @keyframes ds-toast-in {
-    from {
-      opacity:   0;
-      transform: translateX(calc(100% + var(--ds-space-6))) scale(0.96);
-    }
-    to {
-      opacity:   1;
-      transform: translateX(0) scale(1);
-    }
-  }
-
-  @keyframes ds-toast-out {
-    from {
-      opacity:   1;
-      transform: translateX(0) scale(1);
-    }
-    to {
-      opacity:   0;
-      transform: translateX(calc(100% + var(--ds-space-6))) scale(0.96);
-    }
-  }
-
-  .ds-animate-toast-in {
-    animation: ds-toast-in var(--ds-t-slow) var(--ds-ease-spring) both;
-  }
-
-  .ds-animate-toast-out {
-    animation: ds-toast-out var(--ds-t-base) var(--ds-ease) both;
-  }
-
-
-  /* ─────────────────────────────────────────────────────────────────────────
-     11. RIPPLE COMPONENT
-     Ink-ripple click effect. Requires a positioned wrapper and JS to inject
-     the ripple element on click:
-       el.classList.add('ds-ripple-origin');
-       const r = el.appendChild(Object.assign(document.createElement('span'), {
-         className: 'ds-ripple-wave'
-       }));
-       r.style.cssText = `left:${x}px;top:${y}px`;
-       r.addEventListener('animationend', () => r.remove());
-     ───────────────────────────────────────────────────────────────────────── */
-
-  .ds-ripple-origin {
-    position: relative;
-    overflow: hidden;
-  }
-
-  .ds-ripple-wave {
-    position:      absolute;
-    width:         10px;
-    height:        10px;
-    border-radius: var(--ds-r-full);
-    background:    rgba(255, 255, 255, 0.18);
-    transform:     translate(-50%, -50%) scale(0);
-    pointer-events: none;
-    animation:     ds-ripple 600ms var(--ds-ease-out) forwards;
-  }
-
-
-  /* ─────────────────────────────────────────────────────────────────────────
-     12. FOCUS-VISIBLE ANIMATION
-     Subtle ring-pulse on keyboard-focused interactive elements.
-     ───────────────────────────────────────────────────────────────────────── */
-
-  @keyframes ds-focus-ring {
-    0%   { box-shadow: 0 0 0 0   var(--ds-border-focus); }
-    60%  { box-shadow: 0 0 0 4px var(--ds-border-focus); }
-    100% { box-shadow: 0 0 0 3px var(--ds-border-focus); }
-  }
-
-  .ds-focus-animate:focus-visible {
-    outline:   none;
-    animation: ds-focus-ring var(--ds-t-base) var(--ds-ease-out) forwards;
-  }
-
-
-  /* ─────────────────────────────────────────────────────────────────────────
-     13. REDUCED MOTION
-     Respects the user's operating-system preference. All durations are
-     collapsed to 0.01ms — effectively instant — while keeping the CSS
-     animation machinery intact so JS-driven play-state toggling still works.
+     10. REDUCED MOTION
+     Collapses all durations to effectively instant while preserving the
+     CSS animation machinery so JS play-state toggling remains functional.
+     Visibility is preserved for elements that start hidden.
      ───────────────────────────────────────────────────────────────────────── */
 
   @media (prefers-reduced-motion: reduce) {
@@ -792,16 +587,16 @@
       scroll-behavior:           auto   !important;
     }
 
-    /* Preserve visibility: elements that start hidden must still appear */
+    /* Ensure entrance elements remain visible regardless of animation state */
     .ds-animate-fade-in,
     .ds-animate-slide-up,
     .ds-animate-slide-down,
-    .ds-animate-slide-in-right,
     .ds-animate-slide-in-left,
+    .ds-animate-slide-in-right,
     .ds-animate-scale-in,
-    .ds-animate-bounce,
-    .ds-animate-count-up,
-    .ds-animate-toast-in {
+    .ds-animate-pop-in,
+    .ds-animate-toast-in,
+    .ds-stagger > * {
       opacity:   1;
       transform: none;
     }

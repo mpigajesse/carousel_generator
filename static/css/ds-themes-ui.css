@@ -2,75 +2,44 @@
  * ds-themes-ui.css — Premium theme selector layer
  * Carousel Generator · Design System · Theme Picker
  *
- * Targets .theme-grid and .theme-pill elements rendered by renderThemeGrid()
- * in app.js. Enhances the existing markup without modifying JS output.
- * All tokens reference --ds-* variables defined in ds-nav.css.
+ * Covers two HTML zones:
+ *   1. div.theme-grid#theme-grid  (sidebar – main selector)
+ *   2. div.retheme-bar#retheme-bar (preview area – re-theme bar)
+ *
+ * All tokens reference --ds-* variables defined upstream (ds-nav.css / root).
  */
 
 @layer ds-themes-ui {
 
-  /* ── Extra tokens (local to this layer) ──────────────────────── */
-  :root {
-    --dst-card-h:        64px;
-    --dst-swatch-h:      28px;
-    --dst-name-h:        20px;
-    --dst-r:             10px;
-    --dst-border:        rgba(255, 255, 255, .07);
-    --dst-border-hover:  rgba(255, 255, 255, .16);
-    --dst-glow-accent:   rgba(108, 92, 231, .28);
-    --dst-glow-ig:       rgba(225, 48, 108, .22);
-    --dst-check-size:    14px;
-    --dst-t-snap:        140ms;
-    --dst-ease-spring:   cubic-bezier(.34, 1.56, .64, 1);
+  /* ════════════════════════════════════════════════════════════════
+     LOCAL KEYFRAMES
+  ════════════════════════════════════════════════════════════════ */
+
+  @keyframes ds-spin {
+    to { transform: rotate(360deg); }
   }
 
-  /* ══════════════════════════════════════════════════════════════
-     THEME SECTION HEADER
-  ══════════════════════════════════════════════════════════════ */
-
-  /* The .section-label that precedes .theme-grid lives in the sidebar-section;
-     we add a flex row with a badge showing the current theme name. */
-  .sidebar-section:has(.theme-grid) .section-label {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    margin-bottom: 10px;
+  @keyframes ds-pill-pop {
+    0%   { transform: scale(0.88); opacity: 0; }
+    60%  { transform: scale(1.04); opacity: 1; }
+    100% { transform: scale(1);    opacity: 1; }
   }
 
-  /* Current-theme badge injected into the label by the layer — purely CSS */
-  .sidebar-section:has(.theme-grid) .section-label::after {
-    content: attr(data-theme-current);
-    margin-left: auto;
-    font-family: var(--ds-font-mono, 'DM Mono', monospace);
-    font-size: 9px;
-    font-weight: 500;
-    letter-spacing: .06em;
-    color: var(--ds-text-2, #9aa3b8);
-    background: rgba(255, 255, 255, .05);
-    border: 1px solid var(--dst-border);
-    border-radius: 5px;
-    padding: 2px 7px;
-    white-space: nowrap;
-    max-width: 90px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    text-transform: none;
-    letter-spacing: 0;
-  }
-
-  /* ══════════════════════════════════════════════════════════════
-     THEME GRID CONTAINER
-  ══════════════════════════════════════════════════════════════ */
+  /* ════════════════════════════════════════════════════════════════
+     1. SIDEBAR — THEME GRID CONTAINER
+  ════════════════════════════════════════════════════════════════ */
 
   .theme-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 7px;
-    max-height: 340px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6px;
+    max-height: 280px;
     overflow-y: auto;
-    padding-right: 2px;    /* room for scrollbar */
+    overflow-x: hidden;
+    padding-right: 3px;
+    margin-top: 4px;
     scrollbar-width: thin;
-    scrollbar-color: rgba(255, 255, 255, .1) transparent;
+    scrollbar-color: rgba(255, 255, 255, 0.10) transparent;
   }
 
   .theme-grid::-webkit-scrollbar {
@@ -78,261 +47,456 @@
   }
 
   .theme-grid::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, .1);
+    background: rgba(255, 255, 255, 0.10);
     border-radius: 3px;
   }
 
-  /* ══════════════════════════════════════════════════════════════
-     THEME CARD (BASE)
-  ══════════════════════════════════════════════════════════════ */
+  .theme-grid::-webkit-scrollbar-track {
+    background: transparent;
+  }
 
-  .theme-pill {
-    /* Geometry */
+  /* ════════════════════════════════════════════════════════════════
+     2. SIDEBAR — INDIVIDUAL THEME CARD (.theme-item)
+  ════════════════════════════════════════════════════════════════ */
+
+  .theme-item {
     position: relative;
     display: flex;
     flex-direction: column;
-    overflow: hidden;
-    border-radius: var(--dst-r);
-    height: var(--dst-card-h);
-    padding: 0;                        /* strip default padding; children handle it */
-    cursor: pointer;
-
-    /* Surface */
-    background: var(--ds-surface, #0f1520);
-    border: 1px solid var(--dst-border);
-
-    /* Interaction */
-    transition:
-      transform   var(--dst-t-snap) var(--dst-ease-spring),
-      border-color var(--ds-t-base, 180ms) var(--ds-ease, ease),
-      box-shadow  var(--ds-t-base, 180ms) var(--ds-ease, ease),
-      background  var(--ds-t-base, 180ms) var(--ds-ease, ease);
-    will-change: transform;
-  }
-
-  /* ── Swatch strip (the inline gradient div produced by JS) ──── */
-  /* JS injects: <div style="background:linear-gradient(…);height:5px;…"> */
-  .theme-pill > div:first-child {
-    flex-shrink: 0;
-    width: 100%;
-    height: var(--dst-swatch-h) !important;   /* override inline 5px */
-    border-radius: 0 !important;
-    margin-bottom: 0 !important;
-    /* Subtle inner light on top edge */
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .12);
-  }
-
-  /* ── Name area ───────────────────────────────────────────────── */
-  .theme-pill > span {
-    flex: 1;
-    display: flex;
     align-items: center;
-    justify-content: center;
-    padding: 0 5px;
-    font-family: var(--ds-font-ui, 'DM Sans', sans-serif);
-    font-size: 10px !important;           /* override inline if any */
-    font-weight: 500;
-    letter-spacing: .02em;
-    color: var(--ds-text-2, #9aa3b8);
-    white-space: nowrap;
+    gap: 5px;
+    padding: 10px 8px;
+    border-radius: var(--ds-r-md, 10px);
+    background: var(--ds-surface, rgba(255, 255, 255, 0.045));
+    border: 1px solid var(--ds-border, rgba(255, 255, 255, 0.07));
+    cursor: pointer;
+    user-select: none;
     overflow: hidden;
-    text-overflow: ellipsis;
-    line-height: 1;
-    transition: color var(--ds-t-base, 180ms) var(--ds-ease, ease);
+    transition:
+      background  var(--ds-t-base, 240ms) var(--ds-ease, cubic-bezier(0.16, 1, 0.3, 1)),
+      border-color var(--ds-t-base, 240ms) var(--ds-ease, cubic-bezier(0.16, 1, 0.3, 1)),
+      transform   var(--ds-t-fast, 150ms) var(--ds-ease, cubic-bezier(0.16, 1, 0.3, 1)),
+      box-shadow  var(--ds-t-base, 240ms) var(--ds-ease, cubic-bezier(0.16, 1, 0.3, 1));
+    will-change: transform;
+    animation: ds-pill-pop 280ms var(--ds-ease, cubic-bezier(0.16, 1, 0.3, 1)) both;
   }
 
-  /* ── Light-theme sun tag ─────────────────────────────────────── */
-  .theme-pill .theme-platform-tag {
-    position: absolute;
-    bottom: 3px;
-    right: 4px;
-    font-size: 8px;
-    color: rgba(255, 255, 255, .35);
-    line-height: 1;
-  }
-
-  /* ── Shine overlay (pseudo, lights up on hover) ─────────────── */
-  .theme-pill::before {
+  /* Shine overlay — lights up on hover */
+  .theme-item::before {
     content: '';
     position: absolute;
     inset: 0;
     background: linear-gradient(
-      160deg,
-      rgba(255, 255, 255, .06) 0%,
+      150deg,
+      rgba(255, 255, 255, 0.07) 0%,
       transparent 55%
     );
     opacity: 0;
-    transition: opacity var(--dst-t-snap) var(--ds-ease, ease);
     pointer-events: none;
-    z-index: 1;
+    transition: opacity var(--ds-t-fast, 150ms) var(--ds-ease, cubic-bezier(0.16, 1, 0.3, 1));
+    z-index: 0;
   }
 
-  /* ── Checkmark badge (injected via ::after on selected state) ── */
-  .theme-pill::after {
+  /* Checkmark badge — revealed on .active */
+  .theme-item::after {
     content: '';
     position: absolute;
     top: 5px;
     right: 5px;
-    width: var(--dst-check-size);
-    height: var(--dst-check-size);
+    width: 14px;
+    height: 14px;
     border-radius: 50%;
-    background: var(--ds-accent, #6c5ce7);
-    /* SVG check encoded inline */
+    background-color: var(--ds-accent, #6C63FF);
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpolyline points='2,5.5 4,8 8,3' fill='none' stroke='white' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
     background-size: 10px 10px;
     background-repeat: no-repeat;
     background-position: center;
+    box-shadow: 0 0 0 2px rgba(108, 99, 255, 0.35);
     opacity: 0;
-    transform: scale(.5);
-    transition:
-      opacity  var(--dst-t-snap) var(--dst-ease-spring),
-      transform var(--dst-t-snap) var(--dst-ease-spring);
-    z-index: 2;
+    transform: scale(0.5);
     pointer-events: none;
-    /* Soft glow ring */
-    box-shadow: 0 0 0 2px rgba(108, 92, 231, .35);
+    z-index: 2;
+    transition:
+      opacity   160ms cubic-bezier(0.34, 1.56, 0.64, 1),
+      transform 160ms cubic-bezier(0.34, 1.56, 0.64, 1);
   }
 
-  /* ══════════════════════════════════════════════════════════════
-     THEME CARD — HOVER
-  ══════════════════════════════════════════════════════════════ */
+  /* ── Hover state ─────────────────────────────────────────────── */
 
-  .theme-pill:hover {
-    transform: scale(1.04) translateY(-1px);
-    border-color: var(--dst-border-hover);
-    background: #141c2e;
-    box-shadow:
-      0 4px 16px rgba(0, 0, 0, .45),
-      0 1px 0 rgba(255, 255, 255, .05) inset;
+  .theme-item:hover {
+    background: var(--ds-surface-hover, rgba(255, 255, 255, 0.08));
+    border-color: var(--ds-border-strong, rgba(255, 255, 255, 0.14));
+    transform: scale(1.02) translateY(-1px);
+    box-shadow: var(--ds-shadow-sm, 0 2px 8px rgba(0, 0, 0, 0.45));
   }
 
-  .theme-pill:hover::before {
+  .theme-item:hover::before {
     opacity: 1;
   }
 
-  .theme-pill:hover > span {
-    color: var(--ds-text, #e4e8f2);
+  /* ── Press feedback ──────────────────────────────────────────── */
+
+  .theme-item:active {
+    transform: scale(0.97);
+    transition-duration: 80ms;
   }
 
-  /* ══════════════════════════════════════════════════════════════
-     THEME CARD — ACTIVE / SELECTED
-  ══════════════════════════════════════════════════════════════ */
+  /* ── Active / selected state ─────────────────────────────────── */
 
-  .theme-pill.active {
-    border-color: var(--ds-accent, #6c5ce7);
-    background: rgba(108, 92, 231, .10);
+  .theme-item.active {
+    border-color: var(--ds-border-accent, rgba(108, 99, 255, 0.45));
+    background: var(--ds-accent-muted, rgba(108, 99, 255, 0.14));
     box-shadow:
-      0 0 0 1px rgba(108, 92, 231, .25),
-      0 0 18px var(--dst-glow-accent),
-      0 4px 16px rgba(0, 0, 0, .4);
+      0 0 0 1px var(--ds-border-accent, rgba(108, 99, 255, 0.45)),
+      var(--ds-shadow-accent-sm, 0 0 16px rgba(108, 99, 255, 0.20));
   }
 
-  .theme-pill.active > span {
-    color: var(--ds-accent-hi, #8b7cf8);
-    font-weight: 600;
-  }
-
-  /* Show checkmark on active */
-  .theme-pill.active::after {
+  .theme-item.active::after {
     opacity: 1;
     transform: scale(1);
   }
 
-  /* ── Instagram-active variant (light themes get active-ig) ───── */
-  .theme-pill.active[style*="#f"] {   /* heuristic: light cards have light bg */
-    border-color: #e1306c;
-    background: rgba(225, 48, 108, .07);
+  /* ════════════════════════════════════════════════════════════════
+     3. THEME SWATCH — color preview inside .theme-item
+        JS can inject either a rectangle (inline bg) or dot-row children.
+  ════════════════════════════════════════════════════════════════ */
+
+  .theme-swatch {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    height: 28px;
+    border-radius: 6px;
+    overflow: hidden;
+    flex-shrink: 0;
+    /* Fallback surface if JS does not inject a bg */
+    background: var(--ds-surface, rgba(255, 255, 255, 0.045));
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+  }
+
+  /* Dot-row variant: JS renders 3 span/div children inside .theme-swatch */
+  .theme-swatch > * {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  /* When JS uses the dot-row approach, wrap dots in flex */
+  .theme-swatch:has(> * + *) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    padding: 0 6px;
+  }
+
+  /* ════════════════════════════════════════════════════════════════
+     4. THEME NAME — label below swatch
+  ════════════════════════════════════════════════════════════════ */
+
+  .theme-name {
+    position: relative;
+    z-index: 1;
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--ds-text-2, #9B9DB0);
+    text-align: center;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    line-height: 1.2;
+    letter-spacing: 0.02em;
+    transition: color var(--ds-t-base, 240ms) var(--ds-ease, cubic-bezier(0.16, 1, 0.3, 1));
+  }
+
+  .theme-item.active .theme-name {
+    color: var(--ds-text, #EDEEF2);
+  }
+
+  .theme-item:hover .theme-name {
+    color: var(--ds-text, #EDEEF2);
+  }
+
+  /* ════════════════════════════════════════════════════════════════
+     5. RETHEME BAR — preview area wrapper
+  ════════════════════════════════════════════════════════════════ */
+
+  .retheme-bar {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 12px 16px;
+    margin-bottom: 16px;
+    background: var(--ds-surface, rgba(255, 255, 255, 0.045));
+    border: 1px solid var(--ds-border, rgba(255, 255, 255, 0.07));
+    border-radius: var(--ds-r-lg, 16px);
+    /* Subtle top-edge inner highlight */
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  }
+
+  /* ════════════════════════════════════════════════════════════════
+     6. RETHEME BAR HEADER
+  ════════════════════════════════════════════════════════════════ */
+
+  .retheme-bar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  /* Inner flex row that holds title + spinner */
+  .retheme-bar-header > div:first-child {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* ════════════════════════════════════════════════════════════════
+     7. RETHEME BAR TITLE
+  ════════════════════════════════════════════════════════════════ */
+
+  .retheme-bar-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--ds-text-2, #9B9DB0);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    line-height: 1;
+  }
+
+  /* ════════════════════════════════════════════════════════════════
+     8. RETHEME SPINNER — hidden by default, shown via JS
+  ════════════════════════════════════════════════════════════════ */
+
+  .retheme-spinner {
+    display: none;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--ds-accent, #6C63FF);
+    line-height: 1;
+  }
+
+  /* JS adds class .visible (or .active) to show it */
+  .retheme-spinner.visible,
+  .retheme-spinner.active,
+  .retheme-spinner[aria-hidden="false"] {
+    display: flex;
+  }
+
+  /* The SVG icon inside the spinner */
+  .retheme-spinner svg {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+    animation: ds-spin 1s linear infinite;
+  }
+
+  /* ════════════════════════════════════════════════════════════════
+     9. RETHEME CURRENT — displays active theme name + swatch dot
+  ════════════════════════════════════════════════════════════════ */
+
+  .retheme-current {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+
+  /* "Actuel :" label */
+  .retheme-current > span:first-child {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--ds-text-3, #585A70);
+    white-space: nowrap;
+  }
+
+  .retheme-current-swatch {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    border: 1px solid var(--ds-border-strong, rgba(255, 255, 255, 0.14));
+    background: var(--ds-accent, #6C63FF);
+    transition: background var(--ds-t-fast, 150ms) var(--ds-ease, cubic-bezier(0.16, 1, 0.3, 1));
+  }
+
+  .retheme-current-name {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--ds-text, #EDEEF2);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 120px;
+    transition: color var(--ds-t-fast, 150ms) var(--ds-ease, cubic-bezier(0.16, 1, 0.3, 1));
+  }
+
+  /* ════════════════════════════════════════════════════════════════
+     10. RETHEME SCROLL — horizontal pill container
+  ════════════════════════════════════════════════════════════════ */
+
+  .retheme-scroll {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 2px;
+  }
+
+  .retheme-scroll::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* ── Retheme pill (JS-generated inside .retheme-scroll) ───────── */
+
+  .retheme-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 30px;
+    padding: 0 10px;
+    border-radius: var(--ds-r-full, 9999px);
+    background: var(--ds-surface, rgba(255, 255, 255, 0.045));
+    border: 1px solid var(--ds-border, rgba(255, 255, 255, 0.07));
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--ds-text-2, #9B9DB0);
+    cursor: pointer;
+    white-space: nowrap;
+    user-select: none;
+    flex-shrink: 0;
+    transition:
+      background   var(--ds-t-fast, 150ms) var(--ds-ease, cubic-bezier(0.16, 1, 0.3, 1)),
+      border-color var(--ds-t-fast, 150ms) var(--ds-ease, cubic-bezier(0.16, 1, 0.3, 1)),
+      color        var(--ds-t-fast, 150ms) var(--ds-ease, cubic-bezier(0.16, 1, 0.3, 1)),
+      box-shadow   var(--ds-t-fast, 150ms) var(--ds-ease, cubic-bezier(0.16, 1, 0.3, 1)),
+      transform    var(--ds-t-fast, 150ms) var(--ds-ease, cubic-bezier(0.16, 1, 0.3, 1));
+  }
+
+  .retheme-pill:hover {
+    border-color: var(--ds-border-accent, rgba(108, 99, 255, 0.45));
+    color: var(--ds-accent, #6C63FF);
+    background: var(--ds-surface-hover, rgba(255, 255, 255, 0.08));
+    transform: translateY(-1px);
+    box-shadow: var(--ds-shadow-sm, 0 2px 8px rgba(0, 0, 0, 0.45));
+  }
+
+  .retheme-pill:active {
+    transform: scale(0.96);
+    transition-duration: 60ms;
+  }
+
+  .retheme-pill.active {
+    border-color: var(--ds-border-accent, rgba(108, 99, 255, 0.45));
+    background: var(--ds-accent-muted, rgba(108, 99, 255, 0.14));
+    color: var(--ds-accent, #6C63FF);
     box-shadow:
-      0 0 0 1px rgba(225, 48, 108, .2),
-      0 0 18px var(--dst-glow-ig),
-      0 4px 16px rgba(0, 0, 0, .3);
+      0 0 0 1px var(--ds-border-accent, rgba(108, 99, 255, 0.45)),
+      var(--ds-shadow-accent-sm, 0 0 16px rgba(108, 99, 255, 0.20));
   }
 
-  .theme-pill.active[style*="#f"]::after {
-    background-color: #e1306c;
-    box-shadow: 0 0 0 2px rgba(225, 48, 108, .3);
+  /* ── Pill color dot (JS sets inline background) ──────────────── */
+
+  .retheme-pill-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: var(--ds-accent, #6C63FF);
+    transition: transform var(--ds-t-fast, 150ms) var(--ds-ease, cubic-bezier(0.16, 1, 0.3, 1));
   }
 
-  /* ── Light theme pill base override ─────────────────────────── */
-  /* JS sets inline style="border:1px solid #ddd;background:#f5f5f5;color:#333;" */
-  .theme-pill[style*="#f5f5f5"] {
-    border-color: #d4d4d4 !important;
+  .retheme-pill:hover .retheme-pill-dot,
+  .retheme-pill.active .retheme-pill-dot {
+    transform: scale(1.2);
   }
 
-  .theme-pill[style*="#f5f5f5"]:hover {
-    border-color: #aaa !important;
-    background: #ececec !important;
-  }
+  /* ════════════════════════════════════════════════════════════════
+     SPECIAL: RANDOM THEME ITEM & PILL
+  ════════════════════════════════════════════════════════════════ */
 
-  .theme-pill[style*="#f5f5f5"] > span {
-    color: #555 !important;
-  }
-
-  .theme-pill[style*="#f5f5f5"]:hover > span {
-    color: #111 !important;
-  }
-
-  /* ══════════════════════════════════════════════════════════════
-     ACTIVE PRESS FEEDBACK
-  ══════════════════════════════════════════════════════════════ */
-
-  .theme-pill:active {
-    transform: scale(.97);
-    transition-duration: 80ms;
-  }
-
-  /* ══════════════════════════════════════════════════════════════
-     RANDOM THEME PILL — SPECIAL ACCENT TREATMENT
-  ══════════════════════════════════════════════════════════════ */
-
-  /* The random pill has data-theme="random" and renders a dice-like gradient */
-  .theme-pill[data-theme="random"] {
-    border-color: rgba(108, 92, 231, .3);
+  .theme-item[data-theme="random"] {
+    border-color: rgba(108, 99, 255, 0.25);
     background: linear-gradient(
       135deg,
-      rgba(108, 92, 231, .12) 0%,
-      rgba(0, 203, 169, .08) 100%
+      rgba(108, 99, 255, 0.10) 0%,
+      rgba(0, 203, 169, 0.06) 100%
     );
   }
 
-  .theme-pill[data-theme="random"] > div:first-child {
+  .theme-item[data-theme="random"] .theme-swatch {
     background: linear-gradient(
       90deg,
-      #6c5ce7, #e84393, #f59e0b, #00cba9
-    ) !important;
+      #6C63FF 0%,
+      #e84393 33%,
+      #f59e0b 66%,
+      #00cba9 100%
+    );
   }
 
-  .theme-pill[data-theme="random"] > span {
+  .theme-item[data-theme="random"] .theme-name {
     background: linear-gradient(90deg, #a78bfa, #34d399);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
-    font-weight: 600;
+    font-weight: 700;
   }
 
-  .theme-pill[data-theme="random"]:hover {
-    border-color: rgba(108, 92, 231, .6);
+  .theme-item[data-theme="random"]:hover {
+    border-color: rgba(108, 99, 255, 0.55);
     box-shadow:
-      0 0 20px rgba(108, 92, 231, .22),
-      0 4px 16px rgba(0, 0, 0, .45);
+      var(--ds-shadow-sm, 0 2px 8px rgba(0, 0, 0, 0.45)),
+      0 0 18px rgba(108, 99, 255, 0.18);
   }
 
-  /* ══════════════════════════════════════════════════════════════
-     REDUCED MOTION SAFETY
-  ══════════════════════════════════════════════════════════════ */
+  .retheme-pill[data-theme="random"] {
+    border-color: rgba(108, 99, 255, 0.25);
+    background: linear-gradient(
+      90deg,
+      rgba(108, 99, 255, 0.10) 0%,
+      rgba(0, 203, 169, 0.06) 100%
+    );
+  }
+
+  .retheme-pill[data-theme="random"] .retheme-pill-dot {
+    background: linear-gradient(90deg, #6C63FF, #00cba9);
+  }
+
+  /* ════════════════════════════════════════════════════════════════
+     REDUCED MOTION
+  ════════════════════════════════════════════════════════════════ */
 
   @media (prefers-reduced-motion: reduce) {
-    .theme-pill,
-    .theme-pill::before,
-    .theme-pill::after,
-    .theme-pill > span,
-    .theme-pill > div:first-child {
+    .theme-item,
+    .theme-item::before,
+    .theme-item::after,
+    .theme-name,
+    .theme-swatch,
+    .retheme-pill,
+    .retheme-pill-dot,
+    .retheme-current-swatch,
+    .retheme-current-name {
       transition: none;
       animation: none;
     }
 
-    .theme-pill:hover {
+    .theme-item:hover,
+    .retheme-pill:hover {
       transform: none;
+    }
+
+    .retheme-spinner svg {
+      animation: none;
     }
   }
 

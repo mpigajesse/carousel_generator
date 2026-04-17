@@ -1,62 +1,80 @@
 /* ═══════════════════════════════════════════════════════════════
-   ds-slides.css — Premium slide list & card design system
-   Targets: .slides-area, .slides-list, .slide-card, .add-slide-bar
-   Requires: ds-tokens.css (--ds-* custom properties)
+   ds-slides.css  —  Premium slide card design system
+   Targets: .slides-area  .slides-list  .slide-card  .add-slide-bar
+   Requires: ds-tokens.css  (--ds-* custom properties)
    ═══════════════════════════════════════════════════════════════ */
 
 @layer ds-slides {
 
-  /* ── Slide list container ─────────────────────────────────── */
+  /* ─────────────────────────────────────────────────────────────
+     SLIDE LIST CONTAINER
+  ───────────────────────────────────────────────────────────── */
 
   .slides-area {
-    background: var(--ds-bg-2, #0e0e12);
     display: flex;
     flex-direction: column;
     gap: 0;
     min-height: 0;
+    background: var(--ds-bg-4, #161624);
   }
 
   .slides-list {
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    padding: 6px 2px 4px;
+    gap: 12px;
+    padding: 8px 4px 8px;
     overflow-y: auto;
     overflow-x: hidden;
     scroll-behavior: smooth;
-
-    /* Thin, dark scrollbar */
     scrollbar-width: thin;
-    scrollbar-color: var(--ds-border, rgba(255,255,255,.1)) transparent;
+    scrollbar-color: var(--ds-border, rgba(255,255,255,.07)) transparent;
   }
 
-  .slides-list::-webkit-scrollbar {
-    width: 4px;
-  }
-
-  .slides-list::-webkit-scrollbar-track {
-    background: transparent;
-  }
+  .slides-list::-webkit-scrollbar        { width: 4px; }
+  .slides-list::-webkit-scrollbar-track  { background: transparent; }
 
   .slides-list::-webkit-scrollbar-thumb {
-    background: var(--ds-border, rgba(255,255,255,.1));
+    background: var(--ds-border, rgba(255,255,255,.07));
     border-radius: 100px;
-    transition: background var(--ds-t-base, 200ms) var(--ds-ease, ease);
+    transition: background var(--ds-t-base, 240ms) var(--ds-ease, ease);
   }
 
   .slides-list::-webkit-scrollbar-thumb:hover {
-    background: var(--ds-border-accent, rgba(124,106,247,.5));
+    background: var(--ds-border-accent, rgba(108,99,255,.45));
   }
 
-  /* ── Add slide bar ────────────────────────────────────────── */
+  /* ─────────────────────────────────────────────────────────────
+     EMPTY STATE
+  ───────────────────────────────────────────────────────────── */
+
+  .slides-list .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 52px 24px;
+    color: var(--ds-text-3, #585A70);
+    font-size: 13px;
+    text-align: center;
+  }
+
+  .slides-list .empty-state-icon {
+    font-size: 34px;
+    opacity: .35;
+  }
+
+  /* ─────────────────────────────────────────────────────────────
+     ADD SLIDE BAR
+  ───────────────────────────────────────────────────────────── */
 
   .add-slide-bar {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
-    padding: 14px 2px 4px;
-    border-top: 1px solid var(--ds-border, rgba(255,255,255,.08));
-    margin-top: 6px;
+    padding: 14px 4px 6px;
+    border-top: 1px solid var(--ds-border, rgba(255,255,255,.07));
+    margin-top: 8px;
   }
 
   .add-btn {
@@ -66,232 +84,219 @@
     justify-content: center;
     gap: 6px;
     padding: 8px 14px;
-    border-radius: var(--ds-r-md, 8px);
-    border: 1px solid var(--ds-border, rgba(255,255,255,.1));
-    background: var(--ds-surface, rgba(255,255,255,.04));
-    color: var(--ds-text-3, rgba(255,255,255,.45));
+    border-radius: var(--ds-r-md, 10px);
+    border: 1px solid var(--ds-border, rgba(255,255,255,.07));
+    background: var(--ds-surface, rgba(255,255,255,.045));
+    color: var(--ds-text-3, #585A70);
     font-size: 11px;
     font-weight: 600;
     letter-spacing: .04em;
     cursor: pointer;
     overflow: hidden;
     transition:
-      background  var(--ds-t-base, 200ms) var(--ds-ease, ease),
-      border-color var(--ds-t-base, 200ms) var(--ds-ease, ease),
-      color        var(--ds-t-base, 200ms) var(--ds-ease, ease),
-      box-shadow   var(--ds-t-base, 200ms) var(--ds-ease, ease),
-      transform    180ms var(--ds-ease-spring, cubic-bezier(.34,1.56,.64,1));
+      background   var(--ds-t-base, 240ms) var(--ds-ease, ease),
+      border-color var(--ds-t-base, 240ms) var(--ds-ease, ease),
+      color        var(--ds-t-base, 240ms) var(--ds-ease, ease),
+      box-shadow   var(--ds-t-base, 240ms) var(--ds-ease, ease),
+      transform    200ms cubic-bezier(.34,1.56,.64,1);
   }
 
   .add-btn::before {
     content: '';
     position: absolute;
     inset: 0;
-    background: var(--ds-gradient, linear-gradient(135deg,#7c6af7,#38c8a8));
+    background: linear-gradient(135deg, var(--ds-accent, #6C63FF), #38c8a8);
     opacity: 0;
-    transition: opacity var(--ds-t-base, 200ms) var(--ds-ease, ease);
+    transition: opacity var(--ds-t-base, 240ms) var(--ds-ease, ease);
     border-radius: inherit;
-  }
-
-  .add-btn:hover {
-    border-color: var(--ds-border-accent, rgba(124,106,247,.6));
-    color: var(--ds-text, #fff);
-    box-shadow: var(--ds-glow-sm, 0 0 12px rgba(124,106,247,.25));
-    transform: translateY(-1px);
-  }
-
-  .add-btn:hover::before {
-    opacity: .08;
-  }
-
-  .add-btn:active {
-    transform: translateY(0);
-  }
-
-  /* ── Slide card — base state ──────────────────────────────── */
-
-  .slide-card {
-    position: relative;
-    background: var(--ds-surface, rgba(255,255,255,.04));
-    border: 1px solid var(--ds-border, rgba(255,255,255,.08));
-    border-radius: var(--ds-r-lg, 12px);
-    overflow: hidden;
-    box-shadow: var(--ds-shadow-sm, 0 1px 4px rgba(0,0,0,.3));
-    transition:
-      border-color var(--ds-t-base, 200ms) var(--ds-ease, ease),
-      box-shadow   var(--ds-t-base, 200ms) var(--ds-ease, ease),
-      transform    220ms var(--ds-ease-spring, cubic-bezier(.34,1.56,.64,1)),
-      background   var(--ds-t-base, 200ms) var(--ds-ease, ease);
-
-    /* Left accent bar — hidden by default */
-    --_bar-opacity: 0;
-  }
-
-  /* Accent bar pseudo-element */
-  .slide-card::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    width: 3px;
-    background: var(--ds-gradient, linear-gradient(180deg,#7c6af7,#38c8a8));
-    border-radius: 0 2px 2px 0;
-    opacity: var(--_bar-opacity);
-    transition: opacity var(--ds-t-base, 200ms) var(--ds-ease, ease);
     pointer-events: none;
   }
 
-  /* ── Slide card — hover state ─────────────────────────────── */
+  .add-btn:hover {
+    border-color: var(--ds-border-accent, rgba(108,99,255,.45));
+    color: var(--ds-text, #EDEEF2);
+    box-shadow: 0 0 14px rgba(108,99,255,.2);
+    transform: translateY(-1px);
+  }
+
+  .add-btn:hover::before { opacity: .09; }
+  .add-btn:active        { transform: translateY(0); }
+
+  /* ─────────────────────────────────────────────────────────────
+     SLIDE CARD — BASE
+  ───────────────────────────────────────────────────────────── */
+
+  .slide-card {
+    position: relative;
+    background: var(--ds-bg-4, #161624);
+    border: 1px solid var(--ds-border, rgba(255,255,255,.07));
+    border-radius: var(--ds-r-xl, 22px);
+    overflow: hidden;
+    box-shadow: var(--ds-shadow-lg, 0 8px 40px rgba(0,0,0,.65));
+    transition:
+      border-color var(--ds-t-base, 240ms) var(--ds-ease, ease),
+      box-shadow   var(--ds-t-base, 240ms) var(--ds-ease, ease),
+      background   var(--ds-t-base, 240ms) var(--ds-ease, ease),
+      transform    220ms cubic-bezier(.34,1.56,.64,1);
+  }
 
   .slide-card:hover {
-    border-color: var(--ds-border-accent, rgba(124,106,247,.35));
-    background: var(--ds-surface-hover, rgba(255,255,255,.065));
-    box-shadow: var(--ds-shadow-md, 0 4px 16px rgba(0,0,0,.4));
+    border-color: var(--ds-border-strong, rgba(255,255,255,.14));
+    box-shadow:
+      var(--ds-shadow-lg, 0 8px 40px rgba(0,0,0,.65)),
+      0 0 0 1px rgba(255,255,255,.04);
     transform: translateY(-2px);
   }
 
-  .slide-card:hover .slide-card-delete {
-    opacity: 1;
-    pointer-events: auto;
-    transform: translateX(0);
-  }
+  /* ── Type-specific top accent bar ── */
 
-  .slide-card:hover .slide-card-drag {
-    opacity: .5;
-  }
-
-  /* ── Slide card — active / open state ────────────────────── */
-
-  .slide-card.is-open,
-  .slide-card:has(.slide-body.open) {
-    --_bar-opacity: 1;
-    border-color: var(--ds-border-accent, rgba(124,106,247,.55));
-    background: var(--ds-surface-active, rgba(124,106,247,.07));
+  .slide-card[data-type="cover"] {
+    border-top: 2px solid var(--ds-accent, #6C63FF);
     box-shadow:
-      var(--ds-shadow-sm, 0 1px 4px rgba(0,0,0,.3)),
-      var(--ds-glow-sm, 0 0 18px rgba(124,106,247,.18));
+      var(--ds-shadow-lg, 0 8px 40px rgba(0,0,0,.65)),
+      0 -2px 16px rgba(108,99,255,.18);
   }
 
-  /* ── Slide card head ──────────────────────────────────────── */
+  .slide-card[data-type="content"] {
+    border-top: 2px solid #10B981;
+    box-shadow:
+      var(--ds-shadow-lg, 0 8px 40px rgba(0,0,0,.65)),
+      0 -2px 16px rgba(16,185,129,.14);
+  }
 
-  .slide-card-head {
+  .slide-card[data-type="compare"] {
+    border-top: 2px solid #F59E0B;
+    box-shadow:
+      var(--ds-shadow-lg, 0 8px 40px rgba(0,0,0,.65)),
+      0 -2px 16px rgba(245,158,11,.14);
+  }
+
+  .slide-card[data-type="quote"] {
+    border-top: 2px solid #EC4899;
+    box-shadow:
+      var(--ds-shadow-lg, 0 8px 40px rgba(0,0,0,.65)),
+      0 -2px 16px rgba(236,72,153,.14);
+  }
+
+  .slide-card[data-type="stat"] {
+    border-top: 2px solid #3B82F6;
+    box-shadow:
+      var(--ds-shadow-lg, 0 8px 40px rgba(0,0,0,.65)),
+      0 -2px 16px rgba(59,130,246,.14);
+  }
+
+  .slide-card[data-type="cta"] {
+    border-top: 2px solid #8B5CF6;
+    box-shadow:
+      var(--ds-shadow-lg, 0 8px 40px rgba(0,0,0,.65)),
+      0 -2px 16px rgba(139,92,246,.14);
+  }
+
+  /* ─────────────────────────────────────────────────────────────
+     SLIDE HEADER
+  ───────────────────────────────────────────────────────────── */
+
+  .slide-header {
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 13px 16px 13px 20px;
-    cursor: pointer;
+    gap: 8px;
+    padding: var(--ds-space-3, 12px) var(--ds-space-4, 16px);
+    background: var(--ds-surface, rgba(255,255,255,.045));
+    border-bottom: 1px solid var(--ds-border, rgba(255,255,255,.07));
     user-select: none;
-    position: relative;
   }
 
-  /* ── Slide number badge ───────────────────────────────────── */
+  /* ── Drag handle ── */
 
-  .slide-num {
-    width: 26px;
-    height: 26px;
-    flex-shrink: 0;
+  .slide-handle {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: var(--ds-accent-light, rgba(124,106,247,.15));
-    color: var(--ds-accent, #7c6af7);
-    border: 1px solid rgba(124,106,247,.22);
-    border-radius: var(--ds-r-md, 8px);
-    font-family: 'DM Mono', 'Fira Mono', monospace;
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: -.01em;
-    transition:
-      background var(--ds-t-base, 200ms) var(--ds-ease, ease),
-      box-shadow  var(--ds-t-base, 200ms) var(--ds-ease, ease);
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    cursor: grab;
+    color: var(--ds-text-3, #585A70);
+    font-size: 14px;
+    line-height: 1;
+    transition: color var(--ds-t-base, 240ms) var(--ds-ease, ease);
+    border-radius: 4px;
   }
 
-  .slide-card.is-open .slide-num,
-  .slide-card:has(.slide-body.open) .slide-num {
-    background: var(--ds-accent, #7c6af7);
-    color: #fff;
-    box-shadow: 0 0 8px rgba(124,106,247,.45);
-    border-color: transparent;
-  }
+  .slide-handle:hover  { color: var(--ds-text-2, #9B9DB0); }
+  .slide-handle:active { cursor: grabbing; }
 
-  /* ── Title preview ────────────────────────────────────────── */
-
-  .slide-title-preview {
-    flex: 1;
-    min-width: 0;
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--ds-text-2, rgba(255,255,255,.72));
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    letter-spacing: .01em;
-    transition: color var(--ds-t-base, 200ms) var(--ds-ease, ease);
-  }
-
-  .slide-card:hover .slide-title-preview,
-  .slide-card.is-open .slide-title-preview {
-    color: var(--ds-text, #fff);
-  }
-
-  /* ── Slide type badge ─────────────────────────────────────── */
+  /* ── Type badge ── */
 
   .slide-type-badge {
-    flex-shrink: 0;
     display: inline-flex;
     align-items: center;
-    font-size: 9.5px;
-    font-weight: 700;
-    letter-spacing: .1em;
-    text-transform: uppercase;
-    padding: 3px 9px;
+    flex-shrink: 0;
+    padding: 2px 8px;
     border-radius: 100px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    line-height: 18px;
     border: 1px solid transparent;
     transition:
-      background    var(--ds-t-base, 200ms) var(--ds-ease, ease),
-      border-color  var(--ds-t-base, 200ms) var(--ds-ease, ease),
-      box-shadow    var(--ds-t-base, 200ms) var(--ds-ease, ease);
+      background    var(--ds-t-base, 240ms) var(--ds-ease, ease),
+      border-color  var(--ds-t-base, 240ms) var(--ds-ease, ease);
   }
 
-  /* Refine existing badge colour pairs with pill treatment */
-  .badge-cover {
-    background: rgba(240,98,146,.1);
-    color: #f06292;
-    border-color: rgba(240,98,146,.2);
+  /* Badge colours keyed to data-type */
+  .slide-card[data-type="cover"]   .slide-type-badge {
+    background: rgba(108,99,255,.14);
+    color: var(--ds-accent, #6C63FF);
+    border-color: rgba(108,99,255,.3);
   }
 
-  .badge-content {
-    background: rgba(56,200,168,.08);
-    color: #38c8a8;
-    border-color: rgba(56,200,168,.2);
+  .slide-card[data-type="content"] .slide-type-badge {
+    background: rgba(16,185,129,.12);
+    color: #10B981;
+    border-color: rgba(16,185,129,.28);
   }
 
-  .badge-compare {
-    background: rgba(124,106,247,.1);
-    color: var(--ds-accent, #7c6af7);
-    border-color: rgba(124,106,247,.22);
+  .slide-card[data-type="compare"] .slide-type-badge {
+    background: rgba(245,158,11,.12);
+    color: #F59E0B;
+    border-color: rgba(245,158,11,.28);
   }
 
-  .badge-quote {
-    background: rgba(251,191,36,.08);
-    color: #fbbf24;
-    border-color: rgba(251,191,36,.2);
+  .slide-card[data-type="quote"]   .slide-type-badge {
+    background: rgba(236,72,153,.12);
+    color: #EC4899;
+    border-color: rgba(236,72,153,.28);
   }
 
-  .badge-stat {
-    background: rgba(52,211,238,.08);
-    color: #22d3ee;
-    border-color: rgba(52,211,238,.2);
+  .slide-card[data-type="stat"]    .slide-type-badge {
+    background: rgba(59,130,246,.12);
+    color: #3B82F6;
+    border-color: rgba(59,130,246,.28);
   }
 
-  .badge-cta {
-    background: rgba(248,113,113,.08);
-    color: #f87171;
-    border-color: rgba(248,113,113,.2);
+  .slide-card[data-type="cta"]     .slide-type-badge {
+    background: rgba(139,92,246,.12);
+    color: #8B5CF6;
+    border-color: rgba(139,92,246,.28);
   }
 
-  /* ── Slide actions row ────────────────────────────────────── */
+  /* ── Slide number ── */
+
+  .slide-type-num {
+    margin-left: auto;
+    font-family: var(--ds-font-mono, 'DM Mono', 'Fira Mono', monospace);
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--ds-text-3, #585A70);
+    letter-spacing: .02em;
+    flex-shrink: 0;
+  }
+
+  /* ─────────────────────────────────────────────────────────────
+     SLIDE ACTIONS
+  ───────────────────────────────────────────────────────────── */
 
   .slide-actions {
     display: flex;
@@ -300,120 +305,266 @@
     flex-shrink: 0;
   }
 
-  /* ── Icon buttons (move up / down) ───────────────────────── */
-
-  .icon-btn {
+  .btn-slide-action {
     width: 28px;
     height: 28px;
     display: flex;
     align-items: center;
     justify-content: center;
     background: transparent;
-    border: 1px solid var(--ds-border, rgba(255,255,255,.08));
-    border-radius: var(--ds-r-md, 8px);
-    color: var(--ds-text-3, rgba(255,255,255,.35));
+    border: 1px solid transparent;
+    border-radius: var(--ds-r-sm, 6px);
+    color: var(--ds-text-3, #585A70);
     font-size: 13px;
+    line-height: 1;
     cursor: pointer;
-    transition:
-      background    var(--ds-t-base, 200ms) var(--ds-ease, ease),
-      border-color  var(--ds-t-base, 200ms) var(--ds-ease, ease),
-      color         var(--ds-t-base, 200ms) var(--ds-ease, ease),
-      box-shadow    var(--ds-t-base, 200ms) var(--ds-ease, ease);
-  }
-
-  .icon-btn:hover {
-    background: var(--ds-surface-hover, rgba(255,255,255,.07));
-    border-color: var(--ds-border-accent, rgba(124,106,247,.4));
-    color: var(--ds-text, #fff);
-  }
-
-  /* ── Delete button ────────────────────────────────────────── */
-
-  .icon-btn.danger {
-    opacity: 0;
-    pointer-events: none;
-    transform: translateX(4px);
-    transition:
-      opacity      var(--ds-t-base, 200ms) var(--ds-ease, ease),
-      transform    200ms var(--ds-ease-spring, cubic-bezier(.34,1.56,.64,1)),
-      background   var(--ds-t-base, 200ms) var(--ds-ease, ease),
-      border-color var(--ds-t-base, 200ms) var(--ds-ease, ease),
-      color        var(--ds-t-base, 200ms) var(--ds-ease, ease);
-  }
-
-  .slide-card:hover .icon-btn.danger {
-    opacity: 1;
-    pointer-events: auto;
-    transform: translateX(0);
-  }
-
-  .icon-btn.danger:hover {
-    background: rgba(248,113,113,.12);
-    border-color: rgba(248,113,113,.4);
-    color: #f87171;
-    box-shadow: 0 0 8px rgba(248,113,113,.2);
-  }
-
-  /* ── Drag handle ──────────────────────────────────────────── */
-
-  .slide-card-drag {
-    display: flex;
-    flex-direction: column;
-    gap: 3px;
-    padding: 6px 4px;
-    cursor: grab;
-    opacity: 0;
     flex-shrink: 0;
-    transition: opacity var(--ds-t-base, 200ms) var(--ds-ease, ease);
+    transition:
+      background    var(--ds-t-base, 240ms) var(--ds-ease, ease),
+      border-color  var(--ds-t-base, 240ms) var(--ds-ease, ease),
+      color         var(--ds-t-base, 240ms) var(--ds-ease, ease),
+      box-shadow    var(--ds-t-base, 240ms) var(--ds-ease, ease);
   }
 
-  .slide-card-drag:active {
-    cursor: grabbing;
+  .btn-slide-action:hover {
+    background: var(--ds-surface-hover, rgba(255,255,255,.08));
+    border-color: var(--ds-border, rgba(255,255,255,.07));
+    color: var(--ds-text-2, #9B9DB0);
   }
 
-  .slide-card-drag span {
-    display: block;
-    width: 12px;
-    height: 2px;
-    background: var(--ds-text-3, rgba(255,255,255,.35));
-    border-radius: 2px;
+  .btn-slide-action.del:hover {
+    background: var(--ds-danger-muted, rgba(239,68,68,.15));
+    border-color: rgba(239,68,68,.30);
+    color: var(--ds-danger, #EF4444);
+    box-shadow: 0 0 8px rgba(239,68,68,.15);
   }
 
-  /* ── Slide body (expanded form area) ─────────────────────── */
+  /* ─────────────────────────────────────────────────────────────
+     SLIDE BODY — FORM AREA
+  ───────────────────────────────────────────────────────────── */
 
   .slide-body {
-    display: none;
-    padding: 0 20px 16px;
-    border-top: 1px solid var(--ds-border, rgba(255,255,255,.06));
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: var(--ds-space-4, 16px);
     animation: ds-body-in 180ms var(--ds-ease, ease) both;
   }
 
-  .slide-body.open {
-    display: block;
-  }
-
   @keyframes ds-body-in {
-    from { opacity: 0; transform: translateY(-4px); }
-    to   { opacity: 1; transform: translateY(0); }
+    from { opacity: 0; transform: translateY(-5px); }
+    to   { opacity: 1; transform: translateY(0);    }
   }
 
-  /* ── Empty state inside slides list ──────────────────────── */
+  /* ─────────────────────────────────────────────────────────────
+     FIELD PRIMITIVES
+  ───────────────────────────────────────────────────────────── */
 
-  .slides-list .empty-state {
+  .field {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    padding: 48px 24px;
-    color: var(--ds-text-3, rgba(255,255,255,.3));
-    font-size: 13px;
-    text-align: center;
+    gap: 4px;
   }
 
-  .slides-list .empty-state-icon {
-    font-size: 32px;
-    opacity: .4;
+  .field label {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    color: var(--ds-text-3, #585A70);
+    line-height: 1;
+  }
+
+  .field input,
+  .field textarea,
+  .field select {
+    width: 100%;
+    padding: 7px 10px;
+    background: var(--ds-bg-5, #1C1C2C);
+    border: 1px solid var(--ds-border, rgba(255,255,255,.07));
+    border-radius: var(--ds-r-md, 10px);
+    color: var(--ds-text, #EDEEF2);
+    font-size: 13px;
+    line-height: 1.5;
+    outline: none;
+    transition:
+      border-color var(--ds-t-base, 240ms) var(--ds-ease, ease),
+      box-shadow   var(--ds-t-base, 240ms) var(--ds-ease, ease),
+      background   var(--ds-t-base, 240ms) var(--ds-ease, ease);
+    box-sizing: border-box;
+  }
+
+  .field input:focus,
+  .field textarea:focus,
+  .field select:focus {
+    border-color: var(--ds-border-accent, rgba(108,99,255,.45));
+    background: var(--ds-surface, rgba(255,255,255,.045));
+    box-shadow: 0 0 0 3px var(--ds-accent-glow, rgba(108,99,255,.22));
+  }
+
+  .field input::placeholder,
+  .field textarea::placeholder {
+    color: var(--ds-text-3, #585A70);
+  }
+
+  .field textarea {
+    resize: vertical;
+    min-height: 80px;
+    font-family: inherit;
+  }
+
+  /* Modifiers */
+
+  .field.grow   { flex: 1; }
+  .field.full   { width: 100%; }
+
+  /* ─────────────────────────────────────────────────────────────
+     FIELD GROUP — HORIZONTAL ROW
+  ───────────────────────────────────────────────────────────── */
+
+  .field-group {
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+  }
+
+  .field-group .field {
+    flex: 1;
+    min-width: 0;
+  }
+
+  /* ─────────────────────────────────────────────────────────────
+     COMPARE COLUMNS
+  ───────────────────────────────────────────────────────────── */
+
+  .compare-cols {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .compare-col {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 12px;
+    background: var(--ds-surface, rgba(255,255,255,.045));
+    border: 1px solid var(--ds-border, rgba(255,255,255,.07));
+    border-radius: var(--ds-r-lg, 16px);
+  }
+
+  @media (max-width: 640px) {
+    .compare-cols { grid-template-columns: 1fr; }
+  }
+
+  /* ─────────────────────────────────────────────────────────────
+     IMAGE FIELD — UPLOAD AREA
+  ───────────────────────────────────────────────────────────── */
+
+  .image-field {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px;
+    background: var(--ds-surface, rgba(255,255,255,.045));
+    border: 1px dashed var(--ds-border-strong, rgba(255,255,255,.14));
+    border-radius: var(--ds-r-md, 10px);
+    transition:
+      border-color var(--ds-t-base, 240ms) var(--ds-ease, ease),
+      background   var(--ds-t-base, 240ms) var(--ds-ease, ease);
+  }
+
+  .image-field:hover {
+    border-color: var(--ds-border-accent, rgba(108,99,255,.45));
+    background: var(--ds-accent-muted, rgba(108,99,255,.14));
+  }
+
+  .image-preview-thumb {
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+    border-radius: 6px;
+    object-fit: cover;
+    background: var(--ds-bg-5, #1C1C2C);
+    border: 1px solid var(--ds-border, rgba(255,255,255,.07));
+  }
+
+  .image-field-label {
+    flex: 1;
+    font-size: 12px;
+    color: var(--ds-text-3, #585A70);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .btn-image-pick {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 10px;
+    background: transparent;
+    border: 1px solid var(--ds-border-accent, rgba(108,99,255,.45));
+    border-radius: var(--ds-r-md, 10px);
+    color: var(--ds-accent, #6C63FF);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .03em;
+    cursor: pointer;
+    white-space: nowrap;
+    flex-shrink: 0;
+    transition:
+      background    var(--ds-t-base, 240ms) var(--ds-ease, ease),
+      border-color  var(--ds-t-base, 240ms) var(--ds-ease, ease),
+      color         var(--ds-t-base, 240ms) var(--ds-ease, ease),
+      box-shadow    var(--ds-t-base, 240ms) var(--ds-ease, ease);
+  }
+
+  .btn-image-pick:hover {
+    background: var(--ds-accent-muted, rgba(108,99,255,.14));
+    border-color: var(--ds-accent, #6C63FF);
+    color: var(--ds-text, #EDEEF2);
+    box-shadow: 0 0 10px rgba(108,99,255,.22);
+  }
+
+  .btn-image-clear {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: var(--ds-r-sm, 6px);
+    color: var(--ds-text-3, #585A70);
+    font-size: 13px;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition:
+      background    var(--ds-t-base, 240ms) var(--ds-ease, ease),
+      border-color  var(--ds-t-base, 240ms) var(--ds-ease, ease),
+      color         var(--ds-t-base, 240ms) var(--ds-ease, ease);
+  }
+
+  .btn-image-clear:hover {
+    background: var(--ds-danger-muted, rgba(239,68,68,.15));
+    border-color: rgba(239,68,68,.30);
+    color: var(--ds-danger, #EF4444);
+  }
+
+  /* ─────────────────────────────────────────────────────────────
+     DRAG & DROP — REORDER STATES
+  ───────────────────────────────────────────────────────────── */
+
+  .slide-card.is-dragging {
+    opacity: .45;
+    transform: scale(.98);
+    pointer-events: none;
+  }
+
+  .slide-card.drag-over {
+    border-color: var(--ds-border-accent, rgba(108,99,255,.45));
+    background: var(--ds-accent-muted, rgba(108,99,255,.14));
   }
 
 } /* end @layer ds-slides */

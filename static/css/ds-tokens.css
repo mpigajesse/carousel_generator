@@ -1,223 +1,253 @@
-/* ═══════════════════════════════════════════════════════════════════════════
-   ds-tokens.css — Design System Tokens v2
-   Carousel Generator — Premium Dark UI
-   ═══════════════════════════════════════════════════════════════════════════
+/* ============================================================
+   ds-tokens.css  —  Design System Tokens  v3
+   CarouselGen  —  Modern Dark Cinema
+   ============================================================
 
-   USAGE & NAMING CONVENTION
-   ──────────────────────────────────────────────────────────────────────────
-   All tokens follow the pattern:  --ds-<category>[-<variant>]
+   Design direction:  OLED-optimised cinema dark  +  glassmorphism
+   Audience:          Developer / content-creator B2B SaaS
+   Palette core:      Purple-indigo  (--ds-accent  #6C63FF)
+   Depth model:       bg (root)  →  bg-2 (sidebar)  →  bg-3 (workspace)
+                      →  bg-4 (cards)  →  bg-5 (tooltips / popovers)
 
-     ds-          : namespace prefix (Design System)
-     <category>   : bg | surface | border | accent | text | semantic |
-                    r (radius) | shadow | glass | ease | t (timing) |
-                    space | font | text (size) | z | layout |
-                    input | btn | badge | card | tab | preview | scrollbar
-     <variant>    : numeric scale (1–16), named scale (xs/sm/md/lg/xl/2xl),
-                    semantic modifier (hover/active/focus/disabled/light/glow)
+   Naming pattern:
+     --ds-<category>[-<variant>]
+     category  :  bg | surface | accent | text | border | r | shadow |
+                  glass | t | ease | space | font | z | input | btn |
+                  badge | card | tab | slide | preview | scroll | ...
+     variant   :  numeric scale, named scale (xs/sm/md/lg/xl/2xl),
+                  semantic modifier (hover / active / focus / muted / fg)
 
-   Example reads:
-     --ds-bg-3            → background layer 3 (deepest tinted surface)
-     --ds-text-2          → secondary text colour
-     --ds-shadow-lg       → large drop shadow
-     --ds-t-base          → base transition duration
-     --ds-r-md            → medium border radius
-     --ds-space-6         → 24px spacing step
-     --ds-input-bg        → input field background
+   IMPORTANT — No Jinja2 template syntax anywhere in this file.
+   Do not use percent-brace or double-brace sequences.
+   ============================================================ */
 
-   Consumer rule-of-thumb:
-     - Backgrounds   → use --ds-bg-* for page layers, --ds-surface-* for cards/panels
-     - Text          → --ds-text for primary, --ds-text-2 for secondary/muted, --ds-text-3 for placeholders
-     - Borders       → --ds-border for subtle, --ds-border-strong for emphasis, --ds-border-accent for active states
-     - Transitions   → compose as: all var(--ds-t-base) var(--ds-ease)
-     - Glows         → add --ds-glow or --ds-glow-sm to box-shadow for accent surfaces
 
-   ═══════════════════════════════════════════════════════════════════════════ */
+/* ============================================================
+   LAYER DECLARATION
+   ============================================================ */
 
 @layer ds-tokens {
+
   :root {
 
-    /* ════════════════════════════════════════════════
-       BACKGROUNDS
-       Layered depth from deepest (1) to most elevated
-       ════════════════════════════════════════════════ */
-    --ds-bg:          #0A0A15;   /* page root / absolute backdrop          */
-    --ds-bg-2:        #0F0F1E;   /* sidebar, left panel                    */
-    --ds-bg-3:        #151528;   /* main workspace / editor canvas         */
-    --ds-bg-4:        #1A1A30;   /* raised cards, hover states on panels   */
-    --ds-bg-5:        #1F1F38;   /* tooltips, popovers, highest elevation  */
-    --ds-bg-inset:    #07071000; /* inset wells, code blocks, textareas    */
+    /* ----------------------------------------------------------
+       BACKGROUNDS  —  OLED cinema depth layers
+       Darker numbers sit deeper (further from the viewer).
+       ---------------------------------------------------------- */
+
+    --ds-bg:        #06060C;              /* OLED page root                     */
+    --ds-bg-2:      #0C0C18;              /* sidebar / left rail                */
+    --ds-bg-3:      #10101E;              /* main workspace / editor canvas     */
+    --ds-bg-4:      #161624;              /* raised cards                       */
+    --ds-bg-5:      #1C1C2C;              /* tooltips, highest elevation        */
+    --ds-bg-inset:  rgba(0,0,0,0.35);    /* code blocks, textareas, wells      */
 
 
-    /* ════════════════════════════════════════════════
+    /* ----------------------------------------------------------
        GLASS SURFACES
-       Semi-transparent layers for frosted-glass UI
-       ════════════════════════════════════════════════ */
-    --ds-surface:        rgba(255,255,255,0.04);
-    --ds-surface-hover:  rgba(255,255,255,0.07);
-    --ds-surface-active: rgba(255,255,255,0.10);
-    --ds-surface-hi:     rgba(255,255,255,0.14);   /* highest-contrast overlay  */
-    --ds-surface-inset:  rgba(0,0,0,0.25);         /* recessed / well surfaces  */
+       Semi-transparent frosted-glass layers.
+       Apply via  background + backdrop-filter.
+       ---------------------------------------------------------- */
+
+    --ds-surface:        rgba(255,255,255,0.045);
+    --ds-surface-hover:  rgba(255,255,255,0.08);
+    --ds-surface-active: rgba(255,255,255,0.12);
+    --ds-surface-hi:     rgba(255,255,255,0.16);   /* highest-contrast overlay */
+    --ds-surface-inset:  rgba(0,0,0,0.30);         /* recessed / well surfaces */
 
 
-    /* ════════════════════════════════════════════════
-       BORDERS
-       ════════════════════════════════════════════════ */
-    --ds-border:         rgba(255,255,255,0.08);
-    --ds-border-strong:  rgba(255,255,255,0.16);
-    --ds-border-accent:  rgba(124,58,237,0.35);
-    --ds-border-focus:   rgba(124,58,237,0.70);    /* keyboard-focus ring        */
-    --ds-border-error:   rgba(239,68,68,0.50);
-    --ds-border-success: rgba(16,185,129,0.45);
-    --ds-border-subtle:  rgba(255,255,255,0.04);   /* barely-there dividers      */
+    /* ----------------------------------------------------------
+       ACCENT  —  purple-indigo cinematic core
+       ---------------------------------------------------------- */
 
+    --ds-accent:       #6C63FF;                   /* primary CTA / highlights   */
+    --ds-accent-2:     #4F46E5;                   /* mid gradient stop          */
+    --ds-accent-3:     #7C3AED;                   /* violet alt stop            */
+    --ds-accent-glow:  rgba(108,99,255,0.22);     /* glow halo                  */
+    --ds-accent-muted: rgba(108,99,255,0.14);     /* very faint tinted fill     */
+    --ds-accent-hover: #7D75FF;                   /* button hover state         */
+    --ds-accent-fg:    #FFFFFF;                   /* text on solid accent bg    */
 
-    /* ════════════════════════════════════════════════
-       ACCENT COLOURS
-       Core brand palette — violet → indigo → blue
-       ════════════════════════════════════════════════ */
-    --ds-accent:         #7C3AED;                  /* primary CTA / highlights   */
-    --ds-accent-2:       #4F46E5;                  /* mid gradient stop          */
-    --ds-accent-3:       #2563EB;                  /* tail gradient stop         */
-    --ds-accent-4:       #9333EA;                  /* alt purple (badges, chips) */
-    --ds-accent-light:   rgba(124,58,237,0.15);    /* tinted fill                */
-    --ds-accent-lighter: rgba(124,58,237,0.08);    /* very faint tint            */
-    --ds-accent-glow:    rgba(124,58,237,0.30);    /* used in glow shadows       */
-    --ds-accent-hover:   #8B5CF6;                  /* button/link hover state    */
-    --ds-accent-active:  #6D28D9;                  /* pressed state              */
-    --ds-accent-muted:   rgba(124,58,237,0.55);    /* muted / disabled accent    */
+    /* Extended accent aliases kept for backward compat with ds-*.css consumers */
+    --ds-accent-light:  rgba(108,99,255,0.18);
+    --ds-accent-active: #5A52E0;                  /* pressed / active state     */
 
     /* Gradient shorthands */
-    --ds-gradient:       linear-gradient(135deg, #7C3AED 0%, #4F46E5 60%, #2563EB 100%);
+    --ds-gradient:       linear-gradient(135deg, #6C63FF 0%, #4F46E5 55%, #7C3AED 100%);
     --ds-gradient-text:  linear-gradient(135deg, #A78BFA, #818CF8);
-    --ds-gradient-soft:  linear-gradient(135deg, rgba(124,58,237,0.20) 0%, rgba(79,70,229,0.10) 100%);
-    --ds-gradient-panel: linear-gradient(180deg, rgba(124,58,237,0.06) 0%, transparent 100%);
+    --ds-gradient-soft:  linear-gradient(135deg, rgba(108,99,255,0.20) 0%, rgba(79,70,229,0.10) 100%);
+    --ds-gradient-panel: linear-gradient(180deg, rgba(108,99,255,0.06) 0%, transparent 100%);
     --ds-gradient-shine: linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.06) 50%, transparent 60%);
 
 
-    /* ════════════════════════════════════════════════
-       TEXT
-       4-level text hierarchy
-       ════════════════════════════════════════════════ */
-    --ds-text:   #EEEEFF;        /* primary / headings                     */
-    --ds-text-2: #9090B8;        /* secondary / body copy                  */
-    --ds-text-3: #55557A;        /* placeholder / disabled                 */
-    --ds-text-4: #35354A;        /* ghost / barely visible labels          */
-    --ds-text-accent: #A78BFA;   /* accent-coloured text                   */
-    --ds-text-accent-2: #818CF8; /* secondary accent text (links, etc.)    */
-    --ds-text-invert: #0A0A15;   /* text on bright/accent surfaces         */
-    --ds-text-on-accent: #FFFFFF;/* white text on solid accent buttons     */
-
-
-    /* ════════════════════════════════════════════════
+    /* ----------------------------------------------------------
        SEMANTIC COLOURS
-       Status indicators: success / error / warning / info
-       ════════════════════════════════════════════════ */
-    --ds-success:       #10B981;
-    --ds-success-light: #34D399;
-    --ds-success-bg:    rgba(16,185,129,0.12);
-    --ds-success-border:rgba(16,185,129,0.30);
+       ---------------------------------------------------------- */
 
-    --ds-error:         #EF4444;
-    --ds-error-light:   #F87171;
-    --ds-error-bg:      rgba(239,68,68,0.12);
-    --ds-error-border:  rgba(239,68,68,0.30);
+    --ds-success:        #10B981;
+    --ds-success-muted:  rgba(16,185,129,0.15);
+    --ds-success-light:  #34D399;
+    --ds-success-bg:     rgba(16,185,129,0.12);   /* alias for muted            */
 
-    --ds-warning:       #F59E0B;
-    --ds-warning-light: #FCD34D;
-    --ds-warning-bg:    rgba(245,158,11,0.12);
-    --ds-warning-border:rgba(245,158,11,0.30);
+    --ds-warning:        #F59E0B;
+    --ds-warning-muted:  rgba(245,158,11,0.15);
+    --ds-warning-light:  #FCD34D;
+    --ds-warning-bg:     rgba(245,158,11,0.12);
 
-    --ds-info:          #3B82F6;
-    --ds-info-light:    #60A5FA;
-    --ds-info-bg:       rgba(59,130,246,0.12);
-    --ds-info-border:   rgba(59,130,246,0.30);
+    --ds-danger:         #EF4444;
+    --ds-danger-muted:   rgba(239,68,68,0.15);
+    --ds-danger-light:   #F87171;
+    --ds-danger-bg:      rgba(239,68,68,0.12);
+
+    /* Legacy alias — --ds-error mirrors --ds-danger */
+    --ds-error:          #EF4444;
+    --ds-error-light:    #F87171;
+    --ds-error-bg:       rgba(239,68,68,0.12);
+    --ds-error-border:   rgba(239,68,68,0.40);
+
+    --ds-info:           #3B82F6;
+    --ds-info-muted:     rgba(59,130,246,0.15);
+    --ds-info-light:     #60A5FA;
+    --ds-info-bg:        rgba(59,130,246,0.12);
+    --ds-info-border:    rgba(59,130,246,0.30);
 
 
-    /* ════════════════════════════════════════════════
+    /* ----------------------------------------------------------
+       TEXT  —  4-level hierarchy
+       ---------------------------------------------------------- */
+
+    --ds-text:           #EDEEF2;         /* primary / headings                 */
+    --ds-text-2:         #9B9DB0;         /* secondary / body copy              */
+    --ds-text-3:         #585A70;         /* placeholder / disabled             */
+    --ds-text-4:         #2E3050;         /* ghost / barely-visible labels      */
+
+    /* Accent-tinted text */
+    --ds-text-accent:    #A78BFA;
+    --ds-text-accent-2:  #818CF8;
+    --ds-text-on-accent: #FFFFFF;         /* white text on solid accent buttons */
+    --ds-text-invert:    #06060C;         /* dark text on bright surfaces       */
+
+
+    /* ----------------------------------------------------------
+       BORDERS
+       ---------------------------------------------------------- */
+
+    --ds-border:          rgba(255,255,255,0.07);
+    --ds-border-strong:   rgba(255,255,255,0.14);
+    --ds-border-accent:   rgba(108,99,255,0.45);
+    --ds-border-success:  rgba(16,185,129,0.40);
+    --ds-border-danger:   rgba(239,68,68,0.40);
+    --ds-border-focus:    rgba(108,99,255,0.70);   /* keyboard focus ring       */
+    --ds-border-subtle:   rgba(255,255,255,0.04);  /* barely-there dividers     */
+
+
+    /* ----------------------------------------------------------
        BORDER RADIUS
-       xs → full scale
-       ════════════════════════════════════════════════ */
+       ---------------------------------------------------------- */
+
     --ds-r-xs:   4px;
-    --ds-r-sm:   8px;
-    --ds-r-md:   12px;
+    --ds-r-sm:   6px;
+    --ds-r-md:   10px;
     --ds-r-lg:   16px;
-    --ds-r-xl:   20px;
-    --ds-r-2xl:  28px;
-    --ds-r-3xl:  36px;
+    --ds-r-xl:   22px;
+    --ds-r-2xl:  32px;
+    --ds-r-3xl:  40px;
     --ds-r-full: 9999px;
 
 
-    /* ════════════════════════════════════════════════
-       SHADOWS & GLOW
-       Elevation-based shadow scale + accent glows
-       ════════════════════════════════════════════════ */
-    --ds-shadow-xs: 0 1px 4px  rgba(0,0,0,0.40);
-    --ds-shadow-sm: 0 2px 12px rgba(0,0,0,0.50);
-    --ds-shadow-md: 0 8px 32px rgba(0,0,0,0.55);
-    --ds-shadow-lg: 0 16px 56px rgba(0,0,0,0.65);
-    --ds-shadow-xl: 0 24px 80px rgba(0,0,0,0.75);
+    /* ----------------------------------------------------------
+       SHADOWS  —  elevation scale + accent glows
+       ---------------------------------------------------------- */
 
-    /* Inset shadow for wells / inputs */
-    --ds-shadow-inset: inset 0 1px 4px rgba(0,0,0,0.50);
+    --ds-shadow-xs: 0 1px 3px  rgba(0,0,0,0.35);
+    --ds-shadow-sm: 0 2px 8px  rgba(0,0,0,0.45);
+    --ds-shadow-md: 0 4px 20px rgba(0,0,0,0.55);
+    --ds-shadow-lg: 0 8px 40px rgba(0,0,0,0.65);
+    --ds-shadow-xl: 0 16px 64px rgba(0,0,0,0.75);
+
+    /* Inset wells */
+    --ds-shadow-inset:        inset 0 1px 4px rgba(0,0,0,0.50);
     --ds-shadow-inset-strong: inset 0 2px 8px rgba(0,0,0,0.65);
 
-    /* Accent glows — additive on box-shadow */
-    --ds-glow:      0 0 32px rgba(124,58,237,0.25);
-    --ds-glow-sm:   0 0 16px rgba(124,58,237,0.20);
-    --ds-glow-lg:   0 0 60px rgba(124,58,237,0.35);
-    --ds-glow-text: 0 0 20px rgba(167,139,250,0.50); /* for luminous text      */
+    /* Accent glow passes — add to box-shadow */
+    --ds-shadow-accent:    0 0 32px rgba(108,99,255,0.30);
+    --ds-shadow-accent-sm: 0 0 16px rgba(108,99,255,0.20);
+    --ds-shadow-accent-lg: 0 0 60px rgba(108,99,255,0.38);
+
+    /* Legacy glow aliases */
+    --ds-glow:    var(--ds-shadow-accent);
+    --ds-glow-sm: var(--ds-shadow-accent-sm);
+    --ds-glow-lg: var(--ds-shadow-accent-lg);
+    --ds-glow-text: 0 0 20px rgba(167,139,250,0.50);
 
     /* Combined elevation + glow presets */
-    --ds-elevated-sm: var(--ds-shadow-sm), var(--ds-glow-sm);
-    --ds-elevated-md: var(--ds-shadow-md), var(--ds-glow);
-    --ds-elevated-lg: var(--ds-shadow-lg), var(--ds-glow-lg);
+    --ds-elevated-sm: var(--ds-shadow-sm),  var(--ds-shadow-accent-sm);
+    --ds-elevated-md: var(--ds-shadow-md),  var(--ds-shadow-accent);
+    --ds-elevated-lg: var(--ds-shadow-lg),  var(--ds-shadow-accent-lg);
+
+    /* Focus ring shorthand */
+    --ds-focus-ring:       0 0 0 2px var(--ds-bg), 0 0 0 4px var(--ds-accent);
+    --ds-focus-ring-inset: inset 0 0 0 2px var(--ds-border-focus);
 
 
-    /* ════════════════════════════════════════════════
+    /* ----------------------------------------------------------
        GLASS EFFECT
-       Backdrop-filter values for frosted glass panels
-       ════════════════════════════════════════════════ */
-    --ds-glass-bg:        rgba(15,15,30,0.75);
-    --ds-glass-bg-light:  rgba(15,15,30,0.55);
-    --ds-glass-blur:      blur(24px) saturate(1.8);
-    --ds-glass-blur-sm:   blur(12px) saturate(1.5);
-    --ds-glass-blur-lg:   blur(40px) saturate(2.0);
+       ---------------------------------------------------------- */
+
+    --ds-glass-bg:       rgba(12,12,24,0.72);
+    --ds-glass-blur:     20px;
+    --ds-glass-border:   rgba(255,255,255,0.09);
+    --ds-glass-sat:      1.6;
+
+    /* Backdrop-filter presets  (use in backdrop-filter property) */
+    --ds-glass-filter:    blur(20px) saturate(1.6);
+    --ds-glass-filter-sm: blur(12px) saturate(1.4);
+    --ds-glass-filter-lg: blur(36px) saturate(1.8);
+
+    /* Legacy alias */
+    --ds-glass-bg-light:  rgba(12,12,24,0.52);
+    --ds-glass-blur-sm:   blur(12px) saturate(1.4);
+    --ds-glass-blur-lg:   blur(36px) saturate(1.8);
 
 
-    /* ════════════════════════════════════════════════
-       TRANSITIONS & EASING
-       ════════════════════════════════════════════════ */
-    --ds-ease:        cubic-bezier(0.4, 0, 0.2, 1);     /* standard material   */
-    --ds-ease-out:    cubic-bezier(0.0, 0, 0.2, 1);     /* decelerate          */
-    --ds-ease-in:     cubic-bezier(0.4, 0, 1, 1);       /* accelerate          */
-    --ds-ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);/* overshoot/bounce    */
-    --ds-ease-smooth: cubic-bezier(0.25, 0.46, 0.45, 0.94); /* silky           */
+    /* ----------------------------------------------------------
+       TRANSITIONS  &  EASING
+       ---------------------------------------------------------- */
 
+    /* Duration steps */
     --ds-t-instant: 80ms;
     --ds-t-fast:    150ms;
-    --ds-t-base:    250ms;
+    --ds-t-base:    240ms;
     --ds-t-slow:    400ms;
     --ds-t-slower:  600ms;
-    --ds-t-reveal:  800ms;       /* entrance / hero animations              */
+    --ds-t-reveal:  800ms;       /* entrance / hero animations                 */
 
-    /* Shorthand transition presets */
-    --ds-transition:       all var(--ds-t-base) var(--ds-ease);
-    --ds-transition-fast:  all var(--ds-t-fast) var(--ds-ease);
-    --ds-transition-slow:  all var(--ds-t-slow) var(--ds-ease);
-    --ds-transition-color: color var(--ds-t-fast) var(--ds-ease),
-                           background-color var(--ds-t-fast) var(--ds-ease),
-                           border-color var(--ds-t-fast) var(--ds-ease);
+    /* Easing curves */
+    --ds-ease:        cubic-bezier(0.16, 1, 0.3, 1);       /* expo-out cinema  */
+    --ds-ease-std:    cubic-bezier(0.4, 0, 0.2, 1);        /* material std     */
+    --ds-ease-in:     cubic-bezier(0.4, 0, 1, 1);          /* accelerate       */
+    --ds-ease-out:    cubic-bezier(0.0, 0, 0.2, 1);        /* decelerate       */
+    --ds-ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);   /* spring overshoot */
+    --ds-ease-smooth: cubic-bezier(0.25, 0.46, 0.45, 0.94);/* silky            */
+
+    /* Shorthand presets */
+    --ds-transition:           all var(--ds-t-base)  var(--ds-ease);
+    --ds-transition-fast:      all var(--ds-t-fast)  var(--ds-ease);
+    --ds-transition-slow:      all var(--ds-t-slow)  var(--ds-ease);
+    --ds-transition-color:     color            var(--ds-t-fast) var(--ds-ease),
+                               background-color var(--ds-t-fast) var(--ds-ease),
+                               border-color     var(--ds-t-fast) var(--ds-ease);
     --ds-transition-transform: transform var(--ds-t-base) var(--ds-ease-spring);
 
 
-    /* ════════════════════════════════════════════════
-       SPACING SCALE
-       4px base grid — steps 1–20
-       ════════════════════════════════════════════════ */
-    --ds-space-px:  1px;
-    --ds-space-0-5: 2px;
-    --ds-space-1:   4px;
-    --ds-space-2:   8px;
+    /* ----------------------------------------------------------
+       SPACING  —  4px base grid
+       ---------------------------------------------------------- */
+
+    --ds-space-px:   1px;
+    --ds-space-0-5:  2px;
+    --ds-space-1:    4px;
+    --ds-space-2:    8px;
     --ds-space-3:   12px;
     --ds-space-4:   16px;
     --ds-space-5:   20px;
@@ -233,313 +263,310 @@
     --ds-space-32: 128px;
 
 
-    /* ════════════════════════════════════════════════
-       TYPOGRAPHY — FONT FAMILIES
-       ════════════════════════════════════════════════ */
-    --ds-font-ui:      'Inter', 'Manrope', system-ui, -apple-system, sans-serif;
-    --ds-font-display: 'Clash Display', 'Inter', system-ui, sans-serif;
-    --ds-font-mono:    'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+    /* ----------------------------------------------------------
+       LAYOUT  —  structural dimensions
+       ---------------------------------------------------------- */
+
+    --ds-sidebar-w:       300px;    /* primary sidebar (open)                  */
+    --ds-sidebar-w-rail:   68px;    /* icon-only collapsed rail                */
+    --ds-topbar-h:         52px;    /* top navigation bar                      */
+    --ds-toolbar-h:        44px;    /* secondary toolbar                       */
+    --ds-statusbar-h:      28px;    /* bottom status / progress bar            */
+    --ds-panel-max:      1400px;    /* max page content width                  */
+    --ds-panel-w:         320px;    /* right config / settings panel           */
+    --ds-panel-w-lg:      380px;    /* wide panel variant                      */
+    --ds-canvas-min-w:    480px;    /* minimum preview canvas                  */
+    --ds-slide-thumb-w:   160px;    /* slide thumbnail width                   */
+    --ds-slide-thumb-h:   160px;    /* slide thumbnail height (1:1)            */
 
 
-    /* ════════════════════════════════════════════════
-       TYPOGRAPHY — SIZE SCALE
-       ════════════════════════════════════════════════ */
+    /* ----------------------------------------------------------
+       TYPOGRAPHY  —  font families
+       ---------------------------------------------------------- */
+
+    --ds-font-sans:    'Inter', 'DM Sans', system-ui, sans-serif;
+    --ds-font-heading: 'Poppins', 'Syne', sans-serif;
+    --ds-font-mono:    'DM Mono', 'JetBrains Mono', monospace;
+
+    /* Legacy aliases */
+    --ds-font-ui:      var(--ds-font-sans);
+    --ds-font-display: var(--ds-font-heading);
+
+
+    /* ----------------------------------------------------------
+       TYPOGRAPHY  —  size scale
+       ---------------------------------------------------------- */
+
     --ds-text-2xs:  10px;
     --ds-text-xs:   11px;
-    --ds-text-sm:   13px;
+    --ds-text-sm:   12px;
     --ds-text-base: 14px;
-    --ds-text-md:   16px;
-    --ds-text-lg:   18px;
+    --ds-text-md:   15px;
+    --ds-text-lg:   17px;
     --ds-text-xl:   20px;
     --ds-text-2xl:  24px;
-    --ds-text-3xl:  32px;
+    --ds-text-3xl:  30px;
     --ds-text-4xl:  40px;
     --ds-text-5xl:  56px;
 
 
-    /* ════════════════════════════════════════════════
-       TYPOGRAPHY — WEIGHT
-       ════════════════════════════════════════════════ */
+    /* ----------------------------------------------------------
+       TYPOGRAPHY  —  weights, leading, tracking
+       ---------------------------------------------------------- */
+
     --ds-weight-regular: 400;
     --ds-weight-medium:  500;
     --ds-weight-semi:    600;
     --ds-weight-bold:    700;
     --ds-weight-black:   900;
 
-
-    /* ════════════════════════════════════════════════
-       TYPOGRAPHY — LINE HEIGHT & LETTER SPACING
-       ════════════════════════════════════════════════ */
-    --ds-leading-none:   1;
-    --ds-leading-tight:  1.25;
-    --ds-leading-snug:   1.375;
-    --ds-leading-normal: 1.5;
-    --ds-leading-relaxed:1.65;
-    --ds-leading-loose:  1.8;
+    --ds-leading-none:    1;
+    --ds-leading-tight:   1.25;
+    --ds-leading-snug:    1.375;
+    --ds-leading-normal:  1.5;
+    --ds-leading-relaxed: 1.65;
+    --ds-leading-loose:   1.8;
 
     --ds-tracking-tight:  -0.03em;
     --ds-tracking-snug:   -0.015em;
-    --ds-tracking-normal: 0em;
-    --ds-tracking-wide:   0.04em;
-    --ds-tracking-wider:  0.08em;
-    --ds-tracking-caps:   0.12em;    /* for ALL CAPS labels & badges        */
+    --ds-tracking-normal:  0em;
+    --ds-tracking-wide:    0.04em;
+    --ds-tracking-wider:   0.08em;
+    --ds-tracking-caps:    0.12em;   /* ALL CAPS labels, badges                */
 
 
-    /* ════════════════════════════════════════════════
-       Z-INDEX SCALE
-       ════════════════════════════════════════════════ */
+    /* ----------------------------------------------------------
+       Z-INDEX  —  layering stack
+       ---------------------------------------------------------- */
+
     --ds-z-below:    -1;
     --ds-z-base:      1;
     --ds-z-raised:   10;
     --ds-z-dropdown: 100;
-    --ds-z-sticky:   200;
-    --ds-z-overlay:  250;
-    --ds-z-modal:    300;
-    --ds-z-toast:    400;
-    --ds-z-tooltip:  500;
-    --ds-z-top:      999;
+    --ds-z-sidebar:  200;
+    --ds-z-overlay:  300;
+    --ds-z-modal:    400;
+    --ds-z-toast:    500;
+    --ds-z-tooltip:  600;
+    --ds-z-max:     9999;
 
 
-    /* ════════════════════════════════════════════════
-       LAYOUT — STRUCTURAL DIMENSIONS
-       ════════════════════════════════════════════════ */
-    --ds-sidebar-w:       68px;          /* icon-only left rail               */
-    --ds-sidebar-w-open:  240px;         /* expanded sidebar width            */
-    --ds-panel-w:         320px;         /* right config/settings panel       */
-    --ds-panel-w-lg:      380px;         /* wide panel variant                */
-    --ds-topbar-h:        56px;          /* header / nav bar                  */
-    --ds-toolbar-h:       48px;          /* secondary toolbar                 */
-    --ds-statusbar-h:     28px;          /* bottom status / progress bar      */
-    --ds-canvas-min-w:    480px;         /* minimum preview canvas            */
-    --ds-slide-thumb-w:   160px;         /* slide thumbnail width             */
-    --ds-slide-thumb-h:   160px;         /* slide thumbnail height (1:1)      */
+    /* ----------------------------------------------------------
+       SCROLLBAR  tokens
+       ---------------------------------------------------------- */
+
+    --ds-scroll-thumb:       rgba(108,99,255,0.30);
+    --ds-scroll-thumb-hover: rgba(108,99,255,0.55);
+    --ds-scroll-track:       rgba(255,255,255,0.03);
+    --ds-scroll-w:           6px;
 
 
-    /* ════════════════════════════════════════════════
-       COMPONENT TOKENS — INPUT FIELDS
-       ════════════════════════════════════════════════ */
-    --ds-input-bg:          rgba(0,0,0,0.30);
-    --ds-input-bg-focus:    rgba(0,0,0,0.40);
-    --ds-input-border:      var(--ds-border);
-    --ds-input-border-focus:var(--ds-border-focus);
-    --ds-input-border-error:var(--ds-border-error);
-    --ds-input-text:        var(--ds-text);
-    --ds-input-placeholder: var(--ds-text-3);
-    --ds-input-h-sm:        32px;
-    --ds-input-h-md:        40px;
-    --ds-input-h-lg:        48px;
-    --ds-input-px:          var(--ds-space-3);
-    --ds-input-r:           var(--ds-r-sm);
-    --ds-input-shadow-focus: 0 0 0 3px rgba(124,58,237,0.25);
+    /* ----------------------------------------------------------
+       COMPONENT  —  INPUT FIELDS
+       ---------------------------------------------------------- */
+
+    --ds-input-bg:           rgba(0,0,0,0.25);
+    --ds-input-bg-focus:     rgba(108,99,255,0.08);
+    --ds-input-border:       rgba(255,255,255,0.10);
+    --ds-input-border-focus: rgba(108,99,255,0.55);
+    --ds-input-border-error: var(--ds-error-border);
+    --ds-input-text:         var(--ds-text);
+    --ds-input-placeholder:  var(--ds-text-3);
+    --ds-input-h:            36px;   /* canonical single-line height           */
+    --ds-input-h-sm:         32px;
+    --ds-input-h-md:         40px;
+    --ds-input-h-lg:         48px;
+    --ds-input-px:           var(--ds-space-3);
+    --ds-input-radius:       var(--ds-r-md);
+    --ds-input-r:            var(--ds-r-md);  /* alias                          */
+    --ds-input-shadow-focus: 0 0 0 3px rgba(108,99,255,0.25);
 
 
-    /* ════════════════════════════════════════════════
-       COMPONENT TOKENS — BUTTONS
-       ════════════════════════════════════════════════ */
-    /* Primary button (solid accent) */
-    --ds-btn-primary-bg:     var(--ds-accent);
+    /* ----------------------------------------------------------
+       COMPONENT  —  BUTTONS
+       ---------------------------------------------------------- */
+
+    /* Sizes */
+    --ds-btn-h:      36px;    /* canonical default                            */
+    --ds-btn-h-sm:   28px;
+    --ds-btn-h-md:   36px;
+    --ds-btn-h-lg:   44px;
+    --ds-btn-px-sm:  var(--ds-space-3);
+    --ds-btn-px-md:  var(--ds-space-5);
+    --ds-btn-px-lg:  var(--ds-space-6);
+    --ds-btn-radius: var(--ds-r-md);
+    --ds-btn-r:      var(--ds-r-md);  /* alias                                 */
+    --ds-btn-font-size:   var(--ds-text-sm);
+    --ds-btn-font-weight: var(--ds-weight-semi);
+    --ds-btn-gap:    var(--ds-space-2);
+
+    /* Primary (solid accent) */
+    --ds-btn-primary-bg:        var(--ds-accent);
     --ds-btn-primary-bg-hover:  var(--ds-accent-hover);
     --ds-btn-primary-bg-active: var(--ds-accent-active);
-    --ds-btn-primary-text:   var(--ds-text-on-accent);
-    --ds-btn-primary-shadow: var(--ds-glow-sm);
+    --ds-btn-primary-text:      var(--ds-accent-fg);
+    --ds-btn-primary-shadow:    var(--ds-shadow-accent-sm);
 
-    /* Secondary button (ghost/outline) */
+    /* Ghost / outline */
     --ds-btn-ghost-bg:       transparent;
     --ds-btn-ghost-bg-hover: var(--ds-surface-hover);
     --ds-btn-ghost-border:   var(--ds-border-strong);
     --ds-btn-ghost-text:     var(--ds-text-2);
 
-    /* Danger button */
-    --ds-btn-danger-bg:      var(--ds-error);
-    --ds-btn-danger-bg-hover:var(--ds-error-light);
-    --ds-btn-danger-text:    #fff;
-
-    /* Shared button geometry */
-    --ds-btn-h-sm:    30px;
-    --ds-btn-h-md:    38px;
-    --ds-btn-h-lg:    46px;
-    --ds-btn-px-sm:   var(--ds-space-3);
-    --ds-btn-px-md:   var(--ds-space-5);
-    --ds-btn-px-lg:   var(--ds-space-6);
-    --ds-btn-r:       var(--ds-r-sm);
-    --ds-btn-font-size: var(--ds-text-sm);
-    --ds-btn-font-weight: var(--ds-weight-semi);
-    --ds-btn-gap:     var(--ds-space-2);
+    /* Danger */
+    --ds-btn-danger-bg:       var(--ds-danger);
+    --ds-btn-danger-bg-hover: var(--ds-danger-light);
+    --ds-btn-danger-text:     #fff;
 
 
-    /* ════════════════════════════════════════════════
-       COMPONENT TOKENS — BADGES / CHIPS
-       ════════════════════════════════════════════════ */
-    --ds-badge-r:        var(--ds-r-full);
-    --ds-badge-px:       var(--ds-space-2);
-    --ds-badge-py:       2px;
-    --ds-badge-font-size:var(--ds-text-2xs);
-    --ds-badge-font-weight: var(--ds-weight-semi);
-    --ds-badge-tracking: var(--ds-tracking-caps);
+    /* ----------------------------------------------------------
+       COMPONENT  —  BADGES / CHIPS
+       ---------------------------------------------------------- */
 
-    --ds-badge-accent-bg:   var(--ds-accent-light);
-    --ds-badge-accent-text: var(--ds-text-accent);
-    --ds-badge-success-bg:  var(--ds-success-bg);
-    --ds-badge-success-text:var(--ds-success-light);
-    --ds-badge-error-bg:    var(--ds-error-bg);
-    --ds-badge-error-text:  var(--ds-error-light);
-    --ds-badge-warning-bg:  var(--ds-warning-bg);
-    --ds-badge-warning-text:var(--ds-warning-light);
-    --ds-badge-muted-bg:    var(--ds-surface);
-    --ds-badge-muted-text:  var(--ds-text-3);
+    --ds-badge-radius:       var(--ds-r-sm);
+    --ds-badge-r:            var(--ds-r-sm);  /* alias                          */
+    --ds-badge-h:            20px;
+    --ds-badge-px:           var(--ds-space-2);
+    --ds-badge-py:           2px;
+    --ds-badge-font-size:    var(--ds-text-2xs);
+    --ds-badge-font-weight:  var(--ds-weight-semi);
+    --ds-badge-tracking:     var(--ds-tracking-caps);
+
+    --ds-badge-accent-bg:    var(--ds-accent-muted);
+    --ds-badge-accent-text:  var(--ds-text-accent);
+    --ds-badge-success-bg:   var(--ds-success-muted);
+    --ds-badge-success-text: var(--ds-success-light);
+    --ds-badge-error-bg:     var(--ds-danger-muted);
+    --ds-badge-error-text:   var(--ds-danger-light);
+    --ds-badge-warning-bg:   var(--ds-warning-muted);
+    --ds-badge-warning-text: var(--ds-warning-light);
+    --ds-badge-muted-bg:     var(--ds-surface);
+    --ds-badge-muted-text:   var(--ds-text-3);
 
 
-    /* ════════════════════════════════════════════════
-       COMPONENT TOKENS — CARDS & PANELS
-       ════════════════════════════════════════════════ */
-    --ds-card-bg:         var(--ds-bg-4);
-    --ds-card-bg-hover:   var(--ds-bg-5);
-    --ds-card-border:     var(--ds-border);
-    --ds-card-border-hover: var(--ds-border-strong);
-    --ds-card-border-active:var(--ds-border-accent);
-    --ds-card-r:          var(--ds-r-lg);
-    --ds-card-p:          var(--ds-space-5);
-    --ds-card-shadow:     var(--ds-shadow-md);
-    --ds-card-shadow-hover: var(--ds-shadow-lg);
+    /* ----------------------------------------------------------
+       COMPONENT  —  CARDS  &  PANELS
+       ---------------------------------------------------------- */
+
+    --ds-card-bg:            var(--ds-bg-4);
+    --ds-card-bg-hover:      var(--ds-bg-5);
+    --ds-card-border:        var(--ds-border);
+    --ds-card-border-hover:  var(--ds-border-strong);
+    --ds-card-border-active: var(--ds-border-accent);
+    --ds-card-radius:        var(--ds-r-lg);
+    --ds-card-r:             var(--ds-r-lg);  /* alias                          */
+    --ds-card-p:             var(--ds-space-5);
+    --ds-card-shadow:        var(--ds-shadow-md);
+    --ds-card-shadow-hover:  var(--ds-shadow-lg);
 
     /* Glass card variant */
-    --ds-card-glass-bg:    var(--ds-glass-bg);
-    --ds-card-glass-border:var(--ds-border);
+    --ds-card-glass-bg:     var(--ds-glass-bg);
+    --ds-card-glass-border: var(--ds-glass-border);
 
 
-    /* ════════════════════════════════════════════════
-       COMPONENT TOKENS — TABS
-       ════════════════════════════════════════════════ */
-    --ds-tab-track-bg:     var(--ds-bg-2);
-    --ds-tab-track-r:      var(--ds-r-sm);
-    --ds-tab-item-bg:      transparent;
-    --ds-tab-item-bg-active: var(--ds-surface-active);
-    --ds-tab-item-text:    var(--ds-text-3);
+    /* ----------------------------------------------------------
+       COMPONENT  —  TABS
+       ---------------------------------------------------------- */
+
+    --ds-tab-track-bg:         var(--ds-bg-2);
+    --ds-tab-track-r:          var(--ds-r-md);
+    --ds-tab-radius:           var(--ds-r-md);  /* canonical                    */
+    --ds-tab-item-bg:          transparent;
+    --ds-tab-item-bg-active:   var(--ds-surface-active);
+    --ds-tab-item-text:        var(--ds-text-3);
     --ds-tab-item-text-active: var(--ds-text);
-    --ds-tab-item-r:       var(--ds-r-sm);
-    --ds-tab-indicator-bg: var(--ds-accent);
-    --ds-tab-indicator-h:  2px;
-    --ds-tab-font-size:    var(--ds-text-sm);
-    --ds-tab-font-weight:  var(--ds-weight-medium);
-    --ds-tab-h:            36px;
-    --ds-tab-px:           var(--ds-space-4);
+    --ds-tab-item-r:           var(--ds-r-md);
+    --ds-tab-active-bg:        var(--ds-accent);
+    --ds-tab-active-fg:        var(--ds-accent-fg);
+    --ds-tab-indicator-bg:     var(--ds-accent);
+    --ds-tab-indicator-h:      2px;
+    --ds-tab-font-size:        var(--ds-text-sm);
+    --ds-tab-font-weight:      var(--ds-weight-medium);
+    --ds-tab-h:                36px;
+    --ds-tab-px:               var(--ds-space-4);
 
 
-    /* ════════════════════════════════════════════════
-       COMPONENT TOKENS — SLIDE PREVIEW / THUMBNAIL RAIL
-       ════════════════════════════════════════════════ */
-    --ds-thumb-bg:          var(--ds-bg-2);
-    --ds-thumb-border:      var(--ds-border);
-    --ds-thumb-border-active:var(--ds-border-accent);
-    --ds-thumb-r:           var(--ds-r-md);
-    --ds-thumb-shadow-active:var(--ds-glow-sm);
-    --ds-thumb-num-color:   var(--ds-text-3);
-    --ds-thumb-num-size:    var(--ds-text-xs);
+    /* ----------------------------------------------------------
+       COMPONENT  —  SLIDE PREVIEW  /  THUMBNAIL RAIL
+       ---------------------------------------------------------- */
+
+    --ds-slide-radius:         var(--ds-r-xl);  /* slide card corners           */
+    --ds-slide-border:         var(--ds-border);
+    --ds-slide-shadow:         var(--ds-shadow-lg);
+
+    --ds-thumb-bg:             var(--ds-bg-2);
+    --ds-thumb-border:         var(--ds-border);
+    --ds-thumb-border-active:  var(--ds-border-accent);
+    --ds-thumb-r:              var(--ds-r-md);
+    --ds-thumb-shadow-active:  var(--ds-shadow-accent-sm);
+    --ds-thumb-num-color:      var(--ds-text-3);
+    --ds-thumb-num-size:       var(--ds-text-xs);
+
+    --ds-preview-bg:           var(--ds-bg-3);
+    --ds-preview-grid-gap:     var(--ds-space-6);
 
 
-    /* ════════════════════════════════════════════════
-       COMPONENT TOKENS — TOOLTIPS
-       ════════════════════════════════════════════════ */
-    --ds-tooltip-bg:     var(--ds-bg-5);
-    --ds-tooltip-border: var(--ds-border-strong);
-    --ds-tooltip-text:   var(--ds-text);
-    --ds-tooltip-r:      var(--ds-r-sm);
-    --ds-tooltip-px:     var(--ds-space-3);
-    --ds-tooltip-py:     var(--ds-space-2);
-    --ds-tooltip-font-size: var(--ds-text-xs);
-    --ds-tooltip-shadow: var(--ds-shadow-lg);
+    /* ----------------------------------------------------------
+       COMPONENT  —  TOOLTIPS
+       ---------------------------------------------------------- */
+
+    --ds-tooltip-bg:       var(--ds-bg-5);
+    --ds-tooltip-border:   var(--ds-border-strong);
+    --ds-tooltip-text:     var(--ds-text);
+    --ds-tooltip-r:        var(--ds-r-sm);
+    --ds-tooltip-px:       var(--ds-space-3);
+    --ds-tooltip-py:       var(--ds-space-2);
+    --ds-tooltip-font-size:var(--ds-text-xs);
+    --ds-tooltip-shadow:   var(--ds-shadow-lg);
 
 
-    /* ════════════════════════════════════════════════
-       COMPONENT TOKENS — PROGRESS / LOADER
-       ════════════════════════════════════════════════ */
-    --ds-progress-track-bg: var(--ds-surface);
-    --ds-progress-fill-bg:  var(--ds-gradient);
-    --ds-progress-h:        4px;
-    --ds-progress-r:        var(--ds-r-full);
+    /* ----------------------------------------------------------
+       COMPONENT  —  TOAST  /  NOTIFICATION
+       ---------------------------------------------------------- */
+
+    --ds-toast-bg:     var(--ds-bg-5);
+    --ds-toast-border: var(--ds-border-strong);
+    --ds-toast-r:      var(--ds-r-md);
+    --ds-toast-px:     var(--ds-space-5);
+    --ds-toast-py:     var(--ds-space-4);
+    --ds-toast-shadow: var(--ds-shadow-xl);
+    --ds-toast-min-w:  280px;
+    --ds-toast-max-w:  440px;
 
 
-    /* ════════════════════════════════════════════════
-       COMPONENT TOKENS — SCROLLBAR
-       ════════════════════════════════════════════════ */
-    --ds-scroll-track: transparent;
-    --ds-scroll-thumb: rgba(255,255,255,0.10);
-    --ds-scroll-thumb-hover: rgba(255,255,255,0.20);
-    --ds-scroll-w:     6px;
+    /* ----------------------------------------------------------
+       COMPONENT  —  MODAL  /  DIALOG
+       ---------------------------------------------------------- */
+
+    --ds-modal-overlay: rgba(0,0,0,0.72);
+    --ds-modal-bg:      var(--ds-bg-4);
+    --ds-modal-border:  var(--ds-border-strong);
+    --ds-modal-r:       var(--ds-r-xl);
+    --ds-modal-p:       var(--ds-space-8);
+    --ds-modal-shadow:  var(--ds-shadow-xl);
+    --ds-modal-w-sm:    380px;
+    --ds-modal-w-md:    540px;
+    --ds-modal-w-lg:    720px;
 
 
-    /* ════════════════════════════════════════════════
-       COMPONENT TOKENS — CODE BLOCKS / SYNTAX
-       ════════════════════════════════════════════════ */
-    --ds-code-bg:         rgba(0,0,0,0.45);
-    --ds-code-border:     var(--ds-border);
-    --ds-code-text:       #C4B5FD;         /* default monospace text          */
-    --ds-code-r:          var(--ds-r-sm);
-    --ds-code-px:         var(--ds-space-3);
-    --ds-code-py:         var(--ds-space-2);
-    /* Token colours for light syntax colouring in preview */
-    --ds-code-keyword:    #A78BFA;
-    --ds-code-string:     #6EE7B7;
-    --ds-code-number:     #FCD34D;
-    --ds-code-comment:    var(--ds-text-3);
-    --ds-code-function:   #93C5FD;
-    --ds-code-operator:   #F9A8D4;
+    /* ----------------------------------------------------------
+       COMPONENT  —  DROPDOWN  /  SELECT
+       ---------------------------------------------------------- */
 
-
-    /* ════════════════════════════════════════════════
-       COMPONENT TOKENS — THEME SWATCH GRID
-       Used in the theme-picker panel
-       ════════════════════════════════════════════════ */
-    --ds-swatch-size:     36px;
-    --ds-swatch-r:        var(--ds-r-sm);
-    --ds-swatch-gap:      var(--ds-space-2);
-    --ds-swatch-border-active: var(--ds-border-focus);
-    --ds-swatch-shadow-active: var(--ds-glow-sm);
-
-
-    /* ════════════════════════════════════════════════
-       COMPONENT TOKENS — TOAST / NOTIFICATION
-       ════════════════════════════════════════════════ */
-    --ds-toast-bg:       var(--ds-bg-5);
-    --ds-toast-border:   var(--ds-border-strong);
-    --ds-toast-r:        var(--ds-r-md);
-    --ds-toast-px:       var(--ds-space-5);
-    --ds-toast-py:       var(--ds-space-4);
-    --ds-toast-shadow:   var(--ds-shadow-xl);
-    --ds-toast-min-w:    280px;
-    --ds-toast-max-w:    440px;
-
-
-    /* ════════════════════════════════════════════════
-       COMPONENT TOKENS — MODAL / DIALOG
-       ════════════════════════════════════════════════ */
-    --ds-modal-overlay:  rgba(0,0,0,0.70);
-    --ds-modal-bg:       var(--ds-bg-4);
-    --ds-modal-border:   var(--ds-border-strong);
-    --ds-modal-r:        var(--ds-r-xl);
-    --ds-modal-p:        var(--ds-space-8);
-    --ds-modal-shadow:   var(--ds-shadow-xl);
-    --ds-modal-w-sm:     380px;
-    --ds-modal-w-md:     540px;
-    --ds-modal-w-lg:     720px;
-
-
-    /* ════════════════════════════════════════════════
-       COMPONENT TOKENS — DROPDOWN / SELECT
-       ════════════════════════════════════════════════ */
-    --ds-dropdown-bg:      var(--ds-bg-5);
-    --ds-dropdown-border:  var(--ds-border-strong);
-    --ds-dropdown-r:       var(--ds-r-md);
-    --ds-dropdown-shadow:  var(--ds-shadow-lg);
-    --ds-dropdown-item-h:  36px;
-    --ds-dropdown-item-px: var(--ds-space-3);
+    --ds-dropdown-bg:             var(--ds-bg-5);
+    --ds-dropdown-border:         var(--ds-border-strong);
+    --ds-dropdown-r:              var(--ds-r-md);
+    --ds-dropdown-shadow:         var(--ds-shadow-lg);
+    --ds-dropdown-item-h:         36px;
+    --ds-dropdown-item-px:        var(--ds-space-3);
     --ds-dropdown-item-hover-bg:  var(--ds-surface-hover);
-    --ds-dropdown-item-active-bg: var(--ds-accent-light);
+    --ds-dropdown-item-active-bg: var(--ds-accent-muted);
 
 
-    /* ════════════════════════════════════════════════
-       COMPONENT TOKENS — TOGGLE / SWITCH
-       ════════════════════════════════════════════════ */
+    /* ----------------------------------------------------------
+       COMPONENT  —  TOGGLE  /  SWITCH
+       ---------------------------------------------------------- */
+
     --ds-toggle-track-off: var(--ds-surface-active);
     --ds-toggle-track-on:  var(--ds-accent);
     --ds-toggle-thumb:     #fff;
@@ -549,21 +576,75 @@
     --ds-toggle-shadow:    0 1px 4px rgba(0,0,0,0.50);
 
 
-    /* ════════════════════════════════════════════════
-       COMPONENT TOKENS — SLIDER (range input)
-       ════════════════════════════════════════════════ */
-    --ds-slider-track-bg:    var(--ds-surface-active);
-    --ds-slider-fill-bg:     var(--ds-accent);
-    --ds-slider-track-h:     4px;
-    --ds-slider-thumb-size:  16px;
-    --ds-slider-thumb-bg:    #fff;
-    --ds-slider-thumb-shadow:0 2px 6px rgba(0,0,0,0.50);
+    /* ----------------------------------------------------------
+       COMPONENT  —  SLIDER  (range input)
+       ---------------------------------------------------------- */
+
+    --ds-slider-track-bg:   var(--ds-surface-active);
+    --ds-slider-fill-bg:    var(--ds-accent);
+    --ds-slider-track-h:    4px;
+    --ds-slider-thumb-size: 16px;
+    --ds-slider-thumb-bg:   #fff;
+    --ds-slider-thumb-shadow: 0 2px 6px rgba(0,0,0,0.50);
 
 
-    /* ════════════════════════════════════════════════
-       ANIMATION KEYFRAME HELPERS
-       Duration guidance for staggered entrance animations
-       ════════════════════════════════════════════════ */
+    /* ----------------------------------------------------------
+       COMPONENT  —  PROGRESS  /  LOADER
+       ---------------------------------------------------------- */
+
+    --ds-progress-track-bg: var(--ds-surface);
+    --ds-progress-fill-bg:  var(--ds-gradient);
+    --ds-progress-h:        4px;
+    --ds-progress-r:        var(--ds-r-full);
+
+
+    /* ----------------------------------------------------------
+       COMPONENT  —  CODE BLOCKS  /  SYNTAX
+       ---------------------------------------------------------- */
+
+    --ds-code-bg:       rgba(0,0,0,0.45);
+    --ds-code-border:   var(--ds-border);
+    --ds-code-text:     #C4B5FD;
+    --ds-code-r:        var(--ds-r-sm);
+    --ds-code-px:       var(--ds-space-3);
+    --ds-code-py:       var(--ds-space-2);
+
+    /* Light syntax token colours */
+    --ds-code-keyword:  #A78BFA;
+    --ds-code-string:   #6EE7B7;
+    --ds-code-number:   #FCD34D;
+    --ds-code-comment:  var(--ds-text-3);
+    --ds-code-function: #93C5FD;
+    --ds-code-operator: #F9A8D4;
+
+
+    /* ----------------------------------------------------------
+       COMPONENT  —  THEME SWATCH GRID
+       ---------------------------------------------------------- */
+
+    --ds-swatch-size:          36px;
+    --ds-swatch-r:             var(--ds-r-sm);
+    --ds-swatch-gap:           var(--ds-space-2);
+    --ds-swatch-border-active: var(--ds-border-focus);
+    --ds-swatch-shadow-active: var(--ds-shadow-accent-sm);
+
+
+    /* ----------------------------------------------------------
+       PLATFORM BRAND  COLOURS
+       ---------------------------------------------------------- */
+
+    --ds-linkedin:          #0A66C2;
+    --ds-linkedin-muted:    rgba(10,102,194,0.18);
+
+    --ds-instagram:         #E1306C;
+    --ds-instagram-gradient:linear-gradient(135deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+    --ds-instagram-muted:   rgba(225,48,108,0.18);
+
+
+    /* ----------------------------------------------------------
+       ANIMATION  —  stagger helpers
+       ---------------------------------------------------------- */
+
     --ds-stagger-1: 0ms;
     --ds-stagger-2: 60ms;
     --ds-stagger-3: 120ms;
@@ -572,21 +653,105 @@
     --ds-stagger-6: 300ms;
 
 
-    /* ════════════════════════════════════════════════
-       FOCUS RING — accessible keyboard focus styles
-       ════════════════════════════════════════════════ */
-    --ds-focus-ring:        0 0 0 2px var(--ds-bg), 0 0 0 4px var(--ds-accent);
-    --ds-focus-ring-inset:  inset 0 0 0 2px var(--ds-border-focus);
+    /* ----------------------------------------------------------
+       MISCELLANEOUS  UTILITY  TOKENS
+       ---------------------------------------------------------- */
+
+    --ds-divider:        1px solid var(--ds-border);
+    --ds-divider-strong: 1px solid var(--ds-border-strong);
+    --ds-outline-none:   0 0 0 0 transparent;
+
+  }   /* end :root */
+
+}   /* end @layer ds-tokens */
 
 
-    /* ════════════════════════════════════════════════
-       MISCELLANEOUS UTILITY TOKENS
-       ════════════════════════════════════════════════ */
-    --ds-divider:          1px solid var(--ds-border);
-    --ds-divider-strong:   1px solid var(--ds-border-strong);
-    --ds-outline-none:     0 0 0 0 transparent;   /* resets focus ring      */
-    --ds-cursor-grab:      grab;
-    --ds-cursor-grabbing:  grabbing;
+/* ============================================================
+   BODY-LEVEL  GLOBAL  STYLES
+   Applied outside any @layer so they have unconditional specificity.
+   ============================================================ */
 
-  }
+
+/* --  Custom scrollbar (WebKit / Blink)  -------------------- */
+
+::-webkit-scrollbar {
+  width:  var(--ds-scroll-w);
+  height: var(--ds-scroll-w);
+}
+
+::-webkit-scrollbar-track {
+  background:    var(--ds-scroll-track);
+  border-radius: var(--ds-r-full);
+}
+
+::-webkit-scrollbar-thumb {
+  background:    var(--ds-scroll-thumb);
+  border-radius: var(--ds-r-full);
+  transition:    background var(--ds-t-fast) var(--ds-ease);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--ds-scroll-thumb-hover);
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* Firefox scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--ds-scroll-thumb) var(--ds-scroll-track);
+}
+
+
+/* --  Text selection  --------------------------------------- */
+
+::selection {
+  background: rgba(108,99,255,0.38);
+  color:      var(--ds-text);
+}
+
+::-moz-selection {
+  background: rgba(108,99,255,0.38);
+  color:      var(--ds-text);
+}
+
+
+/* --  Keyboard focus  --------------------------------------- */
+
+:focus-visible {
+  outline:        2px solid var(--ds-border-accent);
+  outline-offset: 2px;
+  border-radius:  var(--ds-r-sm);
+}
+
+/* Remove focus ring on mouse/touch interaction (browsers that
+   support :focus-visible already handle this natively, but this
+   covers older targets) */
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+
+/* --  Base html / body ----------------------------------------
+   Sets the OLED root background and default text so the page
+   never flashes white on load.
+   ------------------------------------------------------------ */
+
+html {
+  background-color: var(--ds-bg);
+  color:            var(--ds-text);
+  font-family:      var(--ds-font-sans);
+  font-size:        var(--ds-text-base);
+  line-height:      var(--ds-leading-normal);
+  -webkit-font-smoothing:  antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering:          optimizeLegibility;
+}
+
+body {
+  background-color: var(--ds-bg);
+  color:            var(--ds-text);
+  font-family:      var(--ds-font-sans);
 }

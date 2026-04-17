@@ -1,0 +1,347 @@
+/* ============================================================
+   ds-preview.css — CarouselGen Design System
+   Preview area: grid, slide cards, overlays, footer, skeleton
+   ============================================================ */
+
+@layer ds-preview {
+
+  /* ── Preview content wrapper ───────────────────────────── */
+
+  #preview-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    height: 100%;
+  }
+
+  /* ── Preview header bar ────────────────────────────────── */
+
+  .preview-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 0;
+    flex-shrink: 0;
+    gap: 12px;
+    flex-wrap: wrap;
+    border-bottom: 1px solid var(--ds-border);
+    margin-bottom: 16px;
+  }
+
+  #preview-count {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ds-text-2);
+    letter-spacing: 0.01em;
+  }
+
+  .preview-header > div {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  /* ── Preview grid ──────────────────────────────────────── */
+
+  .preview-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: var(--ds-preview-grid-gap);
+    padding: 4px 0 24px;
+    flex: 1;
+    align-content: start;
+  }
+
+  /* ── Slide card ────────────────────────────────────────── */
+
+  .preview-card {
+    background: var(--ds-bg-4);
+    border: 1px solid var(--ds-border);
+    border-radius: var(--ds-r-xl);
+    overflow: hidden;
+    box-shadow: var(--ds-shadow-md);
+    transition:
+      border-color var(--ds-t-base) var(--ds-ease),
+      box-shadow var(--ds-t-base) var(--ds-ease),
+      transform var(--ds-t-base) var(--ds-ease);
+    cursor: pointer;
+    position: relative;
+  }
+
+  .preview-card:hover {
+    border-color: var(--ds-border-accent);
+    box-shadow: var(--ds-shadow-accent);
+    transform: translateY(-3px);
+  }
+
+  .preview-card:hover .preview-card-overlay {
+    opacity: 1;
+  }
+
+  .preview-card:hover .preview-slide-img {
+    transform: scale(1.02);
+  }
+
+  /* ── Image wrapper ─────────────────────────────────────── */
+
+  .preview-img-wrap {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    background: var(--ds-surface-inset);
+    overflow: hidden;
+  }
+
+  /* ── Slide image ───────────────────────────────────────── */
+
+  .preview-slide-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+    transition: transform var(--ds-t-slow, 400ms) var(--ds-ease);
+  }
+
+  /* ── Hover overlay ─────────────────────────────────────── */
+
+  .preview-card-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(6, 6, 12, 0.70);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    opacity: 0;
+    transition: opacity var(--ds-t-fast) var(--ds-ease);
+  }
+
+  /* ── Overlay action buttons ────────────────────────────── */
+
+  .btn-dl-single,
+  .btn-preview-view {
+    height: 36px;
+    border-radius: var(--ds-r-md);
+    background: rgba(255, 255, 255, 0.10);
+    border: 1px solid rgba(255, 255, 255, 0.20);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition:
+      background var(--ds-t-fast) var(--ds-ease),
+      border-color var(--ds-t-fast) var(--ds-ease),
+      box-shadow var(--ds-t-fast) var(--ds-ease);
+    text-decoration: none;
+    white-space: nowrap;
+    user-select: none;
+  }
+
+  .btn-dl-single {
+    padding: 0 16px;
+    color: var(--ds-accent);
+    border-color: var(--ds-border-accent);
+    gap: 6px;
+  }
+
+  .btn-preview-view {
+    width: 36px;
+    padding: 0;
+    flex-shrink: 0;
+  }
+
+  .btn-dl-single:hover,
+  .btn-preview-view:hover {
+    background: rgba(108, 99, 255, 0.40);
+    border-color: var(--ds-border-accent);
+    box-shadow: var(--ds-shadow-accent-sm);
+    color: #fff;
+  }
+
+  .btn-dl-single:active,
+  .btn-preview-view:active {
+    transform: scale(0.96);
+  }
+
+  /* ── Card footer ───────────────────────────────────────── */
+
+  .preview-card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 12px;
+    border-top: 1px solid var(--ds-border);
+    background: var(--ds-surface-inset);
+    min-height: 34px;
+  }
+
+  .preview-card-num {
+    font-size: 11px;
+    font-family: var(--ds-font-mono, "JetBrains Mono", "Fira Code", monospace);
+    color: var(--ds-text-3);
+    font-weight: 600;
+    letter-spacing: 0.04em;
+  }
+
+  .preview-card-type {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--ds-text-3);
+  }
+
+  /* ── Loading skeleton ──────────────────────────────────── */
+
+  @keyframes ds-shimmer {
+    0% {
+      background-position: 200% 0;
+    }
+    100% {
+      background-position: -200% 0;
+    }
+  }
+
+  .preview-card.is-loading {
+    pointer-events: none;
+  }
+
+  .preview-card.is-loading .preview-img-wrap {
+    animation: ds-shimmer 1.5s infinite linear;
+    background: linear-gradient(
+      90deg,
+      var(--ds-surface) 25%,
+      var(--ds-surface-hover) 50%,
+      var(--ds-surface) 75%
+    );
+    background-size: 200% 100%;
+  }
+
+  .preview-card.is-loading .preview-card-footer {
+    opacity: 0.4;
+  }
+
+  /* ── Header action buttons (btn-edit-back, btn-presentation, btn-dl-all) */
+
+  .btn-edit-back,
+  .btn-presentation,
+  .btn-dl-all {
+    height: 34px;
+    padding: 0 14px;
+    border-radius: var(--ds-r-md);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition:
+      background var(--ds-t-fast) var(--ds-ease),
+      border-color var(--ds-t-fast) var(--ds-ease),
+      box-shadow var(--ds-t-fast) var(--ds-ease),
+      color var(--ds-t-fast) var(--ds-ease);
+    text-decoration: none;
+    white-space: nowrap;
+    user-select: none;
+    border: 1px solid var(--ds-border);
+  }
+
+  .btn-edit-back {
+    background: var(--ds-surface);
+    color: var(--ds-text-2);
+  }
+
+  .btn-edit-back:hover {
+    background: var(--ds-surface-hover);
+    color: var(--ds-text);
+    border-color: var(--ds-border-strong);
+  }
+
+  .btn-presentation {
+    background: var(--ds-surface);
+    color: var(--ds-text-2);
+  }
+
+  .btn-presentation:hover {
+    background: var(--ds-surface-hover);
+    color: var(--ds-text);
+    border-color: var(--ds-border-strong);
+  }
+
+  .btn-dl-all {
+    background: var(--ds-accent-muted);
+    color: var(--ds-accent);
+    border-color: var(--ds-border-accent);
+  }
+
+  .btn-dl-all:hover {
+    background: rgba(108, 99, 255, 0.25);
+    box-shadow: var(--ds-shadow-accent-sm);
+    color: #fff;
+  }
+
+  .btn-edit-back:active,
+  .btn-presentation:active,
+  .btn-dl-all:active {
+    transform: scale(0.97);
+  }
+
+  /* ── Fullscreen / Lightbox card state ──────────────────── */
+
+  .preview-card.is-active {
+    border-color: var(--ds-border-accent);
+    box-shadow: var(--ds-shadow-accent);
+  }
+
+  /* ── Empty grid message (fallback) ────────────────────── */
+
+  .preview-grid:empty::after {
+    content: "";
+    display: none;
+  }
+
+  /* ── Responsive breakpoints ────────────────────────────── */
+
+  @media (max-width: 900px) {
+    .preview-grid {
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    }
+
+    .preview-header {
+      padding: 12px 0;
+    }
+
+    .btn-edit-back,
+    .btn-presentation,
+    .btn-dl-all {
+      height: 30px;
+      padding: 0 10px;
+      font-size: 11px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .preview-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .preview-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .preview-header > div {
+      width: 100%;
+      justify-content: flex-end;
+    }
+  }
+
+} /* end @layer ds-preview */

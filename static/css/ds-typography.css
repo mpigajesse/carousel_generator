@@ -1,14 +1,18 @@
 /* ═══════════════════════════════════════════════════════════════════════════
-   ds-typography.css — Design System Typography v1
-   Carousel Generator — Premium Dark UI
+   ds-typography.css — Design System Typography v2
+   CarouselGen — Modern Dark Cinema
    ═══════════════════════════════════════════════════════════════════════════
 
-   SCOPE
+   DESIGN DIRECTION
    ──────────────────────────────────────────────────────────────────────────
-   Defines all text rendering rules: base copy, heading hierarchy, gradient
-   headings, section labels, form labels, monospace / code blocks, truncation
-   utilities, and link states. Relies exclusively on tokens from ds-tokens.css
-   — no hardcoded values are introduced here.
+   Poppins headings + Inter body + DM Mono code.
+   Cinematic dark palette: deep surface, violet accent, near-white text.
+
+   FONT STACK
+   ──────────────────────────────────────────────────────────────────────────
+   --ds-font-heading : 'Poppins', 'Syne', sans-serif
+   --ds-font-sans    : 'Inter', 'DM Sans', system-ui, sans-serif
+   --ds-font-mono    : 'DM Mono', 'JetBrains Mono', monospace
 
    LAYER ORDER (declared in ds-tokens.css)
      ds-tokens → ds-typography → component layers
@@ -17,28 +21,28 @@
 @layer ds-typography {
 
   /* ──────────────────────────────────────────────────────────────────────────
-     1. BASE RESET — body & paragraph
+     1. BASE RESET — body, paragraphs
      ────────────────────────────────────────────────────────────────────────── */
 
   body {
-    font-family:   var(--ds-font-ui);
-    font-size:     var(--ds-text-base);      /* 14px */
-    font-weight:   var(--ds-weight-regular);
-    line-height:   var(--ds-leading-normal); /* 1.5 */
-    color:         var(--ds-text-2);
-    letter-spacing:var(--ds-tracking-normal);
-    -webkit-font-smoothing:  antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    text-rendering: optimizeLegibility;
+    font-family:              var(--ds-font-sans);
+    font-size:                var(--ds-text-base);      /* 14px */
+    font-weight:              400;
+    line-height:              1.6;
+    color:                    var(--ds-text);            /* #EDEEF2 */
+    letter-spacing:           0em;
+    -webkit-font-smoothing:   antialiased;
+    -moz-osx-font-smoothing:  grayscale;
+    text-rendering:           optimizeLegibility;
   }
 
   p {
-    font-family:  var(--ds-font-ui);
-    font-size:    var(--ds-text-base);
-    font-weight:  var(--ds-weight-regular);
-    line-height:  var(--ds-leading-relaxed); /* 1.65 — slightly looser for readability */
-    color:        var(--ds-text-2);
-    margin:       0 0 var(--ds-space-4);     /* 16px bottom spacing */
+    font-family:   var(--ds-font-sans);
+    font-size:     var(--ds-text-base);
+    font-weight:   400;
+    line-height:   1.65;
+    color:         var(--ds-text);
+    margin:        0 0 1rem;
   }
 
   p:last-child {
@@ -47,42 +51,41 @@
 
 
   /* ──────────────────────────────────────────────────────────────────────────
-     2. HEADINGS — h1–h4
-     Font: display stack; weight & size graduated downward
+     2. HEADING BASE — h1–h4 element defaults
+     Poppins, tightly tracked, high contrast
      ────────────────────────────────────────────────────────────────────────── */
 
   h1, h2, h3, h4 {
-    font-family:    var(--ds-font-display);
-    color:          var(--ds-text);
-    letter-spacing: var(--ds-tracking-snug);
-    line-height:    var(--ds-leading-tight);
-    margin:         0 0 var(--ds-space-3);
+    font-family:     var(--ds-font-heading);
+    font-weight:     600;
+    letter-spacing:  -0.02em;
+    line-height:     1.25;
+    color:           var(--ds-text);
+    margin:          0 0 0.75rem;
   }
 
-  /* Page-level title — used in .main-header h1 */
   h1 {
-    font-size:   var(--ds-text-2xl);         /* 24px */
-    font-weight: var(--ds-weight-bold);
-    letter-spacing: var(--ds-tracking-tight);
+    font-size:       var(--ds-text-3xl);        /* 30px */
+    font-weight:     700;
+    letter-spacing:  -0.03em;
   }
 
-  /* Section headings — modal headers, panel titles */
   h2 {
-    font-size:   var(--ds-text-xl);          /* 20px */
-    font-weight: var(--ds-weight-semi);
+    font-size:       var(--ds-text-2xl);        /* 24px */
+    font-weight:     600;
+    letter-spacing:  -0.02em;
   }
 
-  /* Card / drawer sub-headers */
   h3 {
-    font-size:   var(--ds-text-lg);          /* 18px */
-    font-weight: var(--ds-weight-semi);
+    font-size:       var(--ds-text-xl);         /* 20px */
+    font-weight:     600;
+    letter-spacing:  -0.015em;
   }
 
-  /* Tight sub-labels, compact card titles */
   h4 {
-    font-size:   var(--ds-text-md);          /* 16px */
-    font-weight: var(--ds-weight-medium);
-    letter-spacing: var(--ds-tracking-normal);
+    font-size:       var(--ds-text-lg);         /* 17px */
+    font-weight:     600;
+    letter-spacing:  0em;
   }
 
   h1:last-child,
@@ -94,162 +97,284 @@
 
 
   /* ──────────────────────────────────────────────────────────────────────────
-     3. GRADIENT HEADING — .ds-heading-gradient
-     Accent gradient clipped to text fill; composable on any heading level
+     3. MONOSPACE BASE — code, pre, kbd element defaults
      ────────────────────────────────────────────────────────────────────────── */
 
-  .ds-heading-gradient {
-    background:              var(--ds-gradient-text);   /* #A78BFA → #818CF8 */
+  code,
+  pre,
+  kbd {
+    font-family: var(--ds-font-mono);
+  }
+
+
+  /* ──────────────────────────────────────────────────────────────────────────
+     4. HEADING SCALE UTILITIES — .ds-h1 through .ds-h6
+     Composable on any element; follows Poppins / Inter split
+     ────────────────────────────────────────────────────────────────────────── */
+
+  .ds-h1 {
+    font-family:    var(--ds-font-heading);
+    font-size:      var(--ds-text-3xl);         /* 30px */
+    font-weight:    700;
+    line-height:    1.2;
+    letter-spacing: -0.03em;
+    color:          var(--ds-text);
+  }
+
+  .ds-h2 {
+    font-family:    var(--ds-font-heading);
+    font-size:      var(--ds-text-2xl);         /* 24px */
+    font-weight:    600;
+    line-height:    1.25;
+    letter-spacing: -0.02em;
+    color:          var(--ds-text);
+  }
+
+  .ds-h3 {
+    font-family:    var(--ds-font-heading);
+    font-size:      var(--ds-text-xl);          /* 20px */
+    font-weight:    600;
+    line-height:    1.3;
+    letter-spacing: -0.015em;
+    color:          var(--ds-text);
+  }
+
+  .ds-h4 {
+    font-family:    var(--ds-font-heading);
+    font-size:      var(--ds-text-lg);          /* 17px */
+    font-weight:    600;
+    line-height:    1.35;
+    letter-spacing: 0em;
+    color:          var(--ds-text);
+  }
+
+  /* Section-level label — Inter, uppercase, wide tracking */
+  .ds-h5 {
+    font-family:    var(--ds-font-sans);
+    font-size:      var(--ds-text-md);          /* 15px */
+    font-weight:    600;
+    line-height:    1.4;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color:          var(--ds-text);
+  }
+
+  /* Tiny meta label — Inter, uppercase, very wide tracking */
+  .ds-h6 {
+    font-family:    var(--ds-font-sans);
+    font-size:      var(--ds-text-xs);          /* 11px */
+    font-weight:    700;
+    line-height:    1.4;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color:          var(--ds-text-2);
+  }
+
+
+  /* ──────────────────────────────────────────────────────────────────────────
+     5. TEXT SIZE UTILITIES — .ds-text-xs through .ds-text-3xl
+     Single-purpose font-size classes mapped to canonical tokens
+     ────────────────────────────────────────────────────────────────────────── */
+
+  .ds-text-xs   { font-size: var(--ds-text-xs);   }  /* 11px */
+  .ds-text-sm   { font-size: var(--ds-text-sm);   }  /* 12px */
+  .ds-text-base { font-size: var(--ds-text-base); }  /* 14px */
+  .ds-text-md   { font-size: var(--ds-text-md);   }  /* 15px */
+  .ds-text-lg   { font-size: var(--ds-text-lg);   }  /* 17px */
+  .ds-text-xl   { font-size: var(--ds-text-xl);   }  /* 20px */
+  .ds-text-2xl  { font-size: var(--ds-text-2xl);  }  /* 24px */
+  .ds-text-3xl  { font-size: var(--ds-text-3xl);  }  /* 30px */
+
+
+  /* ──────────────────────────────────────────────────────────────────────────
+     6. COLOR UTILITIES
+     ────────────────────────────────────────────────────────────────────────── */
+
+  .ds-text-primary   { color: var(--ds-text);    }   /* #EDEEF2 */
+  .ds-text-secondary { color: var(--ds-text-2);  }   /* #9B9DB0 */
+  .ds-text-muted     { color: var(--ds-text-3);  }   /* #585A70 */
+  .ds-text-accent    { color: var(--ds-accent);  }   /* #6C63FF */
+
+
+  /* ──────────────────────────────────────────────────────────────────────────
+     7. FONT FAMILY UTILITIES
+     ────────────────────────────────────────────────────────────────────────── */
+
+  .ds-font-heading { font-family: var(--ds-font-heading); }
+  .ds-font-mono    { font-family: var(--ds-font-mono);    }
+
+
+  /* ──────────────────────────────────────────────────────────────────────────
+     8. GRADIENT TEXT — .ds-text-gradient
+     Clipped purple → indigo linear gradient; requires inline-block / block
+     ────────────────────────────────────────────────────────────────────────── */
+
+  .ds-text-gradient {
+    background:              linear-gradient(135deg, #6C63FF 0%, #4F46E5 55%, #818CF8 100%);
     -webkit-background-clip: text;
     background-clip:         text;
     -webkit-text-fill-color: transparent;
-    color:                   transparent;               /* fallback for non-webkit */
-    display:                 inline-block;              /* required for clip to render */
+    color:                   transparent;
+    display:                 inline-block;
+  }
+
+  /* Legacy alias kept for backward compatibility */
+  .ds-heading-gradient {
+    background:              linear-gradient(135deg, #6C63FF 0%, #4F46E5 55%, #818CF8 100%);
+    -webkit-background-clip: text;
+    background-clip:         text;
+    -webkit-text-fill-color: transparent;
+    color:                   transparent;
+    display:                 inline-block;
   }
 
 
   /* ──────────────────────────────────────────────────────────────────────────
-     4. SECTION TITLE — .ds-section-title
-     Used by .section-label in sidebar sections; all-caps meta labels
+     9. APPLICATION-SPECIFIC TEXT STYLES
      ────────────────────────────────────────────────────────────────────────── */
 
-  .ds-section-title,
-  .section-label {
-    font-family:    var(--ds-font-ui);
-    font-size:      var(--ds-text-xs);       /* 11px */
-    font-weight:    var(--ds-weight-semi);
-    color:          var(--ds-text-3);
+  /* Brand wordmark in sidebar */
+  .brand-name {
+    font-family:    var(--ds-font-heading);
+    font-size:      16px;
+    font-weight:    700;
+    letter-spacing: -0.02em;
+    line-height:    1;
+    color:          var(--ds-text);
+  }
+
+  /* Tagline / version beneath brand-name */
+  .brand-sub {
+    font-family:    var(--ds-font-sans);
+    font-size:      9px;
+    font-weight:    700;
     text-transform: uppercase;
-    letter-spacing: var(--ds-tracking-caps); /* 0.12em */
-    line-height:    var(--ds-leading-none);
+    letter-spacing: 0.12em;
+    line-height:    1;
+    color:          var(--ds-text-3);
   }
 
+  /* Sidebar section labels — e.g. "THEME", "SLIDES" */
+  .section-label,
+  .ds-section-title {
+    font-family:    var(--ds-font-sans);
+    font-size:      10px;
+    font-weight:    700;
+    text-transform: uppercase;
+    letter-spacing: 0.10em;
+    line-height:    1;
+    color:          var(--ds-text-2);
+  }
 
-  /* ──────────────────────────────────────────────────────────────────────────
-     5. FORM LABEL — .ds-label
-     Matches <label> elements inside .field wrappers; also standalone utility
-     ────────────────────────────────────────────────────────────────────────── */
+  /* Sidebar platform dimension readout — e.g. "1080 × 1080" */
+  .nav-tab-dim {
+    font-family:    var(--ds-font-sans);
+    font-size:      9px;
+    font-weight:    400;
+    color:          var(--ds-text-3);
+    letter-spacing: 0.02em;
+  }
 
+  /* Mobile top-bar title */
+  .mobile-topbar-title {
+    font-family:    var(--ds-font-heading);
+    font-size:      var(--ds-text-md);
+    font-weight:    700;
+    color:          var(--ds-text);
+    letter-spacing: -0.015em;
+  }
+
+  /* Form labels */
+  label,
   .ds-label,
   .field > label {
     display:        block;
-    font-family:    var(--ds-font-ui);
-    font-size:      var(--ds-text-sm);       /* 13px — one step below base */
-    font-weight:    var(--ds-weight-semi);
+    font-family:    var(--ds-font-sans);
+    font-size:      11px;
+    font-weight:    600;
+    letter-spacing: 0.03em;
+    line-height:    1.4;
     color:          var(--ds-text-2);
-    letter-spacing: var(--ds-tracking-wide);
-    line-height:    var(--ds-leading-tight);
-    margin-bottom:  var(--ds-space-2);       /* 8px gap before input */
+    margin-bottom:  0.5rem;
   }
 
 
   /* ──────────────────────────────────────────────────────────────────────────
-     6. BRAND TYPOGRAPHY — .brand-name, .brand-sub, .mobile-topbar-title
-     Identity text in the sidebar brand block
+     10. INLINE CODE & PRE BLOCKS
+     DM Mono; inline uses violet tint; pre uses full block treatment
      ────────────────────────────────────────────────────────────────────────── */
 
-  .brand-name {
-    font-family:    var(--ds-font-display);
-    font-size:      var(--ds-text-md);       /* 16px */
-    font-weight:    var(--ds-weight-bold);
-    color:          var(--ds-text);
-    letter-spacing: var(--ds-tracking-tight);
-    line-height:    var(--ds-leading-none);
-  }
-
-  .brand-sub {
-    font-family:    var(--ds-font-ui);
-    font-size:      var(--ds-text-2xs);      /* 10px */
-    font-weight:    var(--ds-weight-semi);
-    color:          var(--ds-text-3);
-    text-transform: uppercase;
-    letter-spacing: var(--ds-tracking-wider);
-    line-height:    var(--ds-leading-none);
-  }
-
-  .mobile-topbar-title {
-    font-family:    var(--ds-font-display);
-    font-size:      var(--ds-text-md);
-    font-weight:    var(--ds-weight-bold);
-    color:          var(--ds-text);
-    letter-spacing: var(--ds-tracking-snug);
-  }
-
-
-  /* ──────────────────────────────────────────────────────────────────────────
-     7. MONOSPACE — .ds-mono, code, pre, kbd
-     Inline code snippets and fenced code blocks
-     ────────────────────────────────────────────────────────────────────────── */
-
-  .ds-mono,
-  code,
+  /* Inline code */
+  :not(pre) > code,
   kbd {
-    font-family:     var(--ds-font-mono);
-    font-size:       0.875em;                /* 87.5% of parent — scales contextually */
-    font-weight:     400;
-    color:           var(--ds-code-text);    /* #C4B5FD */
-    background:      var(--ds-code-bg);      /* rgba(0,0,0,0.45) */
-    border:          1px solid var(--ds-code-border);
-    border-radius:   var(--ds-code-r);       /* 8px */
-    padding:         2px var(--ds-code-px);  /* 2px 12px */
-    white-space:     nowrap;
-    vertical-align:  baseline;
+    font-family:    var(--ds-font-mono);
+    font-size:      0.9em;
+    font-weight:    400;
+    color:          #C4B5FD;
+    background:     rgba(108, 99, 255, 0.12);
+    border:         1px solid rgba(108, 99, 255, 0.22);
+    border-radius:  4px;
+    padding:        1px 5px;
+    white-space:    nowrap;
+    vertical-align: baseline;
   }
 
-  /* Block code — pre resets inline constraints */
+  /* Block pre */
   pre {
-    font-family:     var(--ds-font-mono);
-    font-size:       var(--ds-text-sm);      /* 13px */
-    font-weight:     400;
-    color:           var(--ds-code-text);
-    background:      var(--ds-bg-3);
-    border:          1px solid var(--ds-code-border);
-    border-radius:   var(--ds-r-md);
-    padding:         var(--ds-code-py) var(--ds-code-px);
-    overflow-x:      auto;
-    white-space:     pre;
-    line-height:     var(--ds-leading-relaxed);
-    margin:          0 0 var(--ds-space-4);
-    tab-size:        2;
+    font-family:    var(--ds-font-mono);
+    font-size:      var(--ds-text-sm);          /* 12px */
+    font-weight:    400;
+    color:          #C4B5FD;
+    background:     rgba(0, 0, 0, 0.40);
+    border:         1px solid rgba(108, 99, 255, 0.18);
+    border-radius:  8px;
+    padding:        1rem 1.25rem;
+    overflow-x:     auto;
+    white-space:    pre;
+    line-height:    1.7;
+    margin:         0 0 1rem;
+    tab-size:       2;
   }
 
   pre code {
-    font-size:   inherit;
-    background:  none;
-    border:      none;
-    padding:     0;
-    border-radius: 0;
-    color:       inherit;
-    white-space: inherit;
+    font-family:    inherit;
+    font-size:      inherit;
+    color:          inherit;
+    background:     none;
+    border:         none;
+    border-radius:  0;
+    padding:        0;
+    white-space:    inherit;
   }
 
 
   /* ──────────────────────────────────────────────────────────────────────────
-     8. LINKS — <a>
-     Accent-coloured, underline on hover, subtle brightness lift
+     11. LINKS
+     Accent violet; underline on hover with fine offset
      ────────────────────────────────────────────────────────────────────────── */
 
   a {
     color:           var(--ds-accent);
     text-decoration: none;
-    transition:      color var(--ds-t-fast) var(--ds-ease),
-                     filter var(--ds-t-fast) var(--ds-ease);
+    transition:      color 120ms ease,
+                     filter 120ms ease;
   }
 
   a:hover {
-    color:           var(--ds-accent-hover);
-    text-decoration: underline;
-    text-underline-offset: 3px;
-    filter:          brightness(1.15);
+    color:                  #8B85FF;
+    text-decoration:        underline;
+    text-underline-offset:  3px;
+    text-decoration-thickness: 1px;
+    filter:                 brightness(1.12);
   }
 
   a:focus-visible {
-    outline:       2px solid var(--ds-border-focus);
-    outline-offset:3px;
-    border-radius: var(--ds-r-xs);
+    outline:        2px solid var(--ds-accent);
+    outline-offset: 3px;
+    border-radius:  3px;
   }
 
-  /* Navigation tabs and buttons that are <a> should not inherit link underline */
+  /* Button-style anchors — suppress link decoration */
   a.btn-generate,
   a.btn-import,
   a.btn-dl-all,
@@ -269,46 +394,24 @@
 
 
   /* ──────────────────────────────────────────────────────────────────────────
-     9. SLIDE COUNT BADGE — .slide-count-badge
-     Small pill injected inside the generate button
-     ────────────────────────────────────────────────────────────────────────── */
-
-  .slide-count-badge {
-    font-family:    var(--ds-font-ui);
-    font-size:      var(--ds-badge-font-size); /* 10px */
-    font-weight:    var(--ds-badge-font-weight);
-    letter-spacing: var(--ds-badge-tracking);
-    color:          var(--ds-badge-accent-text);
-    background:     var(--ds-badge-accent-bg);
-    border-radius:  var(--ds-badge-r);
-    padding:        var(--ds-badge-py) var(--ds-badge-px);
-    line-height:    1;
-  }
-
-  .slide-count-badge.hidden {
-    display: none;
-  }
-
-
-  /* ──────────────────────────────────────────────────────────────────────────
-     10. MUTED / SECONDARY TEXT UTILITY — .ds-muted
-     Convenience class for inline secondary copy
+     12. SECONDARY / MUTED UTILITIES
      ────────────────────────────────────────────────────────────────────────── */
 
   .ds-muted {
     color:       var(--ds-text-3);
     font-size:   var(--ds-text-sm);
-    font-weight: var(--ds-weight-regular);
+    font-weight: 400;
   }
 
   .ds-muted-2 {
-    color:       var(--ds-text-4);
-    font-size:   var(--ds-text-xs);
+    color:     var(--ds-text-3);
+    font-size: var(--ds-text-xs);
+    opacity:   0.7;
   }
 
 
   /* ──────────────────────────────────────────────────────────────────────────
-     11. TRUNCATION UTILITIES
+     13. TRUNCATION UTILITIES
      ────────────────────────────────────────────────────────────────────────── */
 
   .ds-truncate {
@@ -335,16 +438,38 @@
 
 
   /* ──────────────────────────────────────────────────────────────────────────
-     12. FOOTER TEXT
-     Minimal footer — inherits from body but overrides size and opacity
+     14. SLIDE COUNT BADGE — .slide-count-badge
+     Pill inside the generate button
+     ────────────────────────────────────────────────────────────────────────── */
+
+  .slide-count-badge {
+    font-family:    var(--ds-font-sans);
+    font-size:      10px;
+    font-weight:    700;
+    letter-spacing: 0.04em;
+    line-height:    1;
+    color:          #fff;
+    background:     rgba(108, 99, 255, 0.30);
+    border-radius:  20px;
+    padding:        2px 7px;
+  }
+
+  .slide-count-badge.hidden {
+    display: none;
+  }
+
+
+  /* ──────────────────────────────────────────────────────────────────────────
+     15. FOOTER
+     Minimal — small, low-contrast
      ────────────────────────────────────────────────────────────────────────── */
 
   footer {
-    font-family:    var(--ds-font-ui);
-    font-size:      var(--ds-text-xs);      /* 11px */
-    color:          rgba(255,255,255,0.18);
-    letter-spacing: var(--ds-tracking-wide);
-    line-height:    var(--ds-leading-normal);
+    font-family:    var(--ds-font-sans);
+    font-size:      var(--ds-text-xs);          /* 11px */
+    color:          rgba(237, 238, 242, 0.20);
+    letter-spacing: 0.02em;
+    line-height:    1.5;
   }
 
 } /* end @layer ds-typography */

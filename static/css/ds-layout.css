@@ -1,29 +1,74 @@
-/* ds-layout.css — Premium dark app layout · CarouselGen */
+/* ds-layout.css — Premium B2B SaaS layout · CarouselGen */
 
-/* ── Token bridge: --ds-* → existing app palette ── */
+/* ── Canonical design tokens ── */
 :root {
-  --ds-bg:         var(--bg,       #06080d);
-  --ds-bg-2:       var(--surface,  #0a0e16);
-  --ds-bg-3:       var(--surface2, #0f1520);
-  --ds-surface:    var(--card,     #121826);
-  --ds-border:     var(--border,   rgba(255,255,255,.06));
-  --ds-accent:     var(--accent,   #6c5ce7);
-  --ds-text:       var(--text,     #e4e8f2);
-  --ds-sidebar-w:  var(--sidebar-w, 320px);
-  --ds-panel-w:    360px;
-  --ds-topbar-h:   56px;
-  --ds-shadow-md:  0 4px 24px rgba(0,0,0,.45);
-  --ds-glass-blur: 12px;
-  --ds-glass-bg:   rgba(10,14,22,.72);
-  --ds-r-lg:       14px;
-  --ds-t-base:     .25s;
-  --ds-ease:       cubic-bezier(.4,0,.2,1);
+  /* Backgrounds */
+  --ds-bg:            #06060C;
+  --ds-bg-2:          #0C0C18;
+  --ds-bg-3:          #10101E;
+  --ds-bg-4:          #161624;
+
+  /* Borders & glass */
+  --ds-border:        rgba(255, 255, 255, 0.07);
+  --ds-glass-bg:      rgba(12, 12, 24, 0.72);
+  --ds-glass-blur:    20px;
+  --ds-glass-border:  rgba(255, 255, 255, 0.09);
+
+  /* Dimensions */
+  --ds-sidebar-w:     300px;
+  --ds-topbar-h:      52px;
+
+  /* Typography */
+  --ds-text:          #EDEEF2;
+  --ds-text-2:        #9B9DB0;
+  --ds-font-sans:     'Syne', 'Inter', system-ui, sans-serif;
+
+  /* Motion */
+  --ds-t-base:        240ms;
+  --ds-ease:          cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* Z-index scale */
+  --ds-z-sidebar:     200;
+  --ds-z-overlay:     300;
+  --ds-z-modal:       400;
+
+  /* Shadows */
+  --ds-shadow-md:     0 4px 20px rgba(0, 0, 0, 0.55);
+  --ds-shadow-lg:     0 8px 40px rgba(0, 0, 0, 0.65);
+
+  /* Spacing */
+  --ds-space-4:       16px;
+  --ds-space-6:       24px;
+  --ds-space-8:       32px;
+
+  /* Radii */
+  --ds-r-lg:          16px;
+  --ds-r-xl:          22px;
+
+  /* Scrollbar */
+  --ds-scroll-thumb:  rgba(255, 255, 255, 0.09);
+  --ds-scroll-thumb-hover: rgba(255, 255, 255, 0.16);
+
+  /* Accent (referenced by other layers) */
+  --ds-accent:        #7C6EF5;
+  --ds-surface:       var(--ds-bg-4);
 }
 
 @layer ds-layout {
 
-  /* ── Viewport lock — scroll lives inside panels, not on body ── */
-  html, body {
+  /* ────────────────────────────────────────────
+     1. Base reset
+  ──────────────────────────────────────────── */
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html,
+  body {
     height: 100%;
     overflow: hidden;
   }
@@ -31,25 +76,46 @@
   body {
     background: var(--ds-bg);
     color: var(--ds-text);
+    font-family: var(--ds-font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
-  /* ── Shell — sidebar | main grid ── */
-  .shell {
+  /* ────────────────────────────────────────────
+     2. .ds-app — viewport lock root
+  ──────────────────────────────────────────── */
+  body.ds-app {
     position: relative;
-    z-index: 1;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: var(--ds-bg);
+  }
+
+  /* ────────────────────────────────────────────
+     3. .shell — primary two-column grid
+  ──────────────────────────────────────────── */
+  .shell {
     display: grid;
     grid-template-columns: var(--ds-sidebar-w) 1fr;
     grid-template-rows: 1fr;
     height: 100vh;
     overflow: hidden;
+    position: relative;
+    z-index: 1;
     transition: grid-template-columns var(--ds-t-base) var(--ds-ease);
   }
 
+  /* ────────────────────────────────────────────
+     4. .shell.sidebar-collapsed — zero-width sidebar
+  ──────────────────────────────────────────── */
   .shell.sidebar-collapsed {
     grid-template-columns: 0px 1fr;
   }
 
-  /* ── Sidebar ── */
+  /* ────────────────────────────────────────────
+     5. aside — sidebar panel
+  ──────────────────────────────────────────── */
   .shell > aside {
     grid-column: 1;
     display: flex;
@@ -61,21 +127,54 @@
     position: sticky;
     top: 0;
     min-width: 0;
-    will-change: opacity, transform;
+    z-index: var(--ds-z-sidebar);
+    will-change: opacity, width;
     transition:
       opacity   var(--ds-t-base) var(--ds-ease),
-      transform var(--ds-t-base) var(--ds-ease);
+      width     var(--ds-t-base) var(--ds-ease);
   }
 
-  .shell > aside > * { min-width: var(--ds-sidebar-w); }
+  /* Keep inner content at full width so it stays readable while sliding */
+  .shell > aside > * {
+    min-width: var(--ds-sidebar-w);
+    width: var(--ds-sidebar-w);
+    flex-shrink: 0;
+  }
 
   .shell.sidebar-collapsed > aside {
+    width: 0;
     opacity: 0;
     pointer-events: none;
-    transform: translateX(-8px);
   }
 
-  /* Scrollable inner zone */
+  /* ────────────────────────────────────────────
+     6. main — primary workspace
+  ──────────────────────────────────────────── */
+  .shell > main,
+  main.ds-animate-fade-in {
+    grid-column: 2;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
+    background: var(--ds-bg-3);
+    position: relative;
+    min-width: 0;
+  }
+
+  /* Entry animation when the workspace mounts */
+  @keyframes ds-fade-in {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  main.ds-animate-fade-in {
+    animation: ds-fade-in 360ms var(--ds-ease) both;
+  }
+
+  /* ────────────────────────────────────────────
+     7. .sidebar-scroll — scrollable sidebar interior
+  ──────────────────────────────────────────── */
   .sidebar-scroll {
     flex: 1 1 0;
     overflow-y: auto;
@@ -83,78 +182,103 @@
     display: flex;
     flex-direction: column;
     scrollbar-width: thin;
-    scrollbar-color: rgba(255,255,255,.08) transparent;
+    scrollbar-color: var(--ds-scroll-thumb) transparent;
   }
 
-  .sidebar-scroll::-webkit-scrollbar        { width: 4px; }
-  .sidebar-scroll::-webkit-scrollbar-track  { background: transparent; }
-  .sidebar-scroll::-webkit-scrollbar-thumb  {
-    background: rgba(255,255,255,.08);
+  .sidebar-scroll::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  .sidebar-scroll::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .sidebar-scroll::-webkit-scrollbar-thumb {
+    background: var(--ds-scroll-thumb);
     border-radius: 2px;
   }
-  .sidebar-scroll::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,.15); }
 
-  .sidebar-bottom { margin-top: auto; }
-
-  /* ── Main column ── */
-  .shell > main {
-    grid-column: 2;
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-    overflow: hidden;
-    background: var(--ds-bg);
-    position: relative;
-    min-width: 0;
+  .sidebar-scroll::-webkit-scrollbar-thumb:hover {
+    background: var(--ds-scroll-thumb-hover);
   }
 
-  /* ── Topbar — glass effect, 56px ── */
+  .sidebar-bottom {
+    margin-top: auto;
+    flex-shrink: 0;
+  }
+
+  /* ────────────────────────────────────────────
+     8. .sidebar-backdrop — mobile drawer overlay
+  ──────────────────────────────────────────── */
+  .sidebar-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: calc(var(--ds-z-sidebar) - 1);
+    background: rgba(0, 0, 0, 0.65);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    opacity: 0;
+    transition: opacity var(--ds-t-base) var(--ds-ease);
+    cursor: pointer;
+  }
+
+  /* JS toggles this class to show/hide */
+  .sidebar-backdrop.visible {
+    display: block;
+    opacity: 1;
+  }
+
+  /* ────────────────────────────────────────────
+     9. Topbar — glass strip at top of main
+  ──────────────────────────────────────────── */
   .main-header {
     flex-shrink: 0;
     height: var(--ds-topbar-h);
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 20px;
+    padding: 0 var(--ds-space-4);
     gap: 12px;
     background: var(--ds-glass-bg);
     backdrop-filter: blur(var(--ds-glass-blur));
     -webkit-backdrop-filter: blur(var(--ds-glass-blur));
-    border-bottom: 1px solid var(--ds-border);
+    border-bottom: 1px solid var(--ds-glass-border);
     position: sticky;
     top: 0;
     z-index: 50;
-    box-shadow: 0 1px 0 var(--ds-border), var(--ds-shadow-md);
+    box-shadow: var(--ds-shadow-md);
     transition: background var(--ds-t-base) var(--ds-ease);
   }
 
   .main-header h1 {
-    font-family: 'Syne', sans-serif;
     font-size: 15px;
     font-weight: 700;
-    letter-spacing: -.02em;
+    letter-spacing: -0.02em;
     color: var(--ds-text);
     white-space: nowrap;
   }
 
-  /* Mobile topbar (hidden on desktop) */
+  /* Mobile topbar — hidden by default, shown at ≤768px */
   .mobile-topbar {
     flex-shrink: 0;
     height: var(--ds-topbar-h);
     display: none;
     align-items: center;
-    padding: 0 16px;
+    padding: 0 var(--ds-space-4);
     gap: 12px;
     background: var(--ds-glass-bg);
     backdrop-filter: blur(var(--ds-glass-blur));
     -webkit-backdrop-filter: blur(var(--ds-glass-blur));
-    border-bottom: 1px solid var(--ds-border);
+    border-bottom: 1px solid var(--ds-glass-border);
     position: sticky;
     top: 0;
     z-index: 50;
   }
 
-  /* ── Content areas — fill remaining height, independently scrollable ── */
+  /* ────────────────────────────────────────────
+     Scrollable content zones inside main
+  ──────────────────────────────────────────── */
   .slides-area,
   .preview-area {
     flex: 1 1 0;
@@ -162,120 +286,230 @@
     overflow-x: hidden;
     position: relative;
     scrollbar-width: thin;
-    scrollbar-color: rgba(255,255,255,.07) transparent;
+    scrollbar-color: var(--ds-scroll-thumb) transparent;
   }
 
   .slides-area::-webkit-scrollbar,
-  .preview-area::-webkit-scrollbar        { width: 5px; }
+  .preview-area::-webkit-scrollbar {
+    width: 5px;
+  }
+
   .slides-area::-webkit-scrollbar-track,
-  .preview-area::-webkit-scrollbar-track  { background: transparent; }
+  .preview-area::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
   .slides-area::-webkit-scrollbar-thumb,
-  .preview-area::-webkit-scrollbar-thumb  {
-    background: rgba(255,255,255,.08);
+  .preview-area::-webkit-scrollbar-thumb {
+    background: var(--ds-scroll-thumb);
     border-radius: 3px;
   }
 
-  /* Sticky add-slide action strip, fades into background */
+  .slides-area::-webkit-scrollbar-thumb:hover,
+  .preview-area::-webkit-scrollbar-thumb:hover {
+    background: var(--ds-scroll-thumb-hover);
+  }
+
+  /* Sticky action strip — fades into panel background */
   .add-slide-bar {
     flex-shrink: 0;
     position: sticky;
     bottom: 0;
     z-index: 10;
-    padding: 12px 20px 16px;
+    padding: 12px var(--ds-space-4) var(--ds-space-4);
     display: flex;
     gap: 8px;
     flex-wrap: wrap;
-    background: linear-gradient(to top, var(--ds-bg) 60%, transparent);
+    background: linear-gradient(to top, var(--ds-bg-3) 60%, transparent);
   }
 
-  /* ── Jobs panel — floating bottom-right widget ── */
+  /* ────────────────────────────────────────────
+     Jobs panel — fixed floating widget, bottom-right
+  ──────────────────────────────────────────── */
   .jobs-panel {
     position: fixed;
     bottom: 20px;
     right: 20px;
-    z-index: 200;
+    z-index: var(--ds-z-overlay);
     min-width: 280px;
     max-width: 340px;
-    background: var(--ds-surface);
+    background: var(--ds-bg-4);
     border: 1px solid var(--ds-border);
     border-radius: var(--ds-r-lg);
     box-shadow: var(--ds-shadow-md);
     overflow: hidden;
     transition:
-      box-shadow    var(--ds-t-base) var(--ds-ease),
-      border-color  var(--ds-t-base) var(--ds-ease);
+      box-shadow   var(--ds-t-base) var(--ds-ease),
+      border-color var(--ds-t-base) var(--ds-ease);
   }
 
   .jobs-panel:hover {
-    border-color: rgba(255,255,255,.12);
-    box-shadow: 0 8px 40px rgba(0,0,0,.55);
+    border-color: rgba(255, 255, 255, 0.13);
+    box-shadow: var(--ds-shadow-lg);
   }
 
   .jobs-panel-list {
     max-height: 260px;
     overflow-y: auto;
     scrollbar-width: thin;
-    scrollbar-color: rgba(255,255,255,.07) transparent;
+    scrollbar-color: var(--ds-scroll-thumb) transparent;
   }
 
-  /* ── Sidebar backdrop — mobile drawer overlay ── */
-  .sidebar-backdrop {
-    display: none;
+  /* ────────────────────────────────────────────
+     Overlay layers — presentation & modal
+  ──────────────────────────────────────────── */
+  .presentation-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(0,0,0,.55);
-    backdrop-filter: blur(2px);
-    -webkit-backdrop-filter: blur(2px);
-    z-index: 99;
-    opacity: 0;
-    transition: opacity var(--ds-t-base) var(--ds-ease);
+    z-index: var(--ds-z-overlay);
+    background: rgba(0, 0, 0, 0.88);
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
-  .sidebar-backdrop.visible { opacity: 1; }
+  .md-modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: var(--ds-z-modal);
+    background: rgba(0, 0, 0, 0.72);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--ds-space-6);
+  }
 
-  /* ── Mobile: drawer sidebar + single-column layout ── */
+  /* ────────────────────────────────────────────
+     10. Utility layout classes
+  ──────────────────────────────────────────── */
+  .ds-flex {
+    display: flex;
+    gap: var(--ds-space-4);
+  }
+
+  .ds-flex-col {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ds-space-4);
+  }
+
+  .ds-flex-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ds-flex-between {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .ds-grid-2 {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--ds-space-4);
+  }
+
+  .ds-grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--ds-space-4);
+  }
+
+  .ds-full-height {
+    height: 100%;
+    overflow: auto;
+  }
+
+  /* ────────────────────────────────────────────
+     11. Responsive breakpoint — ≤768px
+         Sidebar becomes a slide-in drawer
+  ──────────────────────────────────────────── */
   @media (max-width: 768px) {
 
-    html, body { overflow: hidden; }
+    html,
+    body {
+      overflow: hidden;
+    }
 
     .shell {
       grid-template-columns: 1fr;
       height: 100dvh;
     }
 
+    /* Drawer: positioned fixed, off-screen left */
     .shell > aside {
       position: fixed;
-      inset-block: 0;
       left: 0;
+      top: 0;
+      bottom: 0;
       width: var(--ds-sidebar-w);
       max-width: 88vw;
-      z-index: 100;
+      z-index: var(--ds-z-sidebar);
       transform: translateX(-100%);
-      box-shadow: var(--ds-shadow-md);
-    }
-
-    .shell > aside > * { min-width: 0; width: 100%; }
-
-    .shell.sidebar-open > aside {
-      transform: translateX(0);
       opacity: 1;
       pointer-events: auto;
+      box-shadow: var(--ds-shadow-lg);
+      transition: transform var(--ds-t-base) var(--ds-ease);
     }
 
+    /* Allow children to fill drawer width naturally */
+    .shell > aside > * {
+      min-width: 0;
+      width: 100%;
+    }
+
+    /* Drawer open state */
+    .shell.sidebar-open > aside {
+      transform: translateX(0);
+    }
+
+    /* Show backdrop when drawer is open */
     .shell.sidebar-open .sidebar-backdrop {
       display: block;
       opacity: 1;
     }
 
-    .shell > main {
+    /* Main fills the full column */
+    .shell > main,
+    main.ds-animate-fade-in {
       grid-column: 1;
       height: 100dvh;
     }
 
+    /* Swap topbars */
     .main-header  { display: none; }
     .mobile-topbar { display: flex; }
 
-    .add-slide-bar { padding: 8px 12px 14px; gap: 6px; }
+    /* Tighter action bar on small screens */
+    .add-slide-bar {
+      padding: 8px 12px 14px;
+      gap: 6px;
+    }
+
+    /* Stack grids on small screens */
+    .ds-grid-2,
+    .ds-grid-3 {
+      grid-template-columns: 1fr;
+    }
+
+    /* Jobs panel: narrower on mobile */
+    .jobs-panel {
+      left: 12px;
+      right: 12px;
+      bottom: 12px;
+      max-width: none;
+      min-width: 0;
+    }
+
+    /* Modals fill most of the viewport on mobile */
+    .md-modal-overlay {
+      padding: var(--ds-space-4);
+      align-items: flex-end;
+    }
   }
 
 } /* end @layer ds-layout */
