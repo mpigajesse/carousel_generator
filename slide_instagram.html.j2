@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <style>
+  /* ── Font imports (dynamic: may use offline bundle) ── */
   {% if fonts_css_url %}
   @import url('{{ fonts_css_url }}');
   {% else %}
@@ -11,17 +12,7 @@
   @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap');
   {% endif %}
 
-  * {
-    margin: 0; padding: 0; box-sizing: border-box;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
-  }
-
-  @page {
-    size: 1080px 1080px;
-    margin: 0;
-  }
-
+  /* ── Dynamic theme tokens (Jinja2 rendered) ── */
   body {
     width: 1080px;
     height: 1080px;
@@ -30,16 +21,6 @@
     font-family: 'Manrope', sans-serif;
     color: {{ theme.text }};
     position: relative;
-  }
-
-  /* ── SLIDE CONTAINER ── */
-  .ig-slide {
-    width: 1080px;
-    height: 1080px;
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
   }
 
   /* ── BACKGROUND LAYER ── */
@@ -82,16 +63,7 @@
     pointer-events: none;
   }
 
-  /* ── TOP BAR ── */
-  .ig-topbar {
-    position: relative;
-    z-index: 10;
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    padding: 36px 72px 0 72px;
-    flex-shrink: 0;
-  }
+  /* ── TOP BAR counter ── */
   .ig-counter {
     font-family: 'JetBrains Mono', monospace;
     font-size: 20px;
@@ -102,18 +74,6 @@
     padding: 8px 18px;
     border-radius: 100px;
     border: 1px solid {{ theme.accent1 }}30;
-  }
-
-  /* ── MAIN CONTENT AREA ── */
-  .ig-content {
-    position: relative;
-    z-index: 5;
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    padding: 24px 72px 0 72px;
-    min-height: 0;
   }
 
   /* ── FOOTER ── */
@@ -127,11 +87,6 @@
     flex-shrink: 0;
     border-top: 1px solid {{ theme.accent1 }}20;
     margin-top: 20px;
-  }
-  .ig-footer-left {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
   }
   .ig-footer-series {
     font-family: 'Manrope', sans-serif;
@@ -192,29 +147,12 @@
     flex-shrink: 0;
   }
 
-  /* ════════════════════════════════════════════
-     COVER SLIDE
-  ════════════════════════════════════════════ */
-  .ig-cover-logo {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: 28px;
-  }
+  /* ── COVER ── */
   .ig-cover-logo img {
     height: 350px;
     width: auto;
     object-fit: contain;
     {% if theme.is_light %}opacity: 0.85;{% endif %}
-  }
-
-  .ig-cover-content {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
   }
 
   .ig-cover-eyebrow {
@@ -250,12 +188,6 @@
   }
 
   /* Cover swipe CTA */
-  .ig-cta {
-    display: inline-flex;
-    align-items: center;
-    gap: 20px;
-    align-self: center;
-  }
   .ig-cta-arrow {
     width: 56px; height: 56px;
     border: 2.5px solid {{ theme.accent1 }};
@@ -287,9 +219,7 @@
     z-index: 3;
   }
 
-  /* ════════════════════════════════════════════
-     CONTENT SLIDE
-  ════════════════════════════════════════════ */
+  /* ── CONTENT SLIDE ── */
   .ig-title {
     font-family: 'Clash Display', sans-serif;
     font-size: {% if slide.is_compact %}48px{% else %}58px{% endif %};
@@ -311,8 +241,6 @@
     flex: 0 1 auto;
     margin-top: 10px;
   }
-  .ig-body p { margin-bottom: 1em; }
-  .ig-body p:last-child { margin-bottom: 0; }
 
   .ig-body .slide-h3 {
     font-family: 'Clash Display', sans-serif;
@@ -350,13 +278,6 @@
   }
 
   /* Bullet list */
-  .ig-body .bullets {
-    list-style: none;
-    margin-top: 16px;
-    margin-bottom: 16px;
-    padding-left: 6px;
-    position: relative;
-  }
   .ig-body .bullets::before {
     content: '';
     position: absolute;
@@ -393,11 +314,6 @@
   }
 
   /* Numbered list */
-  ol.bullets.numbered {
-    counter-reset: item;
-    list-style: none;
-  }
-  ol.bullets.numbered li { counter-increment: item; }
   ol.bullets.numbered li::before {
     content: counter(item) !important;
     background: {{ theme.accent2 }};
@@ -435,14 +351,7 @@
     border-radius: 2px;
   }
 
-  /* ── IMAGES (bloc Markdown dans le body) ── */
-  .slide-figure {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin: 16px 0;
-    flex-shrink: 1;
-  }
+  /* Images in body */
   .slide-image {
     max-width: 100%;
     max-height: 220px;
@@ -453,12 +362,6 @@
     border: 1px solid {{ theme.accent1 }}22;
     box-shadow: 0 6px 24px rgba(0,0,0,0.22);
     display: block;
-  }
-  .slide-image-inline {
-    max-height: 140px;
-    display: inline-block;
-    vertical-align: middle;
-    margin: 0 6px;
   }
   .slide-image-credit {
     font-family: 'Manrope', sans-serif;
@@ -471,20 +374,7 @@
     max-width: 80%;
   }
 
-  /* ── COVER : logo réduit quand une image est aussi présente ── */
-  .ig-cover-logo-small img {
-    height: 180px !important;
-  }
-
-  /* ── COVER : image héro sous le logo ── */
-  .cover-hero-image {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 16px;
-    flex-shrink: 0;
-  }
+  /* Cover hero image border */
   .cover-hero-image img {
     max-width: 88%;
     max-height: 220px;
@@ -494,29 +384,7 @@
     border: 1px solid {{ theme.accent1 }}28;
   }
 
-  /* ── CONTENT AVEC IMAGE : image héro grande + contenu en indice dessous ── */
-  .content-hero-header {
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    gap: 18px;
-    margin-bottom: 14px;
-  }
-  .content-hero-header .ig-badge { margin-bottom: 0; flex-shrink: 0; }
-  .content-hero-header .ig-title {
-    margin-bottom: 0;
-    font-size: 34px;
-    flex: 1;
-    min-width: 0;
-  }
-  .content-hero-image-wrap {
-    flex: 1;
-    min-height: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-  }
+  /* Content hero image */
   .content-hero-image-wrap img {
     max-width: 100%;
     max-height: 100%;
@@ -528,23 +396,8 @@
     border: 1px solid {{ theme.accent1 }}28;
   }
   .content-hero-caption {
-    flex-shrink: 0;
-    margin-top: 14px;
-    max-height: 130px;
-    overflow: hidden;
-    font-family: 'Manrope', sans-serif;
-    font-size: 20px;
-    line-height: 1.45;
     color: {{ theme.text_muted }};
   }
-  .content-hero-caption .bullets {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin: 0; padding: 0;
-    list-style: none;
-  }
-  .content-hero-caption .bullets::before { display: none; }
   .content-hero-caption .bullets li {
     display: inline-flex;
     align-items: center;
@@ -566,18 +419,8 @@
     flex-shrink: 0;
   }
   .content-hero-caption .bullets li strong { color: {{ theme.text }}; }
-  .content-hero-caption p { margin-bottom: 0.4em; }
 
-  /* ── COMPARE : bannière compacte ── */
-  .compare-image-banner {
-    width: 100%;
-    height: 90px;
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 10px;
-  }
+  /* Compare image banner border */
   .compare-image-banner img {
     max-height: 82px;
     max-width: 60%;
@@ -587,16 +430,7 @@
     border: 1px solid {{ theme.accent1 }}20;
   }
 
-  /* ════════════════════════════════════════════
-     QUOTE SLIDE
-  ════════════════════════════════════════════ */
-  .ig-quote-content {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: 32px;
-  }
+  /* ── QUOTE SLIDE ── */
   .ig-quote-mark {
     font-family: 'Clash Display', sans-serif;
     font-size: 160px;
@@ -615,12 +449,6 @@
     color: {{ theme.text }};
     letter-spacing: -0.01em;
   }
-  .ig-quote-author {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    margin-top: 8px;
-  }
   .ig-quote-author-line {
     width: 48px;
     height: 3px;
@@ -636,16 +464,7 @@
     text-transform: uppercase;
   }
 
-  /* ════════════════════════════════════════════
-     STAT SLIDE
-  ════════════════════════════════════════════ */
-  .ig-stat-content {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: 40px;
-  }
+  /* ── STAT SLIDE ── */
   .ig-stat-grid {
     display: grid;
     grid-template-columns: {% if slide.stats | length == 2 %}1fr 1fr{% elif slide.stats | length == 3 %}1fr 1fr 1fr{% else %}1fr 1fr{% endif %};
@@ -688,16 +507,7 @@
     letter-spacing: 0.08em;
   }
 
-  /* ════════════════════════════════════════════
-     COMPARE SLIDE
-  ════════════════════════════════════════════ */
-  .ig-compare-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 28px;
-    flex: 1;
-    margin-top: 8px;
-  }
+  /* ── COMPARE SLIDE ── */
   .ig-compare-col {
     background: {{ theme.surface | default('rgba(255,255,255,0.06)') }};
     border: 1px solid {{ theme.accent1 }}20;
@@ -713,15 +523,6 @@
   }
   .ig-compare-col:last-child {
     border-top: 4px solid {{ theme.accent2 }};
-  }
-  .ig-compare-col::after {
-    content: '';
-    position: absolute;
-    top: -30px; right: -30px;
-    width: 100px; height: 100px;
-    border-radius: 50%;
-    opacity: 0.08;
-    filter: blur(20px);
   }
   .ig-compare-col:first-child::after { background: {{ theme.accent1 }}; }
   .ig-compare-col:last-child::after { background: {{ theme.accent2 }}; }
@@ -755,35 +556,8 @@
     font-size: 0.88em;
     color: {{ theme.accent2 }};
   }
-  .ig-compare-body .bullets { margin-top: 8px; margin-bottom: 8px; }
 
-  .ig-compare-tag {
-    display: inline-block;
-    font-family: 'Manrope', sans-serif;
-    font-size: 16px;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    padding: 8px 18px;
-    border-radius: 100px;
-    margin-top: 20px;
-    background: transparent;
-    border: 1.5px solid var(--tag-color);
-    color: var(--tag-color);
-  }
-
-  /* ════════════════════════════════════════════
-     CTA SLIDE
-  ════════════════════════════════════════════ */
-  .ig-cta-content {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    gap: 36px;
-  }
+  /* ── CTA SLIDE ── */
   .ig-cta-title {
     font-family: 'Clash Display', sans-serif;
     font-size: {% if slide.is_compact %}56px{% else %}68px{% endif %};
@@ -824,9 +598,7 @@
     margin: 0 auto 20px;
   }
 
-  /* ════════════════════════════════════════════
-     LIGHT THEME OVERRIDES
-  ════════════════════════════════════════════ */
+  /* ── LIGHT THEME OVERRIDES ── */
   {% if theme.is_light %}
   .ig-texture {
     background-image: radial-gradient({{ theme.accent1 }}18 1px, transparent 1px);
@@ -852,6 +624,9 @@
   }
   {% endif %}
 
+  /* ── Static CSS (inlined by Jinja2 at render time) ── */
+  {% include 'static/css/slide-base.css' %}
+  {% include 'static/css/slide-instagram.css' %}
 </style>
 </head>
 <body>
@@ -1046,123 +821,8 @@
 </div>
 
 <script>
-  // ── Dynamic font sizing for Instagram (1080×1080) ──
-  function adjustFontSize() {
-    const slideEl = document.querySelector('.ig-slide');
-    const footer = document.querySelector('.ig-footer');
-    const coverTitle = document.getElementById('ig-cover-title');
-    const mainTitle = document.getElementById('ig-title');
-    const body = document.getElementById('ig-body');
-    const topbar = document.querySelector('.ig-topbar');
-
-    if (!slideEl || !footer) return;
-
-    const slideH = 1080;
-    const topbarH = topbar ? topbar.getBoundingClientRect().height + 24 : 80;
-    const footerH = footer.getBoundingClientRect().height;
-    const availH = slideH - topbarH - footerH - 60; // 60px cushion
-
-    let iterations = 0;
-    const maxIter = 100;
-
-    function contentBottom() {
-      const content = document.querySelector('.ig-content');
-      if (!content || !content.lastElementChild) return 0;
-      return content.lastElementChild.getBoundingClientRect().bottom;
-    }
-
-    function footerTop() {
-      return footer.getBoundingClientRect().top;
-    }
-
-    function isOverflowing() {
-      return contentBottom() > footerTop() - 12;
-    }
-
-    while (isOverflowing() && iterations < maxIter) {
-      // Cover titles
-      if (coverTitle) {
-        const sz = parseFloat(window.getComputedStyle(coverTitle).fontSize);
-        if (sz > 32) coverTitle.style.fontSize = (sz - 2) + 'px';
-      }
-      // Content titles
-      if (mainTitle) {
-        const sz = parseFloat(window.getComputedStyle(mainTitle).fontSize);
-        if (sz > 24) mainTitle.style.fontSize = (sz - 1) + 'px';
-      }
-      // Body text
-      if (body) {
-        const sz = parseFloat(window.getComputedStyle(body).fontSize);
-        if (sz > 13) {
-          body.style.fontSize = (sz - 0.7) + 'px';
-          body.style.lineHeight = '1.4';
-        }
-      }
-      // Sub-headings
-      document.querySelectorAll('.ig-body .slide-h3').forEach(el => {
-        const sz = parseFloat(window.getComputedStyle(el).fontSize);
-        if (sz > 18) el.style.fontSize = (sz - 1) + 'px';
-      });
-      // Bullets
-      document.querySelectorAll('.ig-body .bullets li').forEach(el => {
-        const sz = parseFloat(window.getComputedStyle(el).fontSize);
-        if (sz > 13) el.style.fontSize = (sz - 0.7) + 'px';
-      });
-      // Compare body
-      document.querySelectorAll('.ig-compare-body').forEach(el => {
-        const sz = parseFloat(window.getComputedStyle(el).fontSize);
-        if (sz > 13) el.style.fontSize = (sz - 0.8) + 'px';
-      });
-      // Stat numbers
-      document.querySelectorAll('.ig-stat-number').forEach(el => {
-        const sz = parseFloat(window.getComputedStyle(el).fontSize);
-        if (sz > 36) el.style.fontSize = (sz - 2) + 'px';
-      });
-      // Images Markdown en bloc
-      document.querySelectorAll('.slide-figure').forEach(el => {
-        const sz = parseFloat(el.style.maxHeight) || 220;
-        if (sz > 60) el.style.maxHeight = (sz - 8) + 'px';
-      });
-      // Caption héro : réduire fonte si débordement
-      const caption = document.getElementById('ig-body');
-      if (caption && caption.closest('.content-hero')) {
-        const sz = parseFloat(window.getComputedStyle(caption).fontSize);
-        if (sz > 14) caption.style.fontSize = (sz - 1) + 'px';
-      }
-      iterations++;
-    }
-  }
-
-  // Dynamic cover title sizing based on character count
-  function sizeCoverTitle() {
-    const el = document.getElementById('ig-cover-title');
-    if (!el) return;
-    const len = el.textContent.trim().length;
-    let size;
-    if (len < 20)       size = 110;
-    else if (len < 35)  size = 90;
-    else if (len < 55)  size = 72;
-    else if (len < 80)  size = 58;
-    else                size = 48;
-    el.style.fontSize = size + 'px';
-  }
-
-  sizeCoverTitle();
-  adjustFontSize();
-  setTimeout(adjustFontSize, 200);
-  setTimeout(adjustFontSize, 500);
-  setTimeout(adjustFontSize, 900);
-
-  // Re-déclencher adjustFontSize quand l'image héro finit de charger/décoder
-  const heroImg = document.querySelector('.content-hero-image-wrap img');
-  if (heroImg && !heroImg.complete) {
-    heroImg.addEventListener('load', () => {
-      adjustFontSize();
-      setTimeout(adjustFontSize, 100);
-    });
-  } else if (heroImg && heroImg.complete) {
-    setTimeout(adjustFontSize, 50);
-  }
+  {% include 'static/js/slide-instagram.js' %}
+  {% include 'static/js/slide-core.js' %}
 </script>
 </body>
 </html>
