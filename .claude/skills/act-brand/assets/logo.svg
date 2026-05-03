@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 80" role="img" aria-label="ACT — Africa Centred Technology">
+  <!-- Logo officiel ACT v1.0 — ne pas modifier sans validation brand -->
+  <defs>
+    <style>
+      .act-sigle  { font-family: 'Lora', Georgia, serif; font-size: 48px; font-weight: 500; fill: #0A1410; letter-spacing: -0.02em; }
+      .act-mention{ font-family: 'Poppins', system-ui, sans-serif; font-size: 9px; font-weight: 500; fill: #3A4540; letter-spacing: 0.24em; text-transform: uppercase; }
+      .act-italic { font-family: 'Lora', Georgia, serif; font-size: 11px; font-style: italic; font-weight: 500; fill: #D35400; letter-spacing: normal; text-transform: none; }
+    </style>
+  </defs>
+
+  <!-- Losange signature : carré tourné de -43.264° -->
+  <g transform="translate(36 40) rotate(-43.264)">
+    <rect x="-18" y="-18" width="36" height="36" fill="#D35400"/>
+  </g>
+
+  <!-- Sigle ACT en Lora -->
+  <text x="84" y="48" class="act-sigle">ACT</text>
+
+  <!-- Mention complète en Poppins, "Centred" en Lora Italic Orange -->
+  <text x="84" y="66" class="act-mention">
+    Africa <tspan class="act-italic">Centred</tspan> Technology
+  </text>
+</svg>

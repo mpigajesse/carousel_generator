@@ -1,0 +1,178 @@
+/* ============================================================================
+   ACT — Africa Centred Technology
+   Design tokens officiels v1.0 — Avril 2026
+   À inclure tel quel dans toute page, mockup ou template HTML ACT.
+   ============================================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&family=Poppins:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  /* ─── COULEURS DE MARQUE ──────────────────────────────────────────── */
+  --act-orange:     #D35400;  /* Primaire · CTA · accent · signature */
+  --act-orange-hot: #FF6B00;  /* Hover, accent secondaire */
+  --act-gold:       #F39C12;  /* Chiffres-clés, premium */
+  --act-dark:       #0A1410;  /* Fond principal digital */
+  --act-dark-deep:  #070E1C;  /* Fond ultra-sombre */
+  --act-green:      #1B3022;  /* Cartes, panneaux */
+  --act-green-mid:  #2C4A35;  /* Hover sur green */
+  --act-cream:      #FCF9F2;  /* Fond clair, texte sur dark */
+  --act-cream-deep: #F4EFE4;  /* Fond clair secondaire */
+
+  /* ─── NEUTRES ─────────────────────────────────────────────────────── */
+  --act-ink:        #0A1410;  /* Texte principal sur fond clair */
+  --act-ink-soft:   #3A4540;  /* Texte secondaire */
+  --act-muted:      #6B7A72;  /* Texte tertiaire, légendes */
+  --act-line:       #D5CFBE;  /* Filets, séparateurs */
+  --act-line-soft:  #E8E4D7;  /* Filets très discrets */
+
+  /* ─── SÉMANTIQUES ─────────────────────────────────────────────────── */
+  --act-success:    #6ECF8A;
+  --act-warning:    #F39C12;
+  --act-danger:     #C84B4B;
+
+  /* ─── TYPOGRAPHIES ────────────────────────────────────────────────── */
+  --act-font-display: 'Lora', Georgia, 'Times New Roman', serif;
+  --act-font-body:    'Poppins', -apple-system, system-ui, Calibri, Arial, sans-serif;
+  --act-font-mono:    'JetBrains Mono', Consolas, 'SF Mono', Menlo, monospace;
+
+  /* ─── ÉLÉMENT SIGNATURE ───────────────────────────────────────────── */
+  --act-diamond-angle: -43.264deg;
+
+  /* ─── ESPACEMENTS ─────────────────────────────────────────────────── */
+  --act-space-xs:  4px;
+  --act-space-sm:  8px;
+  --act-space-md:  16px;
+  --act-space-lg:  24px;
+  --act-space-xl:  40px;
+  --act-space-2xl: 64px;
+  --act-space-3xl: 96px;
+  --act-space-4xl: 144px;
+
+  /* ─── RAYONS, TRANSITIONS ─────────────────────────────────────────── */
+  --act-radius-none: 0;
+  --act-radius-sm:   2px;
+  --act-radius-md:   4px;
+  --act-easing:      cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+/* ============================================================================
+   COMPOSANTS DE BASE
+   ============================================================================ */
+
+/* ─── LOSANGE ────────────────────────────────────────────────────── */
+.act-diamond {
+  display: inline-block;
+  width: 10px; height: 10px;
+  background: var(--act-orange);
+  transform: rotate(var(--act-diamond-angle));
+  flex-shrink: 0;
+}
+.act-diamond--gold  { background: var(--act-gold); }
+.act-diamond--cream { background: var(--act-cream); }
+.act-diamond--dark  { background: var(--act-dark); }
+.act-diamond--16 { width: 16px; height: 16px; }
+.act-diamond--24 { width: 24px; height: 24px; }
+.act-diamond--40 { width: 40px; height: 40px; }
+.act-diamond--64 { width: 64px; height: 64px; }
+.act-diamond--80 { width: 80px; height: 80px; }
+
+/* ─── EYEBROW (surtitre) ────────────────────────────────────────── */
+.act-eyebrow {
+  font-family: var(--act-font-body);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--act-orange);
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* ─── ACCENT ITALIQUE ORANGE (signature typographique) ──────────── */
+.act-accent {
+  color: var(--act-orange);
+  font-style: italic;
+  font-weight: 500;
+}
+
+/* ─── BOUTONS ───────────────────────────────────────────────────── */
+.act-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 28px;
+  font-family: var(--act-font-body);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s var(--act-easing), transform 0.15s var(--act-easing);
+}
+.act-btn--primary {
+  background: var(--act-orange);
+  color: var(--act-cream);
+}
+.act-btn--primary:hover {
+  background: var(--act-orange-hot);
+  transform: translateY(-1px);
+}
+.act-btn--ghost {
+  background: transparent;
+  color: var(--act-cream);
+  border: 1px solid var(--act-cream);
+}
+.act-btn--ghost:hover {
+  background: var(--act-cream);
+  color: var(--act-dark);
+}
+
+/* ─── PATTERNS ──────────────────────────────────────────────────── */
+.act-pattern-grid {
+  background-image:
+    linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
+  background-size: 80px 80px;
+}
+.act-pattern-grid--light {
+  background-image:
+    linear-gradient(rgba(10,20,16,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(10,20,16,0.04) 1px, transparent 1px);
+  background-size: 80px 80px;
+}
+
+/* ─── TYPOGRAPHIE ────────────────────────────────────────────────── */
+.act-h1, .act-h2, .act-h3 {
+  font-family: var(--act-font-display);
+  font-weight: 500;
+  line-height: 1.05;
+  letter-spacing: -0.025em;
+  text-wrap: balance;
+}
+.act-h1 { font-size: clamp(48px, 8vw, 96px); line-height: 0.98; }
+.act-h2 { font-size: clamp(36px, 5vw, 56px); line-height: 1.1; }
+.act-h3 { font-size: clamp(24px, 3vw, 32px); line-height: 1.25; }
+.act-h1 em, .act-h2 em, .act-h3 em { color: var(--act-orange); font-style: italic; }
+
+.act-body { font-family: var(--act-font-body); font-size: 16px; line-height: 1.6; }
+.act-caption { font-family: var(--act-font-body); font-size: 13px; line-height: 1.5; color: var(--act-muted); }
+.act-mono { font-family: var(--act-font-mono); font-size: 13px; letter-spacing: 0.08em; }
+
+/* ─── BULLETS LOSANGE ────────────────────────────────────────────── */
+.act-list { list-style: none; padding: 0; margin: 0; }
+.act-list li {
+  position: relative;
+  padding: 6px 0 6px 22px;
+  line-height: 1.6;
+}
+.act-list li::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 13px;
+  width: 7px; height: 7px;
+  background: var(--act-orange);
+  transform: rotate(var(--act-diamond-angle));
+}
