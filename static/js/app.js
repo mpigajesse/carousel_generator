@@ -356,6 +356,40 @@ function renderSlides() {
     list.innerHTML = slides.map((s, i) => renderSlideCard(s, i)).join('');
   }
   _updateSlideBadge(slides.length);
+  assertScrollContract();
+}
+
+// Guards the "Éditeur de slides" scroll chain defined by the
+// LAYOUT CONTRACT block at the end of app.css. If a future CSS
+// or DOM change breaks any link in the chain, this logs a
+// descriptive warning to the browser console so the regression
+// is caught in dev tools instead of silently hiding imported
+// content. Cheap (~1ms), runs after every render.
+function assertScrollContract() {
+  const area = document.getElementById('editor-area');
+  const list = document.getElementById('slides-list');
+  if (!area || !list) return;
+  const cs = getComputedStyle(area);
+  if (cs.overflowY !== 'auto' && cs.overflowY !== 'scroll') {
+    console.warn(
+      '[scroll-contract] #editor-area overflow-y = "' + cs.overflowY +
+      '" (expected "auto"). Imported content may be hidden. ' +
+      'See LAYOUT CONTRACT block in app.css.'
+    );
+  }
+  requestAnimationFrame(() => {
+    const contentTall = list.scrollHeight > area.clientHeight + 50;
+    const notScrollable = area.scrollHeight <= area.clientHeight + 1;
+    if (contentTall && notScrollable) {
+      console.warn(
+        '[scroll-contract] Editor content (' + list.scrollHeight + 'px) ' +
+        'exceeds .slides-area viewport (' + area.clientHeight + 'px) but ' +
+        'the container is not scrollable. Check the ancestor chain ' +
+        'html > body > .shell > main > .slides-area for broken ' +
+        'overflow/height/min-height rules. See LAYOUT CONTRACT in app.css.'
+      );
+    }
+  });
 }
 
 function _updateSlideBadge(count) {
