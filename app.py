@@ -6,6 +6,7 @@ Accès      : http://localhost:5000
 Authentification : définir APP_PASSWORD dans l'environnement (ou fichier .env).
 """
 
+import json
 import os
 import re
 import secrets
@@ -60,8 +61,22 @@ if not SECRET_KEY:
     )
     SECRET_KEY = secrets.token_hex(32)
 
-APP_PASSWORD = os.environ.get('APP_PASSWORD', '')
-if not APP_PASSWORD:
+# ─────────────────────────────────────────
+#  Démo publique (DEMO_PUBLIQUE=1)
+# ─────────────────────────────────────────
+# Instance ouverte à tous, sans mot de passe, pour les recruteurs. Rien ne
+# change quand la variable est absente : la production garde son mot de passe,
+# sa bibliothèque partagée et ses limites. En démo :
+#   - chaque visiteur ne voit que les exemples et ses propres carrousels ;
+#   - les exemples ne peuvent être ni supprimés ni renommés ;
+#   - une seule génération Chromium à la fois (instance de 512 Mo) ;
+#   - 10 slides au plus par carrousel, carrousels des visiteurs effacés après 2 h.
+DEMO_PUBLIQUE = os.environ.get('DEMO_PUBLIQUE') == '1'
+DEMO_MAX_SLIDES = 10
+DEMO_DUREE_VIE = timedelta(hours=2)
+
+APP_PASSWORD = '' if DEMO_PUBLIQUE else os.environ.get('APP_PASSWORD', '')
+if not APP_PASSWORD and not DEMO_PUBLIQUE:
     import warnings
     warnings.warn(
         "APP_PASSWORD n'est pas définie — l'application est accessible sans authentification. "
@@ -70,6 +85,9 @@ if not APP_PASSWORD:
     )
 
 app = Flask(__name__)
+if DEMO_PUBLIQUE:
+    from werkzeug.middleware.proxy_fix import ProxyFix
+    app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1)
 app.config['SECRET_KEY'] = SECRET_KEY
 app.config['OUTPUT_DIR'] = Path('static/generated')
 app.config['OUTPUT_DIR'].mkdir(parents=True, exist_ok=True)
@@ -112,6 +130,64 @@ except ImportError:
 
 # Stockage en mémoire des jobs en cours
 jobs = {}
+
+# Une génération Chromium à la fois en démo ; en production, pas de file.
+_verrou_generation = threading.Semaphore(1) if DEMO_PUBLIQUE else None
+
+
+def _exemples_demo() -> set:
+    """Carrousels d'exemple générés à la construction de l'image de démo."""
+    fichier = app.config['OUTPUT_DIR'] / 'exemples.json'
+    try:
+        return set(json.loads(fichier.read_text(encoding='utf-8')))
+    except (OSError, ValueError):
+        return set()
+
+
+def _mes_carousels() -> list:
+    return session.get('mes_carousels', [])
+
+
+def _visible_en_demo(job_id: str) -> bool:
+    return job_id in _exemples_demo() or job_id in _mes_carousels()
+
+
+def _purger_demo() -> None:
+    """Efface les carrousels des visiteurs plus vieux que DEMO_DUREE_VIE."""
+    exemples = _exemples_demo()
+    limite = datetime.now().timestamp() - DEMO_DUREE_VIE.total_seconds()
+    for dossier in app.config['OUTPUT_DIR'].iterdir():
+        if dossier.is_dir() and dossier.name not in exemples and dossier.stat().st_mtime < limite:
+            shutil.rmtree(dossier, ignore_errors=True)
+            jobs.pop(dossier.name, None)
+
+
+_RE_ROUTE_JOB = re.compile(
+    r'^/(?:api/library|api/status|api/download|static/generated)/([^/]+)'
+)
+
+
+@app.before_request
+def garde_demo():
+    """En démo, un visiteur n'accède qu'aux exemples et à ses propres carrousels."""
+    if not DEMO_PUBLIQUE:
+        return None
+    m = _RE_ROUTE_JOB.match(request.path)
+    if not m:
+        return None
+    job_id = m.group(1)
+    if job_id == 'exemples.json':
+        abort(404)
+    if not _visible_en_demo(job_id):
+        abort(404)
+    if request.method in ('DELETE', 'PATCH') and job_id in _exemples_demo():
+        return jsonify({'error': "Les exemples de la démo ne peuvent pas être modifiés."}), 403
+    return None
+
+
+@app.context_processor
+def contexte_demo():
+    return {'demo_publique': DEMO_PUBLIQUE}
 
 
 # ─────────────────────────────────────────
@@ -321,6 +397,8 @@ def api_library():
     out_dir = app.config['OUTPUT_DIR']
     items = []
     for folder in sorted(out_dir.iterdir(), key=lambda f: f.stat().st_mtime, reverse=True):
+        if DEMO_PUBLIQUE and not _visible_en_demo(folder.name):
+            continue
         meta = _scan_job_folder(folder)
         if meta:
             items.append(meta)
@@ -368,6 +446,8 @@ def api_library_rename(job_id):
 
     folder.rename(new_folder)
     jobs.pop(job_id, None)
+    if DEMO_PUBLIQUE:
+        session['mes_carousels'] = [new_id if j == job_id else j for j in _mes_carousels()]
     return jsonify({'ok': True, 'new_job_id': new_id})
 
 
@@ -473,7 +553,7 @@ def _sanitize_slide_body(body: str) -> str:
 
 
 @app.route('/api/generate', methods=['POST'])
-@limiter.limit('15 per minute; 100 per hour')
+@limiter.limit('4 per minute; 20 per hour' if DEMO_PUBLIQUE else '15 per minute; 100 per hour')
 def api_generate():
     """Lance la génération en arrière-plan, retourne un job_id."""
     data = request.json or {}
@@ -486,6 +566,8 @@ def api_generate():
 
     if not slides_raw:
         return jsonify({'error': 'Aucune slide fournie'}), 400
+    if DEMO_PUBLIQUE and len(slides_raw) > DEMO_MAX_SLIDES:
+        return jsonify({'error': f'La démo publique génère {DEMO_MAX_SLIDES} slides au plus par carrousel.'}), 400
 
     # Sanitiser les corps HTML avant rendu Playwright (H5 — XSS dans Chromium headless)
     for slide in slides_raw:
@@ -503,6 +585,12 @@ def api_generate():
     time_str = now.strftime('%H-%M-%S')
     series_name = _sanitize_folder_name(footer.get('series', 'carousel'))
     job_id = f"{date_str}_{time_str}_{series_name}"
+    if DEMO_PUBLIQUE:
+        _purger_demo()
+        # Deux visiteurs à la même seconde avec le même titre : éviter la collision.
+        if job_id in jobs or (app.config['OUTPUT_DIR'] / job_id).exists():
+            job_id = f"{job_id}_{secrets.token_hex(2)}"
+        session['mes_carousels'] = (_mes_carousels() + [job_id])[-20:]
     jobs[job_id] = {
         'status': 'running',
         'files': [],
@@ -513,6 +601,14 @@ def api_generate():
     }
 
     def run():
+        if _verrou_generation is not None:
+            # Reste en « Préparation… » tant qu'une autre génération occupe Chromium.
+            with _verrou_generation:
+                _run()
+        else:
+            _run()
+
+    def _run():
         jobs[job_id]['phase'] = 'rendering'
 
         def progress_cb(current, total):

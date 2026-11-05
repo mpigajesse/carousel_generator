@@ -522,13 +522,13 @@
       </svg>
       Bibliothèque
     </a>
-    <a href="/logout" class="guide-topbar-btn danger hide-mobile">
+    {% if not demo_publique %}<a href="/logout" class="guide-topbar-btn danger hide-mobile">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
         <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
         <polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
       </svg>
       Déconnexion
-    </a>
+    </a>{% endif %}
   </nav>
 
 </header>
@@ -646,7 +646,7 @@
         <a href="/" class="guide-footer-link">← Retour à l'éditeur</a>
         <a href="/generator" class="guide-footer-link">Bibliothèque →</a>
       </div>
-      <p class="guide-footer-copy">© 2026 Africa Centred Technology · CarouselGen v2.0</p>
+      <p class="guide-footer-copy">{% if demo_publique %}Démo publique · CarouselGen v2.0{% else %}© 2026 Africa Centred Technology · CarouselGen v2.0{% endif %}</p>
     </footer>
 
   </main>

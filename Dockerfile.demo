@@ -1,0 +1,55 @@
+# =============================================================================
+# Dockerfile.demo — Démo publique de Carousel Generator (Render, offre gratuite)
+#
+# Ce fichier ne sert QUE à la démo. La production (carousel.a-ct.ma) continue
+# d'utiliser le Dockerfile principal, déployé par .github/workflows/deploy.yml.
+#
+# Différences avec la production, toutes pilotées par variables d'environnement
+# (voir app.py et generate.py) :
+#   DEMO_PUBLIQUE=1              accès sans mot de passe, bibliothèque par visiteur,
+#                                exemples protégés, 10 slides max, purge après 2 h
+#   CAROUSEL_PAGES_PARALLELES=1  une page Chromium à la fois (instance de 512 Mo)
+#   CAROUSEL_CHROMIUM_ECONOME=1  options mémoire de Chromium
+#   CAROUSEL_RESEAU_BLOQUE=1     aucune URL externe chargée par le serveur
+#   CAROUSEL_LOGO=aucun          slides sans la marque de l'entreprise
+# =============================================================================
+
+FROM python:3.12-slim
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PLAYWRIGHT_BROWSERS_PATH=/ms-playwright \
+    FLASK_ENV=production \
+    PORT=10000 \
+    DEMO_PUBLIQUE=1 \
+    CAROUSEL_PAGES_PARALLELES=1 \
+    CAROUSEL_CHROMIUM_ECONOME=1 \
+    CAROUSEL_RESEAU_BLOQUE=1 \
+    CAROUSEL_LOGO=aucun
+
+RUN groupadd -r appuser && useradd -r -g appuser -m -d /home/appuser appuser
+
+WORKDIR /app
+
+COPY requirements.txt .
+# hadolint ignore=DL3013
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir -r requirements.txt
+
+# --with-deps installe les bibliothèques système de Chromium ; --only-shell
+# se limite au navigateur sans interface, plus léger que Chromium complet.
+RUN playwright install --with-deps --only-shell chromium && \
+    rm -rf /var/lib/apt/lists/* && \
+    chown -R appuser:appuser /ms-playwright
+
+COPY --chown=appuser:appuser . .
+
+USER appuser
+
+# Exemples de la bibliothèque, générés une fois ici : le disque de l'instance
+# gratuite est effacé à chaque redémarrage, l'image ne l'est pas.
+RUN python demo/generer_exemples.py
+
+EXPOSE 10000
+
+CMD ["gunicorn", "--config", "gunicorn.conf.py", "app:app"]

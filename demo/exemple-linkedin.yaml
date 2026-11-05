@@ -1,0 +1,39 @@
+footer:
+  series: "Architecture · Démo"
+  author: "@carouselgen"
+
+slides:
+  - type: cover
+    badge: "Sous le capot"
+    title: "Un pipeline en quatre étapes"
+    code: "render(slides)_"
+    cta: "Faites défiler"
+
+  - type: content
+    title: "1. Lire le contenu"
+    body: |
+      Le fichier <span class="bold">Markdown</span> ou <span class="bold">YAML</span>
+      est transformé en une liste de slides typées :<br><br>
+      <span class="hl1">cover</span>, <span class="hl2">content</span>, <span class="hl3">compare</span>.
+
+  - type: content
+    title: "2. Appliquer un thème"
+    body: |
+      19 thèmes définissent fond, accents, texte et encadrés de code.<br><br>
+      La taille du texte est <span class="hl1">calculée</span> selon la longueur de chaque slide.
+
+  - type: compare
+    title: "3. Rendre, puis exporter"
+    columns:
+      - title: "PNG"
+        tag: "Instagram, LinkedIn"
+        body: "Une image 1080 px par slide, réunies dans un ZIP."
+      - title: "PDF"
+        tag: "Document LinkedIn"
+        body: "Les slides fusionnées en un seul PDF avec pypdf."
+
+  - type: content
+    title: "4. Retrouver ses carrousels"
+    body: |
+      Chaque génération est rangée dans la <span class="bold">bibliothèque</span> :
+      aperçu, téléchargement, renommage.

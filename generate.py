@@ -45,6 +45,59 @@ def _run_async(coro):
         asyncio.set_event_loop(None)
 
 
+# ─────────────────────────────────────────
+#  RÉGLAGES MÉMOIRE (démo publique)
+# ─────────────────────────────────────────
+# Par défaut rien ne change : 5 pages en parallèle, Chromium sans option, comme
+# sur le serveur de production. La démo publique tourne sur une instance de
+# 512 Mo : Chromium avec 5 pages ouvertes y dépasse 1 Go et l'instance est tuée.
+# Elle fixe donc CAROUSEL_PAGES_PARALLELES=1 et CAROUSEL_CHROMIUM_ECONOME=1.
+
+def _pages_paralleles() -> int:
+    try:
+        return max(1, int(os.environ.get("CAROUSEL_PAGES_PARALLELES", "5")))
+    except ValueError:
+        return 5
+
+
+def _reseau_bloque() -> bool:
+    """Démo publique : ni le serveur ni Chromium ne vont chercher d'URL externe.
+
+    Sinon n'importe quel visiteur pourrait faire appeler au serveur une adresse
+    de son choix (y compris le réseau interne de l'hébergeur) via image_url ou
+    une balise <img> dans le corps d'une slide.
+    """
+    return os.environ.get("CAROUSEL_RESEAU_BLOQUE") == "1"
+
+
+async def _bloquer_reseau(page) -> None:
+    if not _reseau_bloque():
+        return
+
+    async def _filtre(route):
+        url = route.request.url
+        if url.startswith(("file:", "data:", "blob:", "about:")):
+            await route.continue_()
+        else:
+            await route.abort()
+
+    await page.route("**/*", _filtre)
+
+
+def _options_chromium() -> dict:
+    if os.environ.get("CAROUSEL_CHROMIUM_ECONOME") != "1":
+        return {}
+    return {
+        "args": [
+            "--disable-dev-shm-usage",   # /dev/shm minuscule dans les conteneurs
+            "--disable-gpu",
+            "--no-zygote",
+            "--renderer-process-limit=1",
+            "--js-flags=--max-old-space-size=128",
+        ]
+    }
+
+
 def _calculate_text_size(slide: dict) -> dict:
     """
     Calcule automatiquement la taille optimale du texte pour chaque slide.
@@ -207,12 +260,13 @@ async def _capture_slides_async(
     """
     from playwright.async_api import async_playwright
 
-    BATCH_SIZE = 5                           # Pages simultanées max (équilibre RAM/vitesse)
+    BATCH_SIZE = _pages_paralleles()         # 5 par défaut (équilibre RAM/vitesse)
     wait_ms = 150 if fonts_css_url else 900  # 150ms fonts locales vs 900ms CDN fallback
     total = len(html_files)
 
     async def _one(browser, idx):
         page = await browser.new_page(viewport={"width": slide_w, "height": slide_h})
+        await _bloquer_reseau(page)
         await page.emulate_media(media="screen")
         abs_path = os.path.abspath(html_files[idx]).replace("\\", "/")
         await page.goto(f"file:///{abs_path}")
@@ -258,7 +312,7 @@ async def _capture_slides_async(
         return idx, path, slide_title
 
     async with async_playwright() as p:
-        browser = await p.chromium.launch()
+        browser = await p.chromium.launch(**_options_chromium())
         collected = {}
 
         for batch_start in range(0, total, BATCH_SIZE):
@@ -276,7 +330,7 @@ async def _convert_to_pdfs_async(png_results, slide_w, slide_h, output_dir):
     """Convertit tous les PNGs capturés en PDFs en parallèle via Chromium."""
     from playwright.async_api import async_playwright
 
-    BATCH_SIZE = 5
+    BATCH_SIZE = _pages_paralleles()
 
     async def _one_pdf(browser, idx, temp_path, slide_title):
         pdf_filename = _build_slide_filename(idx + 1, slide_title, "pdf")
@@ -298,6 +352,7 @@ async def _convert_to_pdfs_async(png_results, slide_w, slide_h, output_dir):
             f"</body></html>"
         )
         page = await browser.new_page(viewport={"width": slide_w, "height": slide_h})
+        await _bloquer_reseau(page)
         await page.set_content(img_html)
         # Attendre que l'image base64 soit décodée et peinte
         await page.wait_for_function(
@@ -315,7 +370,7 @@ async def _convert_to_pdfs_async(png_results, slide_w, slide_h, output_dir):
         return idx, pdf_path
 
     async with async_playwright() as p:
-        browser = await p.chromium.launch()
+        browser = await p.chromium.launch(**_options_chromium())
         collected = {}
 
         for batch_start in range(0, len(png_results), BATCH_SIZE):
@@ -387,7 +442,10 @@ def generate_carousel(
         fonts_css_url = None
 
     logo_path = template_dir / "static" / "logo" / "logo.png"
-    if logo_path.exists():
+    # La démo publique ne porte pas la marque de l'entreprise : CAROUSEL_LOGO=aucun.
+    if os.environ.get("CAROUSEL_LOGO") == "aucun":
+        logo_url = None
+    elif logo_path.exists():
         logo_b64 = base64.b64encode(logo_path.read_bytes()).decode("ascii")
         logo_url = f"data:image/png;base64,{logo_b64}"
     else:
@@ -418,7 +476,7 @@ def generate_carousel(
             _scheme = urlparse(_url).scheme.lower()
             # Accepter http/https (URLs externes) et data:image/ (images locales base64)
             _allowed = (
-                _scheme in ('http', 'https')
+                (_scheme in ('http', 'https') and not _reseau_bloque())
                 or (_scheme == 'data' and _url.startswith('data:image/'))
             )
             if not _allowed:
@@ -430,7 +488,8 @@ def generate_carousel(
             logo_url=logo_url,
             slide_index=i + 1, slide_total=total_slides,
         )
-        html = _prefetch_images_as_base64(html)   # ← AJOUT : embed images avant capture
+        if not _reseau_bloque():
+            html = _prefetch_images_as_base64(html)   # ← AJOUT : embed images avant capture
         html_path = os.path.join(output_dir, f"_tmp_slide_{i + 1:02d}.html")
         with open(html_path, "w", encoding="utf-8") as f:
             f.write(html)
