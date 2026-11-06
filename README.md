@@ -4,6 +4,18 @@ Générateur de carrousels professionnels pour **LinkedIn** et **Instagram** —
 
 ---
 
+## Démo en ligne
+
+**[carousel-generator-demo.onrender.com](https://carousel-generator-demo.onrender.com)** — sans compte ni mot de passe.
+
+- Données fictives : chaque visiteur ne voit que ses propres carrousels, effacés après 2 h.
+- 10 slides maximum par génération, rendu sans logo d'entreprise.
+- Hébergement gratuit : le premier chargement réveille le serveur (~50 s).
+
+Le code de la démo vit sur la branche [`demo-publique`](https://github.com/mpigajesse/carousel_generator/tree/demo-publique) (`Dockerfile.demo`) ; la production n'en dépend pas.
+
+---
+
 ## Fonctionnalités
 
 - **Import Markdown intelligent** — détecte automatiquement la structure (front matter YAML, hiérarchie `#`/`##`/`###`, séparateurs `---`, listes)
