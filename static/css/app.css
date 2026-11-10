@@ -48,6 +48,19 @@
    ============================================================ */
 
 
+/* ============================================================
+   CASCADE LAYER ORDER — DO NOT REMOVE
+   Declared before any @layer block is opened downstream, so the
+   cascade is deterministic regardless of <link> load order.
+   Unlayered rules (this file's body + LAYOUT CONTRACT block at
+   the end) always beat layered rules per CSS spec.
+   ============================================================ */
+@layer ds-tokens, ds-typography, ds-animations, ds-glass,
+       ds-layout, ds-nav, ds-slides, ds-editor, ds-forms,
+       ds-controls, ds-themes-ui, ds-modals, ds-status,
+       ds-preview, ds-components, ds-overrides;
+
+
 /* ── Reset ── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -111,8 +124,8 @@ body {
   font-family: 'DM Sans', sans-serif;
   font-size: 14px;
   line-height: 1.6;
-  min-height: 100vh;
-  overflow-x: hidden;
+  height: 100vh;
+  overflow: hidden;
 }
 
 /* Noise texture overlay */
@@ -156,7 +169,8 @@ body::before {
   z-index: 1;
   display: grid;
   grid-template-columns: var(--sidebar-w) 1fr;
-  min-height: 100vh;
+  height: 100vh;
+  overflow: hidden;
   transition: grid-template-columns .28s cubic-bezier(.4,0,.2,1);
 }
 .shell.sidebar-collapsed {
@@ -265,7 +279,7 @@ aside > * { min-width: var(--sidebar-w); }
 /* ============================================================
    MAIN AREA
    ============================================================ */
-main { display: flex; flex-direction: column; overflow-y: auto; }
+main { display: flex; flex-direction: column; overflow: hidden; height: 100vh; min-height: 0; }
 
 .main-header {
   padding: 28px 36px 20px;
@@ -326,13 +340,24 @@ main { display: flex; flex-direction: column; overflow-y: auto; }
 .tab.active { background: var(--surface); color: var(--text); }
 
 /* Slides / preview areas — JS toggles .hidden and .active */
-.slides-area { padding: 24px 36px; flex: 1; transition: padding-left .2s ease; }
+.slides-area {
+  padding: 24px 36px;
+  flex: 1 1 0;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  transition: padding-left .2s ease;
+}
 .shell.sidebar-collapsed .slides-area { padding-left: 64px; }
 
 .preview-area {
   position: relative;
   padding: 24px 36px;
-  flex: 1;
+  flex: 1 1 0;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
   display: none;
   transition: padding-left .2s ease;
 }
@@ -414,17 +439,39 @@ main { display: flex; flex-direction: column; overflow-y: auto; }
 .field textarea { min-height: 90px; resize: vertical; font-family: 'DM Mono', monospace; font-size: 12px; }
 .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 
-/* Image field */
-.field-img-wrap { display: flex; gap: 8px; align-items: center; }
-.field-img-wrap input[type="text"] { flex: 1; min-width: 0; }
-.btn-img-pick {
-  flex-shrink: 0; padding: 7px 12px;
-  background: var(--surface2); border: 1px solid var(--border2);
-  border-radius: var(--radius-sm); color: var(--muted2);
-  font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap;
-  transition: border-color .15s, color .15s;
+/* Image field — generous sizing so the URL input and picker button breathe */
+.field-img-wrap {
+  display: flex;
+  gap: 10px;
+  align-items: stretch;
+  flex-wrap: wrap;
 }
-.btn-img-pick:hover { border-color: var(--accent); color: var(--accent); }
+.field-img-wrap input[type="text"] {
+  flex: 1 1 240px;
+  min-width: 0;
+  padding: 11px 14px;
+  font-size: 13px;
+  min-height: 42px;
+  line-height: 1.4;
+}
+.btn-img-pick {
+  flex-shrink: 0;
+  padding: 10px 18px;
+  min-height: 42px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius-sm);
+  color: var(--muted2);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: border-color .15s, color .15s, background .15s;
+}
+.btn-img-pick:hover { border-color: var(--accent); color: var(--accent); background: var(--card2, var(--surface2)); }
 .field-img-preview-wrap {
   margin-top: 8px; display: none; position: relative;
   border-radius: 8px; overflow: hidden;
@@ -542,11 +589,19 @@ main { display: flex; flex-direction: column; overflow-y: auto; }
    SLIDES LIST & CARD STRUCTURE
    (ds-slides.css handles visual tokens; layout lives here)
    ============================================================ */
-.slides-list { display: flex; flex-direction: column; gap: 14px; }
+.slides-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  overflow: visible;
+  flex: 0 0 auto;
+  padding-bottom: 96px;
+}
 
 .slide-card {
   background: var(--card); border: 1px solid var(--border);
-  border-radius: var(--radius); overflow: hidden; transition: border-color .2s;
+  border-radius: var(--radius); overflow: visible; transition: border-color .2s;
+  flex-shrink: 0;
 }
 .slide-card:hover { border-color: var(--border2); }
 
@@ -1231,4 +1286,102 @@ main { display: flex; flex-direction: column; overflow-y: auto; }
   .btn-dl-all, .btn-edit-back, .btn-presentation { font-size: 11px; padding: 7px 12px; }
   .preview-grid { grid-template-columns: repeat(2, 1fr); }
   .add-btn { flex: 1 1 100%; }
+}
+
+
+/* ════════════════════════════════════════════════════════════
+   LAYOUT CONTRACT — DO NOT MODIFY WITHOUT READING THE WHOLE BLOCK
+   ────────────────────────────────────────────────────────────
+   These rules guarantee that the "Éditeur de slides" remains
+   scrollable and the field inputs remain visible regardless of
+   how much content is imported.
+
+   PAST INCIDENTS fixed by this block:
+     - 2026-04-24 : scroll broke on the editor after importing
+       many slides because .slides-list had min-height:0 and was
+       crushed by flex layout, hiding overflowing content.
+     - 2026-04-24 : image URL input + picker button were too
+       compact (30px tall) and got tangled on narrow widths.
+     - 2026-04-24 : body / .shell had min-height:100vh (no cap)
+       so the whole document scrolled natively and the internal
+       .slides-area overflow:auto never activated.
+
+   CONTRACT (every link required — break one, scroll dies):
+     html, body      → 100vh tall, overflow hidden (viewport lock)
+     .shell          → 100vh, overflow hidden (grid never grows)
+     main            → 100vh, flex column, overflow hidden, min-height 0
+                       (flex children MUST have min-height:0 to shrink)
+     .slides-area    → flex:1 1 0, min-height:0, overflow-y:auto
+                       (THIS is the single editor scroll port)
+     .slides-list    → flex:0 0 auto (never shrinks below content),
+                       padding-bottom:96px (clears sticky add-bar)
+     .slide-card     → flex-shrink:0, overflow:visible
+                       (fields inside the card body are never clipped)
+     .add-slide-bar  → position:sticky, bottom:0
+                       (docks at viewport bottom inside .slides-area)
+     .field-img-wrap → flex-wrap:wrap, align-items:stretch, gap:10px
+                       (URL input + picker button breathe and wrap
+                        instead of compressing on narrow widths)
+
+   HOW TO ADD A NEW RULE WITHOUT BREAKING THE CONTRACT:
+     1. If you set overflow/height/min-height/flex on any selector
+        listed above, add it INSIDE THIS BLOCK so source order wins.
+     2. If you add a new scroll container inside the editor, give
+        it min-height:0 and verify its parent chain is height-capped.
+     3. Never set `body { overflow: visible }` — guide.html already
+        relies on body being scroll-locked.
+     4. Test with 15+ imported slides, each opened, at 320px width.
+
+   This block is intentionally unlayered and placed LAST in app.css
+   so no other rule — layered or unlayered — can override it via
+   source order. If a future rule conflicts, it will be caught by
+   assertScrollContract() in app.js (console warning).
+   ════════════════════════════════════════════════════════════ */
+
+html, body {
+  height: 100vh;
+  overflow: hidden;
+}
+.shell {
+  height: 100vh;
+  overflow: hidden;
+}
+main,
+.shell > main {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  min-height: 0;
+  overflow: hidden;
+}
+.slides-area {
+  flex: 1 1 0;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+}
+.slides-list {
+  flex: 0 0 auto;
+  min-height: auto;
+  padding-bottom: 96px;
+}
+.slide-card {
+  flex-shrink: 0;
+  overflow: visible;
+}
+.field-img-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  gap: 10px;
+}
+.field-img-wrap > input[type="text"] {
+  flex: 1 1 240px;
+  min-width: 0;
+  min-height: 42px;
+}
+.field-img-wrap > .btn-img-pick {
+  flex-shrink: 0;
+  min-height: 42px;
 }

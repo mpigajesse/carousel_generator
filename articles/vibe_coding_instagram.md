@@ -84,5 +84,3 @@ Et lesquelles viennent des **outils dans lesquels ils opèrent** ?
 Partagez vos retours — et surtout vos **désaccords**.
 
 *Dr. Sohaib Baroud — Fondateur @ACT | IA & Computer Science*
-
-`#VibeCoding` `#IA` `#LLM` `#FutureOfDev` `#AgentIA`
