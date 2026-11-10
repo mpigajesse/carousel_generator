@@ -315,6 +315,207 @@ THEMES = {
         "terminal_bg": "#0f0f0f",
         "terminal_border": "rgba(245,197,24,.3)",
     },
+    # ═══════════════════════════════════════════
+    # NEUTRES — Palettes sobres pour communications formelles,
+    # partenariats, annonces corporate, éditorial premium.
+    # Aucune couleur vive : que des gris colorés, ivoires, bruns chauds.
+    # ═══════════════════════════════════════════
+    "neutral_charcoal": {
+        # Charbon premium — fond très sombre, accents gris-doré subtils
+        "bg":          "#0F0F10",
+        "bg2":         "#1A1A1C",
+        "blob1":       "#26262A",
+        "blob2":       "#2E2E33",
+        "accent1":     "#C9B89A",   # gris-doré chaud (pas or vif)
+        "accent2":     "#9E9486",   # taupe clair
+        "accent3":     "#7A7368",   # taupe moyen
+        "text":        "#F5F2EC",
+        "text_muted":  "#A8A39A",
+        "badge_bg":    "#1A1A1C",
+        "rule":        "linear-gradient(90deg, #C9B89A, #7A7368)",
+        "terminal_bg": "#0F0F10",
+        "terminal_border": "rgba(201,184,154,.25)",
+    },
+    "neutral_stone": {
+        # Pierre/sable — fond très clair, accents bruns chauds
+        "bg":          "#F4EFE7",
+        "bg2":         "#EBE4D6",
+        "blob1":       "#D9CFBC",
+        "blob2":       "#C4B89F",
+        "accent1":     "#5C4A36",   # brun terre
+        "accent2":     "#8A6F4E",   # ocre brun
+        "accent3":     "#3A2F22",   # brun très foncé
+        "text":        "#2A2520",
+        "text_muted":  "#6B5F4F",
+        "badge_bg":    "#E5DCC8",
+        "rule":        "linear-gradient(90deg, #5C4A36, #8A6F4E)",
+        "terminal_bg": "#EBE4D6",
+        "terminal_border": "rgba(92,74,54,.25)",
+    },
+    "neutral_paper": {
+        # Papier ivoire — éditorial premium, lecture longue
+        "bg":          "#FAF7F0",
+        "bg2":         "#F2EDE0",
+        "blob1":       "#E8E0CD",
+        "blob2":       "#D8CEB7",
+        "accent1":     "#1F1E1B",   # encre noire
+        "accent2":     "#6B5F4F",   # gris-brun
+        "accent3":     "#A09483",   # gris chaud clair
+        "text":        "#1F1E1B",
+        "text_muted":  "#6B5F4F",
+        "badge_bg":    "#EFE9D9",
+        "rule":        "linear-gradient(90deg, #1F1E1B, #6B5F4F)",
+        "terminal_bg": "#F2EDE0",
+        "terminal_border": "rgba(31,30,27,.20)",
+    },
+    "neutral_slate": {
+        # Ardoise bleu-gris — corporate sobre, B2B sérieux
+        "bg":          "#0E1216",
+        "bg2":         "#181D23",
+        "blob1":       "#222A33",
+        "blob2":       "#2C3640",
+        "accent1":     "#A8B2BD",   # gris bleuté clair
+        "accent2":     "#7B8590",   # gris bleuté moyen
+        "accent3":     "#5A636E",   # gris bleuté foncé
+        "text":        "#E8EAEC",
+        "text_muted":  "#9BA1A8",
+        "badge_bg":    "#181D23",
+        "rule":        "linear-gradient(90deg, #A8B2BD, #5A636E)",
+        "terminal_bg": "#0E1216",
+        "terminal_border": "rgba(168,178,189,.25)",
+    },
+    "neutral_warm": {
+        # Beige chaud — magazine luxe, communication mode/lifestyle
+        "bg":          "#1A1614",
+        "bg2":         "#241E1A",
+        "blob1":       "#2E2722",
+        "blob2":       "#3A312A",
+        "accent1":     "#D4B896",   # beige doré chaud
+        "accent2":     "#A89074",   # beige moyen
+        "accent3":     "#7A6650",   # beige foncé
+        "text":        "#F5EFE5",
+        "text_muted":  "#B8A993",
+        "badge_bg":    "#241E1A",
+        "rule":        "linear-gradient(90deg, #D4B896, #7A6650)",
+        "terminal_bg": "#1A1614",
+        "terminal_border": "rgba(212,184,150,.25)",
+    },
+    "neutral_mono": {
+        # Monochrome pur — noir + blanc + gris uniquement, journalistique
+        "bg":          "#FFFFFF",
+        "bg2":         "#F5F5F5",
+        "blob1":       "#E8E8E8",
+        "blob2":       "#D4D4D4",
+        "accent1":     "#000000",
+        "accent2":     "#404040",
+        "accent3":     "#7A7A7A",
+        "text":        "#000000",
+        "text_muted":  "#5C5C5C",
+        "badge_bg":    "#EEEEEE",
+        "rule":        "linear-gradient(90deg, #000000, #7A7A7A)",
+        "terminal_bg": "#F5F5F5",
+        "terminal_border": "rgba(0,0,0,.18)",
+    },
+    "neutral_linen": {
+        # Lin chaud — texture papier de luxe, contraste AAA (15:1)
+        "bg":          "#F8F4ED",
+        "bg2":         "#EFE8DA",
+        "blob1":       "#E0D6C2",
+        "blob2":       "#CCBFA5",
+        "accent1":     "#1C1A16",   # noir-brun -> ratio 15.4:1 sur bg
+        "accent2":     "#5C4534",   # brun chaud -> 9.1:1
+        "accent3":     "#8A7560",   # taupe sable -> 5.0:1
+        "text":        "#1C1A16",
+        "text_muted":  "#5C4534",
+        "badge_bg":    "#EBE3D2",
+        "rule":        "linear-gradient(90deg, #1C1A16, #5C4534)",
+        "terminal_bg": "#EFE8DA",
+        "terminal_border": "rgba(28,26,22,.20)",
+    },
+    "neutral_carbon": {
+        # Carbone profond — accent cuivré bronze, contraste AAA (17:1)
+        "bg":          "#0C0C0E",
+        "bg2":         "#16161A",
+        "blob1":       "#22232A",
+        "blob2":       "#2C2D34",
+        "accent1":     "#B89968",   # cuivre bronze -> 7.4:1 sur bg
+        "accent2":     "#8E7858",   # bronze foncé -> 4.6:1
+        "accent3":     "#D4C19B",   # cuivre clair -> 10.8:1
+        "text":        "#F0EDE6",
+        "text_muted":  "#B0A998",
+        "badge_bg":    "#16161A",
+        "rule":        "linear-gradient(90deg, #B89968, #D4C19B)",
+        "terminal_bg": "#0C0C0E",
+        "terminal_border": "rgba(184,153,104,.28)",
+    },
+    "neutral_fog": {
+        # Brouillard gris-bleu froid — minimaliste tech, contraste AAA (15:1)
+        "bg":          "#EEF1F4",
+        "bg2":         "#E2E7ED",
+        "blob1":       "#D0D7E0",
+        "blob2":       "#B8C2CD",
+        "accent1":     "#1A1F26",   # anthracite bleuté -> 15.1:1 sur bg
+        "accent2":     "#4A5560",   # gris bleu moyen -> 7.6:1
+        "accent3":     "#7A8693",   # gris bleu clair -> 4.5:1
+        "text":        "#1A1F26",
+        "text_muted":  "#4A5560",
+        "badge_bg":    "#E2E7ED",
+        "rule":        "linear-gradient(90deg, #1A1F26, #4A5560)",
+        "terminal_bg": "#E2E7ED",
+        "terminal_border": "rgba(26,31,38,.20)",
+    },
+    "neutral_clay": {
+        # Argile/terracotta désaturée — chaleur sourde, contraste AAA (13:1)
+        "bg":          "#F0E6DC",
+        "bg2":         "#E5D7C8",
+        "blob1":       "#D2BFA8",
+        "blob2":       "#B89E84",
+        "accent1":     "#2D241D",   # brun très foncé -> 13.0:1 sur bg
+        "accent2":     "#8B5A3C",   # terracotta sourde -> 5.2:1
+        "accent3":     "#5C4233",   # brun moyen -> 8.6:1
+        "text":        "#2D241D",
+        "text_muted":  "#5C4233",
+        "badge_bg":    "#E5D7C8",
+        "rule":        "linear-gradient(90deg, #2D241D, #8B5A3C)",
+        "terminal_bg": "#E5D7C8",
+        "terminal_border": "rgba(45,36,29,.22)",
+    },
+    "neutral_obsidian": {
+        # Obsidienne noir-vert — minéral profond, contraste AAA (17:1)
+        "bg":          "#0A0E0C",
+        "bg2":         "#131816",
+        "blob1":       "#1F2622",
+        "blob2":       "#2A332E",
+        "accent1":     "#8FA888",   # vert sauge clair -> 8.2:1 sur bg
+        "accent2":     "#6B8466",   # vert sauge moyen -> 5.0:1
+        "accent3":     "#B5C9AE",   # vert sauge très clair -> 12.0:1
+        "text":        "#E8E6DD",
+        "text_muted":  "#A8B0A2",
+        "badge_bg":    "#131816",
+        "rule":        "linear-gradient(90deg, #8FA888, #B5C9AE)",
+        "terminal_bg": "#0A0E0C",
+        "terminal_border": "rgba(143,168,136,.28)",
+    },
+
+    # ═══════════════════════════════════════════
+    # ACT BRAND — Charte officielle Africa Centred Technology
+    # Ratio 60/30/10 : Dark dominante / Green secondaire / Orange + Gold accent
+    # ═══════════════════════════════════════════
+    "act_brand": {
+        "bg":          "#0A1410",   # ACT Dark
+        "bg2":         "#070E1C",   # ACT Dark Deep
+        "blob1":       "#1B3022",   # ACT Green
+        "blob2":       "#2C4A35",   # ACT Green Mid
+        "accent1":     "#D35400",   # ACT Orange primaire
+        "accent2":     "#F39C12",   # ACT Gold
+        "accent3":     "#FF6B00",   # ACT Orange Hot
+        "text":        "#FCF9F2",   # ACT Cream
+        "text_muted":  "#D5CFBE",   # ACT Line
+        "badge_bg":    "#1B3022",   # ACT Green
+        "rule":        "linear-gradient(90deg, #D35400, #F39C12)",
+        "terminal_bg": "#070E1C",
+        "terminal_border": "rgba(211,84,0,.3)",
+    },
 }
 
 IG_THEMES = {
@@ -531,6 +732,255 @@ IG_THEMES = {
         "surface2":         "rgba(255,255,255,0.10)",
         "is_light":         False,
     },
+
+    # ═══════════════════════════════════════════
+    # NEUTRES (IG) — Palettes sobres format 1080×1350
+    # Communications formelles, partenariats, éditorial premium.
+    # ═══════════════════════════════════════════
+    "ig_neutral_charcoal": {
+        # Charbon premium IG
+        "bg":               "#0F0F10",
+        "bg2":              "#1A1A1C",
+        "bg_gradient":      "linear-gradient(145deg, #0F0F10 0%, #1A1A1C 55%, #26262A 100%)",
+        "blob1":            "#26262A",
+        "blob2":            "#2E2E33",
+        "accent1":          "#C9B89A",
+        "accent2":          "#9E9486",
+        "accent3":          "#7A7368",
+        "text":             "#F5F2EC",
+        "text_muted":       "#A8A39A",
+        "badge_bg":         "#1A1A1C",
+        "rule":             "linear-gradient(90deg, #C9B89A, #7A7368)",
+        "terminal_bg":      "#0F0F10",
+        "terminal_border":  "rgba(201,184,154,.25)",
+        "surface":          "rgba(245,242,236,0.06)",
+        "surface2":         "rgba(245,242,236,0.10)",
+        "is_light":         False,
+    },
+    "ig_neutral_paper": {
+        # Papier ivoire IG — éditorial light
+        "bg":               "#FAF7F0",
+        "bg2":              "#F2EDE0",
+        "bg_gradient":      "linear-gradient(145deg, #FAF7F0 0%, #F2EDE0 60%, #E8E0CD 100%)",
+        "blob1":            "#E8E0CD",
+        "blob2":            "#D8CEB7",
+        "accent1":          "#1F1E1B",
+        "accent2":          "#6B5F4F",
+        "accent3":          "#A09483",
+        "text":             "#1F1E1B",
+        "text_muted":       "#6B5F4F",
+        "badge_bg":         "#EFE9D9",
+        "rule":             "linear-gradient(90deg, #1F1E1B, #6B5F4F)",
+        "terminal_bg":      "#F2EDE0",
+        "terminal_border":  "rgba(31,30,27,.20)",
+        "surface":          "rgba(31,30,27,0.04)",
+        "surface2":         "rgba(31,30,27,0.08)",
+        "is_light":         True,
+    },
+    "ig_neutral_stone": {
+        # Pierre/sable IG — light minimaliste
+        "bg":               "#F4EFE7",
+        "bg2":              "#EBE4D6",
+        "bg_gradient":      "linear-gradient(145deg, #F4EFE7 0%, #EBE4D6 60%, #D9CFBC 100%)",
+        "blob1":            "#D9CFBC",
+        "blob2":            "#C4B89F",
+        "accent1":          "#5C4A36",
+        "accent2":          "#8A6F4E",
+        "accent3":          "#3A2F22",
+        "text":             "#2A2520",
+        "text_muted":       "#6B5F4F",
+        "badge_bg":         "#E5DCC8",
+        "rule":             "linear-gradient(90deg, #5C4A36, #8A6F4E)",
+        "terminal_bg":      "#EBE4D6",
+        "terminal_border":  "rgba(92,74,54,.25)",
+        "surface":          "rgba(42,37,32,0.04)",
+        "surface2":         "rgba(42,37,32,0.08)",
+        "is_light":         True,
+    },
+    "ig_neutral_slate": {
+        # Ardoise bleu-gris IG — corporate dark
+        "bg":               "#0E1216",
+        "bg2":              "#181D23",
+        "bg_gradient":      "linear-gradient(145deg, #0E1216 0%, #181D23 55%, #222A33 100%)",
+        "blob1":            "#222A33",
+        "blob2":            "#2C3640",
+        "accent1":          "#A8B2BD",
+        "accent2":          "#7B8590",
+        "accent3":          "#5A636E",
+        "text":             "#E8EAEC",
+        "text_muted":       "#9BA1A8",
+        "badge_bg":         "#181D23",
+        "rule":             "linear-gradient(90deg, #A8B2BD, #5A636E)",
+        "terminal_bg":      "#0E1216",
+        "terminal_border":  "rgba(168,178,189,.25)",
+        "surface":          "rgba(232,234,236,0.06)",
+        "surface2":         "rgba(232,234,236,0.10)",
+        "is_light":         False,
+    },
+    "ig_neutral_warm": {
+        # Beige chaud IG — magazine lifestyle
+        "bg":               "#1A1614",
+        "bg2":              "#241E1A",
+        "bg_gradient":      "linear-gradient(145deg, #1A1614 0%, #241E1A 55%, #2E2722 100%)",
+        "blob1":            "#2E2722",
+        "blob2":            "#3A312A",
+        "accent1":          "#D4B896",
+        "accent2":          "#A89074",
+        "accent3":          "#7A6650",
+        "text":             "#F5EFE5",
+        "text_muted":       "#B8A993",
+        "badge_bg":         "#241E1A",
+        "rule":             "linear-gradient(90deg, #D4B896, #7A6650)",
+        "terminal_bg":      "#1A1614",
+        "terminal_border":  "rgba(212,184,150,.25)",
+        "surface":          "rgba(245,239,229,0.06)",
+        "surface2":         "rgba(245,239,229,0.10)",
+        "is_light":         False,
+    },
+    "ig_neutral_mono": {
+        # Monochrome pur IG — noir/blanc/gris journalistique
+        "bg":               "#FFFFFF",
+        "bg2":              "#F5F5F5",
+        "bg_gradient":      "linear-gradient(145deg, #FFFFFF 0%, #F5F5F5 60%, #E8E8E8 100%)",
+        "blob1":            "#E8E8E8",
+        "blob2":            "#D4D4D4",
+        "accent1":          "#000000",
+        "accent2":          "#404040",
+        "accent3":          "#7A7A7A",
+        "text":             "#000000",
+        "text_muted":       "#5C5C5C",
+        "badge_bg":         "#EEEEEE",
+        "rule":             "linear-gradient(90deg, #000000, #7A7A7A)",
+        "terminal_bg":      "#F5F5F5",
+        "terminal_border":  "rgba(0,0,0,.18)",
+        "surface":          "rgba(0,0,0,0.04)",
+        "surface2":         "rgba(0,0,0,0.08)",
+        "is_light":         True,
+    },
+    "ig_neutral_linen": {
+        # Lin chaud IG — papier de luxe, contraste AAA
+        "bg":               "#F8F4ED",
+        "bg2":              "#EFE8DA",
+        "bg_gradient":      "linear-gradient(145deg, #F8F4ED 0%, #EFE8DA 60%, #E0D6C2 100%)",
+        "blob1":            "#E0D6C2",
+        "blob2":            "#CCBFA5",
+        "accent1":          "#1C1A16",
+        "accent2":          "#5C4534",
+        "accent3":          "#8A7560",
+        "text":             "#1C1A16",
+        "text_muted":       "#5C4534",
+        "badge_bg":         "#EBE3D2",
+        "rule":             "linear-gradient(90deg, #1C1A16, #5C4534)",
+        "terminal_bg":      "#EFE8DA",
+        "terminal_border":  "rgba(28,26,22,.20)",
+        "surface":          "rgba(28,26,22,0.04)",
+        "surface2":         "rgba(28,26,22,0.08)",
+        "is_light":         True,
+    },
+    "ig_neutral_carbon": {
+        # Carbone profond IG — accent cuivré bronze
+        "bg":               "#0C0C0E",
+        "bg2":              "#16161A",
+        "bg_gradient":      "linear-gradient(145deg, #0C0C0E 0%, #16161A 55%, #22232A 100%)",
+        "blob1":            "#22232A",
+        "blob2":            "#2C2D34",
+        "accent1":          "#B89968",
+        "accent2":          "#8E7858",
+        "accent3":          "#D4C19B",
+        "text":             "#F0EDE6",
+        "text_muted":       "#B0A998",
+        "badge_bg":         "#16161A",
+        "rule":             "linear-gradient(90deg, #B89968, #D4C19B)",
+        "terminal_bg":      "#0C0C0E",
+        "terminal_border":  "rgba(184,153,104,.28)",
+        "surface":          "rgba(240,237,230,0.06)",
+        "surface2":         "rgba(240,237,230,0.10)",
+        "is_light":         False,
+    },
+    "ig_neutral_fog": {
+        # Brouillard gris-bleu IG — minimaliste tech
+        "bg":               "#EEF1F4",
+        "bg2":              "#E2E7ED",
+        "bg_gradient":      "linear-gradient(145deg, #EEF1F4 0%, #E2E7ED 60%, #D0D7E0 100%)",
+        "blob1":            "#D0D7E0",
+        "blob2":            "#B8C2CD",
+        "accent1":          "#1A1F26",
+        "accent2":          "#4A5560",
+        "accent3":          "#7A8693",
+        "text":             "#1A1F26",
+        "text_muted":       "#4A5560",
+        "badge_bg":         "#E2E7ED",
+        "rule":             "linear-gradient(90deg, #1A1F26, #4A5560)",
+        "terminal_bg":      "#E2E7ED",
+        "terminal_border":  "rgba(26,31,38,.20)",
+        "surface":          "rgba(26,31,38,0.04)",
+        "surface2":         "rgba(26,31,38,0.08)",
+        "is_light":         True,
+    },
+    "ig_neutral_clay": {
+        # Argile/terracotta désaturée IG
+        "bg":               "#F0E6DC",
+        "bg2":              "#E5D7C8",
+        "bg_gradient":      "linear-gradient(145deg, #F0E6DC 0%, #E5D7C8 60%, #D2BFA8 100%)",
+        "blob1":            "#D2BFA8",
+        "blob2":            "#B89E84",
+        "accent1":          "#2D241D",
+        "accent2":          "#8B5A3C",
+        "accent3":          "#5C4233",
+        "text":             "#2D241D",
+        "text_muted":       "#5C4233",
+        "badge_bg":         "#E5D7C8",
+        "rule":             "linear-gradient(90deg, #2D241D, #8B5A3C)",
+        "terminal_bg":      "#E5D7C8",
+        "terminal_border":  "rgba(45,36,29,.22)",
+        "surface":          "rgba(45,36,29,0.04)",
+        "surface2":         "rgba(45,36,29,0.08)",
+        "is_light":         True,
+    },
+    "ig_neutral_obsidian": {
+        # Obsidienne noir-vert IG — minéral profond
+        "bg":               "#0A0E0C",
+        "bg2":              "#131816",
+        "bg_gradient":      "linear-gradient(145deg, #0A0E0C 0%, #131816 55%, #1F2622 100%)",
+        "blob1":            "#1F2622",
+        "blob2":            "#2A332E",
+        "accent1":          "#8FA888",
+        "accent2":          "#6B8466",
+        "accent3":          "#B5C9AE",
+        "text":             "#E8E6DD",
+        "text_muted":       "#A8B0A2",
+        "badge_bg":         "#131816",
+        "rule":             "linear-gradient(90deg, #8FA888, #B5C9AE)",
+        "terminal_bg":      "#0A0E0C",
+        "terminal_border":  "rgba(143,168,136,.28)",
+        "surface":          "rgba(232,230,221,0.06)",
+        "surface2":         "rgba(232,230,221,0.10)",
+        "is_light":         False,
+    },
+
+    # ═══════════════════════════════════════════
+    # ACT BRAND (IG) — Charte officielle Africa Centred Technology
+    # Format Instagram 1080×1350 — Dark dominante, Orange ACT accent
+    # ═══════════════════════════════════════════
+    "ig_act_brand": {
+        "bg":               "#0A1410",   # ACT Dark
+        "bg2":              "#070E1C",   # ACT Dark Deep
+        "bg_gradient":      "linear-gradient(145deg, #0A1410 0%, #1B3022 55%, #070E1C 100%)",
+        "blob1":            "#1B3022",   # ACT Green
+        "blob2":            "#2C4A35",   # ACT Green Mid
+        "accent1":          "#D35400",   # ACT Orange primaire
+        "accent2":          "#F39C12",   # ACT Gold
+        "accent3":          "#FF6B00",   # ACT Orange Hot
+        "text":             "#FCF9F2",   # ACT Cream
+        "text_muted":       "#D5CFBE",   # ACT Line
+        "badge_bg":         "#1B3022",
+        "rule":             "linear-gradient(90deg, #D35400, #F39C12)",
+        "terminal_bg":      "#070E1C",
+        "terminal_border":  "rgba(211,84,0,.3)",
+        "surface":          "rgba(252,249,242,0.06)",
+        "surface2":         "rgba(252,249,242,0.10)",
+        "is_light":         False,
+    },
 }
 
 
@@ -718,6 +1168,19 @@ def get_theme_preview(name: str) -> str:
         "volcanic_fire": "Feu volcanique - Puissance brute",
         "aurora_borealis": "Aurore boreale - Magie celeste",
         "kente_tech": "Kente Tech - Heritage africain vibrant",
+        # Neutres
+        "neutral_charcoal": "Neutral Charcoal - Charbon premium gris-dore (dark)",
+        "neutral_stone": "Neutral Stone - Pierre/sable bruns chauds (light)",
+        "neutral_paper": "Neutral Paper - Ivoire editorial premium (light)",
+        "neutral_slate": "Neutral Slate - Ardoise bleu-gris corporate (dark)",
+        "neutral_warm": "Neutral Warm - Beige chaud magazine luxe (dark)",
+        "neutral_mono": "Neutral Mono - Monochrome noir/blanc journalistique (light)",
+        "neutral_linen": "Neutral Linen - Lin chaud papier de luxe AAA (light)",
+        "neutral_carbon": "Neutral Carbon - Carbone bronze cuivre AAA (dark)",
+        "neutral_fog": "Neutral Fog - Brouillard gris-bleu tech AAA (light)",
+        "neutral_clay": "Neutral Clay - Argile/terracotta sourde AAA (light)",
+        "neutral_obsidian": "Neutral Obsidian - Obsidienne sauge minerale AAA (dark)",
+        "act_brand": "ACT Brand - Charte officielle Africa Centred Technology",
         # Instagram-optimized themes
         "ig_aurora_dark": "IG Aurora Dark - Violet/Bleu/Rose viral (dark)",
         "ig_sunset_vibes": "IG Sunset Vibes - Corail/Orange/Rose lifestyle (dark)",
@@ -729,5 +1192,128 @@ def get_theme_preview(name: str) -> str:
         "ig_sage_earth": "IG Sage Earth - Vert sauge/Terre nature bien-etre (light)",
         "ig_midnight_gold": "IG Midnight Gold - Noir/Or luxe de marque (dark)",
         "ig_coral_burst": "IG Coral Burst - Corail/Tangerine energie jeunesse (dark)",
+        # Neutres IG
+        "ig_neutral_charcoal": "IG Neutral Charcoal - Charbon premium IG (dark)",
+        "ig_neutral_paper": "IG Neutral Paper - Ivoire editorial IG (light)",
+        "ig_neutral_stone": "IG Neutral Stone - Pierre minimaliste IG (light)",
+        "ig_neutral_slate": "IG Neutral Slate - Ardoise corporate IG (dark)",
+        "ig_neutral_warm": "IG Neutral Warm - Beige chaud lifestyle IG (dark)",
+        "ig_neutral_mono": "IG Neutral Mono - Monochrome journalistique IG (light)",
+        "ig_neutral_linen": "IG Neutral Linen - Lin chaud IG AAA (light)",
+        "ig_neutral_carbon": "IG Neutral Carbon - Carbone bronze IG AAA (dark)",
+        "ig_neutral_fog": "IG Neutral Fog - Brouillard tech IG AAA (light)",
+        "ig_neutral_clay": "IG Neutral Clay - Argile sourde IG AAA (light)",
+        "ig_neutral_obsidian": "IG Neutral Obsidian - Obsidienne sauge IG AAA (dark)",
+        "ig_act_brand": "IG ACT Brand - Charte officielle ACT format Instagram (dark)",
     }
     return previews.get(name, "Theme personnalise")
+
+
+# ═══════════════════════════════════════════════════════════════════════════
+# AUDIT WCAG — fonctions utilitaires pour valider la lisibilité des thèmes.
+# Tout thème ajouté doit passer "audit_theme(name)" sans avertissement.
+# Ratios cibles (WCAG 2.1) :
+#   - text/bg          ≥ 4.5:1 (AA), idéal ≥ 7:1 (AAA)
+#   - accent1/bg       ≥ 3.0:1 (AA large text), idéal ≥ 4.5:1
+#   - accent2/bg       ≥ 3.0:1
+# ═══════════════════════════════════════════════════════════════════════════
+
+def _hex_to_linear_rgb(hex_color: str) -> tuple:
+    """Convertit hex -> tuple (r, g, b) lineaire pour calcul de luminance WCAG."""
+    h = hex_color.lstrip("#")
+    if len(h) == 3:
+        h = "".join(c * 2 for c in h)
+    rgb = tuple(int(h[i:i+2], 16) / 255.0 for i in (0, 2, 4))
+    def _lin(c):
+        return c / 12.92 if c <= 0.03928 else ((c + 0.055) / 1.055) ** 2.4
+    return tuple(_lin(c) for c in rgb)
+
+
+def _relative_luminance(hex_color: str) -> float:
+    """Luminance relative WCAG 2.1."""
+    r, g, b = _hex_to_linear_rgb(hex_color)
+    return 0.2126 * r + 0.7152 * g + 0.0722 * b
+
+
+def contrast_ratio(hex_a: str, hex_b: str) -> float:
+    """Ratio de contraste WCAG 2.1 entre deux couleurs hex (1.0 a 21.0)."""
+    la = _relative_luminance(hex_a)
+    lb = _relative_luminance(hex_b)
+    lighter, darker = (la, lb) if la > lb else (lb, la)
+    return (lighter + 0.05) / (darker + 0.05)
+
+
+def audit_theme(name: str) -> dict:
+    """Audit WCAG d'un theme : retourne un rapport avec ratios texte/accents sur fond.
+
+    Critere "intelligent" :
+      - text/bg >= 4.5:1 OBLIGATOIRE (AA)
+      - text/bg >= 7.0:1 RECOMMANDE (AAA)
+      - accent1/bg >= 3.0:1 OBLIGATOIRE (AA large)
+      - accent1/bg >= 4.5:1 RECOMMANDE
+
+    Args:
+        name: nom du theme (LinkedIn ou Instagram).
+
+    Returns:
+        dict avec champs : theme, ratios (text, accent1/2/3, text_muted),
+        warnings (liste), level (AAA/AA/FAIL).
+    """
+    theme = THEMES.get(name) or IG_THEMES.get(name)
+    if not theme:
+        raise ValueError(f"Theme inconnu: {name}")
+
+    bg = theme["bg"]
+    ratios = {
+        "text/bg":        round(contrast_ratio(theme["text"], bg), 2),
+        "text_muted/bg":  round(contrast_ratio(theme["text_muted"], bg), 2),
+        "accent1/bg":     round(contrast_ratio(theme["accent1"], bg), 2),
+        "accent2/bg":     round(contrast_ratio(theme["accent2"], bg), 2),
+        "accent3/bg":     round(contrast_ratio(theme["accent3"], bg), 2),
+    }
+    warnings = []
+    if ratios["text/bg"] < 4.5:
+        warnings.append(f"FAIL text/bg = {ratios['text/bg']}:1 (< 4.5 AA)")
+    if ratios["text_muted/bg"] < 4.5:
+        warnings.append(f"WARN text_muted/bg = {ratios['text_muted/bg']}:1 (< 4.5 AA)")
+    if ratios["accent1/bg"] < 3.0:
+        warnings.append(f"FAIL accent1/bg = {ratios['accent1/bg']}:1 (< 3.0 AA large)")
+    if ratios["accent2/bg"] < 3.0:
+        warnings.append(f"WARN accent2/bg = {ratios['accent2/bg']}:1 (< 3.0)")
+
+    if any(w.startswith("FAIL") for w in warnings):
+        level = "FAIL"
+    elif ratios["text/bg"] >= 7.0 and ratios["accent1/bg"] >= 4.5:
+        level = "AAA"
+    else:
+        level = "AA"
+
+    return {
+        "theme": name,
+        "ratios": ratios,
+        "warnings": warnings,
+        "level": level,
+    }
+
+
+def audit_all_themes() -> list:
+    """Audit complet de tous les themes (LinkedIn + Instagram). Retourne la liste des rapports."""
+    reports = []
+    for name in list(THEMES.keys()) + list(IG_THEMES.keys()):
+        try:
+            reports.append(audit_theme(name))
+        except (KeyError, ValueError) as e:
+            reports.append({"theme": name, "error": str(e), "level": "ERROR"})
+    return reports
+
+
+if __name__ == "__main__":
+    # Lancer "python themes.py" pour afficher l'audit WCAG complet.
+    print(f"{'Theme':<28} {'Level':<6} {'text/bg':<10} {'accent1/bg':<12} Warnings")
+    print("-" * 100)
+    for r in audit_all_themes():
+        if "error" in r:
+            print(f"{r['theme']:<28} ERROR  {r['error']}")
+            continue
+        warns = "; ".join(r["warnings"]) if r["warnings"] else "OK"
+        print(f"{r['theme']:<28} {r['level']:<6} {r['ratios']['text/bg']:<10} {r['ratios']['accent1/bg']:<12} {warns}")

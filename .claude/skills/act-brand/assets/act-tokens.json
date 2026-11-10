@@ -1,0 +1,194 @@
+{
+  "$schema": "https://design-tokens.dev/schema",
+  "name": "act-brand-tokens",
+  "version": "1.0.0",
+  "description": "Design tokens officiels d'ACT — Africa Centred Technology. Source de vérité unique pour les couleurs, typographies, espacements et angles.",
+
+  "color": {
+    "brand": {
+      "orange":     { "value": "#D35400", "rgb": "211, 84, 0",  "cmyk": "0, 60, 100, 17", "pantone": "471 C", "role": "Couleur primaire — CTA, accent, signature" },
+      "orange-hot": { "value": "#FF6B00", "rgb": "255, 107, 0", "cmyk": "0, 58, 100, 0",  "role": "État hover, accent secondaire" },
+      "gold":       { "value": "#F39C12", "rgb": "243, 156, 18", "cmyk": "0, 36, 93, 5",  "role": "Chiffres-clés, premium, highlights" },
+      "dark":       { "value": "#0A1410", "rgb": "10, 20, 16",  "role": "Fond principal digital, texte sur cream" },
+      "dark-deep":  { "value": "#070E1C", "rgb": "7, 14, 28",   "role": "Fond ultra-sombre (sections d'impact)" },
+      "green":      { "value": "#1B3022", "rgb": "27, 48, 34",  "role": "Cartes, panneaux, fond secondaire" },
+      "green-mid":  { "value": "#2C4A35", "rgb": "44, 74, 53",  "role": "Hover sur fond green, séparateurs" },
+      "cream":      { "value": "#FCF9F2", "rgb": "252, 249, 242", "role": "Fond clair, texte sur fond sombre" },
+      "cream-deep": { "value": "#F4EFE4", "rgb": "244, 239, 228", "role": "Fond clair secondaire (cartes sur cream)" }
+    },
+    "neutral": {
+      "ink":      { "value": "#0A1410", "role": "Texte principal sur fond clair" },
+      "ink-soft": { "value": "#3A4540", "role": "Texte secondaire sur fond clair" },
+      "muted":    { "value": "#6B7A72", "role": "Texte tertiaire, légendes, métadonnées" },
+      "line":     { "value": "#D5CFBE", "role": "Filets, séparateurs sur fond clair" },
+      "line-soft":{ "value": "#E8E4D7", "role": "Filets très discrets" }
+    },
+    "semantic": {
+      "success": { "value": "#6ECF8A", "role": "Validation, statut OK" },
+      "warning": { "value": "#F39C12", "role": "Alerte modérée (= gold)" },
+      "danger":  { "value": "#C84B4B", "role": "Erreur, à bannir, interdit" }
+    }
+  },
+
+  "wcag": {
+    "cream-on-dark":     { "ratio": "16.5:1", "status": "AAA", "use": "tout texte" },
+    "dark-on-cream":     { "ratio": "16.5:1", "status": "AAA", "use": "tout texte" },
+    "orange-on-cream":   { "ratio": "4.9:1",  "status": "AA",  "use": "tout texte normal" },
+    "orange-on-dark":    { "ratio": "3.5:1",  "status": "AA",  "use": "texte large uniquement (≥24px ou ≥18pt gras)" },
+    "gold-on-dark":      { "ratio": "7.4:1",  "status": "AAA", "use": "tout texte" },
+    "muted-on-cream":    { "ratio": "4.6:1",  "status": "AA",  "use": "tout texte normal" }
+  },
+
+  "ratio": {
+    "60-30-10": {
+      "60": "Dominante : Dark (digital) ou Cream (impression)",
+      "30": "Secondaire : Green + gris moyens",
+      "10": "Accent : Orange + Gold — JAMAIS en aplat plein page"
+    }
+  },
+
+  "typography": {
+    "display": {
+      "family": "Lora",
+      "google-fonts-url": "https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&display=swap",
+      "weights": [400, 500, 600, 700],
+      "italics": true,
+      "fallback": "Georgia, 'Times New Roman', serif",
+      "use": "Titres H1-H3, citations, chiffres-clés mis en valeur",
+      "rules": {
+        "letter-spacing": "-0.025em sur les gros titres",
+        "line-height": "1.0 sur très gros titres, 1.1 sur H2, 1.25 sur H3",
+        "italic-color": "#D35400 — italique orange systématiquement sur 1-3 mots-clés par titre",
+        "text-wrap": "balance sur tous les H1/H2"
+      }
+    },
+    "body": {
+      "family": "Poppins",
+      "google-fonts-url": "https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap",
+      "weights": [300, 400, 500, 600, 700],
+      "fallback": "-apple-system, system-ui, Calibri, Arial, sans-serif",
+      "use": "Corps de texte, navigation, labels, boutons, UI",
+      "rules": {
+        "line-height": "1.6 minimum pour le body",
+        "letter-spacing": "+0.18em à +0.24em sur eyebrows et boutons en capitales",
+        "weight-default": 400,
+        "weight-emphasis": 600
+      }
+    },
+    "mono": {
+      "family": "JetBrains Mono",
+      "google-fonts-url": "https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap",
+      "weights": [400, 500],
+      "fallback": "Consolas, 'SF Mono', Menlo, monospace",
+      "use": "Extraits de code, valeurs techniques, data viz, tableaux de chiffres"
+    },
+    "scale": {
+      "h1": { "size-min": "48px", "size-max": "96px", "weight": 500, "family": "Lora", "line-height": 1.0 },
+      "h2": { "size-min": "36px", "size-max": "56px", "weight": 500, "family": "Lora", "line-height": 1.1 },
+      "h3": { "size-min": "24px", "size-max": "32px", "weight": 500, "family": "Lora", "line-height": 1.25 },
+      "h4": { "size-min": "18px", "size-max": "20px", "weight": 600, "family": "Poppins", "line-height": 1.3 },
+      "body-lg": { "size": "20px", "weight": 300, "family": "Poppins", "line-height": 1.6 },
+      "body":    { "size": "16px", "weight": 400, "family": "Poppins", "line-height": 1.6 },
+      "caption": { "size": "13px", "weight": 400, "family": "Poppins", "line-height": 1.5 },
+      "eyebrow": { "size": "11px", "weight": 600, "family": "Poppins", "letter-spacing": "0.24em", "text-transform": "uppercase", "color": "#D35400" },
+      "code":    { "size": "14px", "weight": 400, "family": "JetBrains Mono" }
+    }
+  },
+
+  "diamond": {
+    "description": "Élément signature ACT. Carré tourné de -43.264°.",
+    "angle": "-43.264deg",
+    "sizes": [10, 16, 24, 40, 64, 80],
+    "colors-allowed": ["#D35400", "#F39C12", "#FCF9F2", "#0A1410"],
+    "variants": ["filled (default)", "outline 2px", "creux (couleur du parent)"],
+    "uses": [
+      "Bullet point des listes (remplace puces classiques)",
+      "Avant les eyebrows (surtitres) de section",
+      "Séparateur entre items d'une marquee",
+      "Texture de fond (5-8% opacité)",
+      "Puce d'activation pulsante dans alertes",
+      "Favicon — losange seul"
+    ]
+  },
+
+  "spacing": {
+    "xs": "4px",
+    "sm": "8px",
+    "md": "16px",
+    "lg": "24px",
+    "xl": "40px",
+    "2xl": "64px",
+    "3xl": "96px",
+    "4xl": "144px"
+  },
+
+  "logo": {
+    "components": ["losange (-43.264°)", "sigle ACT en Lora", "mention 'Africa Centred Technology' avec 'Centred' en Lora Italic Orange"],
+    "min-sizes": {
+      "screen-principal": "32px",
+      "screen-compact": "20px",
+      "print-principal": "12mm",
+      "print-compact": "8mm",
+      "favicon": "16px (losange seul)"
+    },
+    "clear-space": "1× hauteur losange (haut/bas), 1.5× hauteur losange (gauche/droite)",
+    "variants": [
+      "principale (horizontale, orange + noir)",
+      "monochrome foncé (sur fond clair)",
+      "monochrome inversé (cream sur dark)",
+      "compact (sigle + losange)",
+      "favicon (losange seul)"
+    ]
+  },
+
+  "voice": {
+    "tone": "Expert, rigoureux, accessible, moderne, chaleureux",
+    "archetype": "Le Sage-Artisan",
+    "tagline": "L'IA opérationnelle. Vraiment.",
+    "rules": [
+      "Affirmer avant de nuancer",
+      "Le concret avant l'abstrait — chiffre, exemple, cas",
+      "Le 'vous' avant le 'nous'",
+      "Clarté avant élégance"
+    ],
+    "vocab-prefer": [
+      "déployer", "transmettre", "outiller", "accompagner", "piloter", "cadrer",
+      "opérationnel", "mesurable", "concret", "reproductible", "actionnable",
+      "méthode", "framework", "cadre", "protocole", "checklist",
+      "autonomie", "souveraineté", "maîtrise"
+    ],
+    "vocab-ban": [
+      "révolutionnaire", "disruptif", "game-changer", "next-gen",
+      "solutions innovantes", "synergies",
+      "leverage", "scaler", "onboarder",
+      "IA générative de pointe (redondant)",
+      "tout ce qui pourrait sortir d'une brochure de 2007"
+    ],
+    "anglicisms-tolerated": [
+      "prompt", "LLM", "fine-tuning", "RAG", "framework", "pipeline", "roadmap", "dashboard", "backend", "benchmark"
+    ],
+    "italic-orange-pattern": "1 à 3 mots par titre maximum, en italique Lora couleur Orange — c'est notre ponctuation visuelle"
+  },
+
+  "anchor": {
+    "company-name": "ACT",
+    "long-name": "Africa Centred Technology",
+    "tagline-fr": "L'IA opérationnelle. Vraiment.",
+    "tagline-alt-1": "Former. Déployer. Transmettre.",
+    "tagline-alt-2": "L'expertise IA, à hauteur d'Afrique.",
+    "cities": ["Casablanca", "Rabat", "Dakar"],
+    "city-separator": "·"
+  },
+
+  "filename-convention": {
+    "pattern": "ACT_[TYPE]_[SUJET]_[CLIENT-ou-INTERNE]_[YYYYMMDD]_[vXX].[ext]",
+    "types": {
+      "DOC": "document Word / PDF",
+      "PRES": "présentation PowerPoint / Keynote",
+      "VISU": "visuel marketing (post, bannière, affiche)",
+      "CODE": "livrable technique",
+      "CONTR": "contrat, devis, document administratif",
+      "RAPP": "rapport (audit, benchmark, cadrage)"
+    }
+  }
+}
