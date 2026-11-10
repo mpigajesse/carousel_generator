@@ -341,6 +341,43 @@ def guide():
     return render_template('guide.html')
 
 
+@app.route('/calendar')
+def calendar_view():
+    """Planning chronologique des couleurs ACT mai-decembre 2026.
+    A consulter avant chaque generation pour choisir le bon theme."""
+    from calendar_data import (
+        MONTHS, LEGEND_COLOR, LEGEND_NEUTRAL, LOGIC, get_swatch
+    )
+    # Enrichir les rows avec les swatchs hex pour le rendu Jinja
+    months = []
+    for m in MONTHS:
+        rows_enriched = []
+        for date_label, article, lk, ig in m["rows"]:
+            rows_enriched.append({
+                "date": date_label,
+                "article": article,
+                "lk_name": lk,
+                "lk_swatch": get_swatch(lk),
+                "ig_name": ig,
+                "ig_swatch": get_swatch(ig),
+            })
+        months.append({**m, "rows": rows_enriched})
+
+    legend_color = [
+        {"name": n, "use": u, "swatch": get_swatch(n)} for n, u in LEGEND_COLOR
+    ]
+    legend_neutral = [
+        {"name": n, "use": u, "swatch": get_swatch(n)} for n, u in LEGEND_NEUTRAL
+    ]
+    return render_template(
+        'calendar.html',
+        months=months,
+        legend_color=legend_color,
+        legend_neutral=legend_neutral,
+        logic=LOGIC,
+    )
+
+
 # ─────────────────────────────────────────
 #  LIBRARY API — lecture disque (persistante)
 # ─────────────────────────────────────────

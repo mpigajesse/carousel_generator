@@ -1,6 +1,6 @@
 ---
 series: "Digital Morocco 2030 · Décryptage"
-author: "@ACT"
+author: "@Sohaib Baroud"
 ---
 
 # 100 milliards de PIB grâce au numérique ?

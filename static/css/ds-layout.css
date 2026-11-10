@@ -160,6 +160,7 @@
     background: var(--ds-bg-3);
     position: relative;
     min-width: 0;
+    min-height: 0;
   }
 
   /* Entry animation when the workspace mounts */
